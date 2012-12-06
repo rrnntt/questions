@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block main %}  	
+	{% if user %}
+	  <div>User: {{ user_name }}</div>
+	  <ul>
+	  {% for role in user.roles%}
+	    <li>{{role}}</li>  	  
+	  {% endfor %}
+	  </ul>
+	  {% if user.isAdmin() %}
+	  <a href="/users">Manage users</a>
+	  {% endif %}
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+application: questions
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /stylesheets
+  static_dir: stylesheets
+
+- url: /backbone
+  static_dir: backbone
+
+- url: /jquery
+  static_dir: jquery-ui
+
+- url: /.*
+  script: questions.app
+
+libraries:
+- name: jinja2
+  version: latest

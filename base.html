@@ -1,0 +1,21 @@
+<html>
+	
+  <head>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<script type="text/javascript" src="/jquery/js/jquery-1.8.3.js" ></script>
+    <link type="text/css" rel="stylesheet" href="/jquery/css/ui-lightness/jquery-ui-1.9.2.custom.css"/>
+    <script type="text/javascript" src="/jquery/js/jquery-ui-1.9.2.custom.min.js"></script>
+	<script type="text/javascript" src="/backbone/underscore-min.js" ></script>
+	<script type="text/javascript" src="/backbone/backbone.js" ></script>
+  </head>
+  
+  <body>
+  	
+  	{% block main %}
+  	{% endblock %}
+  	
+  	<a href="/">Home</a>
+  	<a href="{{ login_url }}">{{ login_url_text }}</a>
+    
+  </body>
+</html>

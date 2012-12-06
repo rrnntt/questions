@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block main%}
+
+    Users:<br/>
+    <ul>
+    {% for u in user_list %}
+    	<li>
+    		<form action="/deleteuser?name={{ u.nickname() }}" method="post">
+	    		{{ u.nickname() }}
+    			<input type="submit" value="Delete" />
+    		</form>
+    	</li>
+    {% endfor %}
+    </ul>
+    <form action="/adduser" method="post">
+    	<div><textarea name="new-name" cols="60"></textarea></div>
+    	<div><input type="submit" value="Add new user" /></div>
+    </form>
+
+{% endblock %}
