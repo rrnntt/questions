@@ -50,8 +50,9 @@ def create_user(name,roles=None):
 def get_current_user():
     default_user = 'test@example.com'
     gUser = users.get_current_user()
-    if not gUser or gUser.nickname() != default_user:
+    if not gUser:
         return None
+    #raise Exception(str(gUser))
     user = get_user(gUser.nickname())
     if user and not user.user:
         user.user = gUser 
@@ -59,50 +60,58 @@ def get_current_user():
         user = MyUser(key_name=default_user)
         user.user = gUser
         user.roles.append('admin')
-        #user.put()
-    #user.roles = []
+        user.put()
+    # temporary:
+    if gUser.nickname() == default_user:
+        user.roles = ['admin']
     return user
+
+def get_current_admin():
+    user = get_current_user()
+    if not user or not user.isAdmin():
+        return None
+    return user
+
+def write_template(handler, user, file_name, template_values = {}):
+        if user:
+            url = users.create_logout_url(handler.request.uri)
+            url_linktext = 'Logout'
+            user_name = user.nickname()
+        else:
+            url = users.create_login_url(handler.request.uri)
+            url_linktext = 'Login'
+            user_name = ''
+        template_values['user'] = user
+        template_values['user_name'] = user_name
+        template_values['login_url'] = url
+        template_values['login_url_text'] = url_linktext
+        template = jinja_environment.get_template(file_name)
+        handler.response.out.write(template.render(template_values))
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
 
         user = get_current_user()
-        if user:
-            url = users.create_logout_url(self.request.uri)
-            url_linktext = 'Logout'
-            user_name = user.nickname()
-        else:
-            url = users.create_login_url(self.request.uri)
-            url_linktext = 'Login'
-            user_name = ''
         
-        guser = users.get_current_user()
-        if guser:
-            guser_name = guser.nickname()
-        else:
-            guser_name = ''
-
-        template_values = {
-            'user': user,
-            'user_name': user_name,
-            'login_url': url,
-            'login_url_text': url_linktext,
-            'guser_name': guser_name,
-        }
-
-        template = jinja_environment.get_template('index.html')
-        self.response.out.write(template.render(template_values))
+        #template = jinja_environment.get_template('index.html')
+        #self.response.out.write(template.render(template_values))
+        write_template(self, user, 'index.html')
 
 class UserList(webapp2.RequestHandler):
     def get(self):
 
+        user = get_current_admin()
+        if not user:
+            self.redirect('/')
+        
         user_list = MyUser.all().fetch(1000)
             
         template_values = {
             'user_list': user_list,
         }
-        template = jinja_environment.get_template('user_list.html')
-        self.response.out.write(template.render(template_values))
+        #template = jinja_environment.get_template('user_list.html')
+        #self.response.out.write(template.render(template_values))
+        write_template(self, user, 'user_list.html',template_values)
         
 class DeleteUser(webapp2.RequestHandler):
     def post(self):
