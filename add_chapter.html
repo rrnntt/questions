@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block main %}
+<form action="/addchapter?parent={{chapter_key}}" method="post">
+	<div>Title: <input type="text" id="title"/> </div>
+	<div><input type="submit" value="Add" /></div>
+</form>
+{% endblock %}

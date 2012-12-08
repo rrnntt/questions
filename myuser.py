@@ -62,15 +62,6 @@ def get_current_admin():
         return None
     return user
 
-class MainPage(webapp2.RequestHandler):
-    def get(self):
-
-        user = get_current_user()
-        
-        #template = jinja_environment.get_template('index.html')
-        #self.response.out.write(template.render(template_values))
-        write_template(self, user, 'index.html')
-
 class UserList(webapp2.RequestHandler):
     def get(self):
 
@@ -83,8 +74,6 @@ class UserList(webapp2.RequestHandler):
         template_values = {
             'user_list': user_list,
         }
-        #template = jinja_environment.get_template('user_list.html')
-        #self.response.out.write(template.render(template_values))
         write_template(self, user, 'user_list.html',template_values)
         
 class DeleteUser(webapp2.RequestHandler):

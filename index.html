@@ -8,6 +8,13 @@
 	    <li>{{role}}</li>  	  
 	  {% endfor %}
 	  </ul>
+    	<div>Chapters:</div>
+	  <ul>
+	  	{% for chapter in chapters %}
+	  	<li>{{ chapter.title }}</li>
+	  	{% endfor %}
+	  </ul>
+	  <a href="/addchapterpage?chapter=root">Add chapter</a>
 	  {% if user.isAdmin() %}
 	  <a href="/users">Manage users</a>
 	  {% endif %}
