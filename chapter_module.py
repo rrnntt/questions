@@ -59,9 +59,13 @@ class AddChapter(webapp2.RequestHandler):
         if not user:
             self.redirect('/')
         
-        chapter_key = self.request.get('parent')
-        if chapter_key == 'root':
-            chapter_key = root_key()
+        parent_key = self.request.get('parent')
+        if parent_key == 'root':
+            parent_key = root_key()
         
-        self.redirect('/addchapterpage?parent='+chapter_key)
+        chapter = Chapter(parent=parent_key)
+        chapter.authors.append(user.nickname())
+        chapter.put()
+        
+        self.redirect('/addchapterpage?parent='+parent_key)
         
