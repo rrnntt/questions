@@ -28,5 +28,6 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/adduser', myuser.AddUser),
                                (r'/addchapterpage', chapter_module.AddChapterPage),
                                (r'/addchapter', chapter_module.AddChapter),
+                               (r'/chapterpage', chapter_module.ChapterPage),
                                ],
                               debug=True)

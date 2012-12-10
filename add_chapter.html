@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block main %}
+{% if chapter %}
+Add a sub-chapter to {{chapter.title}}
+{% else %}
+Add a new chapter
+{% endif %}
+<br/>
 <form action="/addchapter?parent={{chapter_key}}" method="post">
 	<div>Title: <input type="text" name="title"/> </div>
 	<div><input type="submit" value="Add" /></div>
