@@ -9,6 +9,17 @@
 	<script type="text/javascript" src="/backbone/backbone.js" ></script>
   </head>
   
+  <script type="text/javascript"> 
+    Backbone.emulateJSON = true;
+	var Chapter = Backbone.Model.extend({
+		urlRoot : '/chapters', 
+		title: '', 
+		parent_key: ''
+		});
+  	{% block head_script %}
+  	{% endblock %}
+  </script>
+  
   <body>
   	
   	{% block main %}

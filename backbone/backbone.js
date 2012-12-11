@@ -1331,6 +1331,8 @@
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
     }
+    
+    
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {
@@ -1354,6 +1356,8 @@
     if (params.type !== 'GET' && !Backbone.emulateJSON) {
       params.processData = false;
     }
+    
+    //alert('sync '+JSON.stringify(params));
 
     // Make the request, allowing the user to override any Ajax options.
     return $.ajax(_.extend(params, options));

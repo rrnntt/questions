@@ -29,5 +29,8 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/addchapterpage', chapter_module.AddChapterPage),
                                (r'/addchapter', chapter_module.AddChapter),
                                (r'/chapterpage', chapter_module.ChapterPage),
+                               (r'/deletechapter', chapter_module.DeleteChapter),
+                               (r'/chapters', chapter_module.Chapters),
+                               (r'/chapters/(.+)', chapter_module.Chapters),
                                ],
                               debug=True)

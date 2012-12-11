@@ -1,14 +1,40 @@
 {% extends "base.html" %}
 
+{% block head_script %}
+	var chapter = new Chapter();
+	chapter.set('title','{{chapter.title}}');
+	chapter.set('parent_key','{{chapter.parent_key()}}');
+    var c = new Chapter();
+	$(function(){
+		$("#addbutton").button().click(function(event){
+			c.save({title: $("#title_text").val(),parent_key: '{{chapter.key()}}'},
+			       {
+		    		success: function(model,resp,opt){
+		    			//alert("Response: "+JSON.stringify(resp.id));
+		    			model.id = resp.id;
+		    			},
+		    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+		    		wait: true
+		    	   });
+		});
+		$("#savebutton").button().click(function(event){
+			c.set('title',$("#title_text").val());
+			c.save({title: $("#title_text").val()});
+		});
+	});
+{% endblock %}
+
 {% block main %}
-{% if chapter %}
-Add a sub-chapter to {{chapter.title}}
-{% else %}
-Add a new chapter
-{% endif %}
-<br/>
-<form action="/addchapter?parent={{chapter_key}}" method="post">
-	<div>Title: <input type="text" name="title"/> </div>
-	<div><input type="submit" value="Add" /></div>
-</form>
+	{% if chapter %}
+	Add a sub-chapter to {{chapter.title}}
+	{% else %}
+	Add a new chapter
+	{% endif %}
+	<br/>
+	<form action="/addchapter?parent={{chapter_key}}" method="post">
+		<div>Title: <input type="text" name="title" id="title_text" /> </div>
+		<div><input type="submit" value="Add" /></div>
+	</form>
+	<div><button id="addbutton">Add</button></div>
+	<div><button id="savebutton">Save</button></div>
 {% endblock %}

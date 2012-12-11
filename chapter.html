@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block head_script %}
+	var chapter = new Chapter();
+	chapter.set('title','{{chapter.title}}');
+	chapter.set('parent_key','{{chapter.parent_key()}}');
+{% endblock %}
+
 {% block main %}  	
 <div>Chapter {{chapter.title}}:</div>
 {% if not subchapters_empty %}
@@ -9,5 +15,10 @@
 {% endfor %}
 </ul>
 {% endif %}
-<a href="/addchapterpage?chapter={{chapter.key()}}">Add chapter</a>
+<form action="/deletechapter?chapter={{chapter.key()}}" method="post">
+	<div><input type="submit" value="Delete this chapter" /></div>
+</form>
+<a href="/chapterpage?chapter={{chapter.parent_key()}}">Up</a>
+<a href="/addchapterpage?chapter={{chapter.key()}}">Add subchapter</a>
+
 {% endblock %}
