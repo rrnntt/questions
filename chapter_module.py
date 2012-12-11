@@ -1,5 +1,6 @@
 import webapp2
 from google.appengine.ext import db
+import simplejson
 from myuser import *
 import mytemplate
 
@@ -151,8 +152,9 @@ class Chapters(webapp2.RequestHandler):
         if not user:
             self.redirect('/')
             
-        model = self.request.get('model')
-        raise Exception(model[0])
+        json = simplejson.decoder.JSONDecoder()
+        model = json.decode( self.request.get('model'))
+        #raise Exception(model[0])
         if not 'parent_key' in model:
             self.response.out.write('error')
         if not 'title' in model:
