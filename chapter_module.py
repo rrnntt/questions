@@ -44,6 +44,20 @@ def list_visible_chapters(user, parent = None):
             chapters.append(chapter)
     return chapters
 
+def get_chapter_by_encoded_key(encoded_key):
+    encoded_chapter_key = encoded_key
+    if encoded_chapter_key == 'root':
+        chapter_key = root_key()
+        encoded_chapter_key = str(chapter_key)
+        chapter = Chapter.get(chapter_key)
+        if not chapter:
+            chapter = Chapter()
+            chapter.put()
+    else:
+        chapter_key = db.Key(encoded=encoded_chapter_key)
+        chapter = Chapter.get(chapter_key)
+    return chapter, encoded_chapter_key
+            
 class AddChapterPage(webapp2.RequestHandler):
     def get(self):
 
@@ -52,14 +66,7 @@ class AddChapterPage(webapp2.RequestHandler):
             self.redirect('/')
         
         encoded_chapter_key = self.request.get('chapter')
-        if encoded_chapter_key == 'root':
-            chapter_key = root_key()
-            encoded_chapter_key = str(chapter_key)
-            chapter = None
-        else:
-            #raise Exception(encoded_chapter_key+' '+len(encoded_chapter_key))
-            chapter_key = db.Key(encoded=encoded_chapter_key)
-            chapter = Chapter.get(chapter_key)
+        chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
             
         template_values = {
                            'chapter': chapter,
@@ -68,32 +75,32 @@ class AddChapterPage(webapp2.RequestHandler):
         
         write_template(self, user, 'add_chapter.html',template_values)
         
-class AddChapter(webapp2.RequestHandler):
-    def post(self):
-
-        user = get_current_user()
-        if not user:
-            self.redirect('/')
-        
-        root = root_key()
-        encoded_parent_key = self.request.get('parent')
-        if encoded_parent_key == 'root':
-            parent_key = root
-        else:
-            parent_key = db.Key(encoded=encoded_parent_key)
-        
-        title = self.request.get('title')
-            
-        if len(title) > 0:
-            chapter = Chapter(parent=parent_key)
-            chapter.authors.append(user.nickname())
-            chapter.title = title
-            chapter.put()
-        
-        if parent_key == root:
-            self.redirect('/')
-        else:
-            self.redirect('/chapterpage?chapter='+str(parent_key))
+#class AddChapter(webapp2.RequestHandler):
+#    def post(self):
+#
+#        user = get_current_user()
+#        if not user:
+#            self.redirect('/')
+#        
+#        root = root_key()
+#        encoded_parent_key = self.request.get('parent')
+#        if encoded_parent_key == 'root':
+#            parent_key = root
+#        else:
+#            parent_key = db.Key(encoded=encoded_parent_key)
+#        
+#        title = self.request.get('title')
+#            
+#        if len(title) > 0:
+#            chapter = Chapter(parent=parent_key)
+#            chapter.authors.append(user.nickname())
+#            chapter.title = title
+#            chapter.put()
+#        
+#        if parent_key == root:
+#            self.redirect('/')
+#        else:
+#            self.redirect('/chapterpage?chapter='+str(parent_key))
             
 class ChapterPage(webapp2.RequestHandler):
     def get(self):
@@ -120,24 +127,24 @@ class ChapterPage(webapp2.RequestHandler):
             
             write_template(self, user, 'chapter.html',template_values)
         
-class DeleteChapter(webapp2.RequestHandler):
-    def post(self):
-        
-        user = get_current_user()
-        if not user:
-            self.redirect('/')
-        
-        encoded_chapter_key = self.request.get('chapter')
-        chapter = Chapter.get(db.Key(encoded=encoded_chapter_key))
-        
-        if not chapter.canEdit(user):
-            self.redirect('/')
-            
-        parent_key = chapter.parent_key()
-            
-        chapter.delete()
-        
-        self.redirect('/chapterpage?chapter='+str(parent_key))
+#class DeleteChapter(webapp2.RequestHandler):
+#    def post(self):
+#        
+#        user = get_current_user()
+#        if not user:
+#            self.redirect('/')
+#        
+#        encoded_chapter_key = self.request.get('chapter')
+#        chapter = Chapter.get(db.Key(encoded=encoded_chapter_key))
+#        
+#        if not chapter.canEdit(user):
+#            self.redirect('/')
+#            
+#        parent_key = chapter.parent_key()
+#            
+#        chapter.delete()
+#        
+#        self.redirect('/chapterpage?chapter='+str(parent_key))
         
 class Chapters(webapp2.RequestHandler):
     def put(self,Id):

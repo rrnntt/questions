@@ -4,6 +4,12 @@
 	var chapter = new Chapter();
 	chapter.set('title','{{chapter.title}}');
 	chapter.set('parent_key','{{chapter.parent_key()}}');
+	$(function(){
+		$("#add_chapter_page").hide();
+		$("#add_button").button().click(function(event){
+			$("#add_chapter_page").show();
+		});
+	});
 {% endblock %}
 
 {% block main %}  	
@@ -22,5 +28,8 @@
 {% endif %}
 <a href="/chapterpage?chapter={{chapter.parent_key()}}">Up</a>
 <a href="/addchapterpage?chapter={{chapter.key()}}">Add subchapter</a>
+<div><button id="add_button">Add</button></div>
+
+<div id="add_chapter_page">Hidden</div>
 
 {% endblock %}

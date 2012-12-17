@@ -38,6 +38,7 @@ def create_user(name,roles=None):
     return user
 
 def get_current_user():
+    """Return the current user if someone logged in or None otherwise"""
     default_user = 'test@example.com'
     gUser = users.get_current_user()
     if not gUser:
@@ -56,7 +57,17 @@ def get_current_user():
         user.roles = ['admin']
     return user
 
+def check_loggedin(func):
+    """Decorator for requests handlers wich must check that a user has logged in"""
+    def check_loggedin_wrapper(self):
+        user = get_current_user()
+        if not user:
+            self.redirect('/')
+        func(self)
+    return check_loggedin_wrapper
+
 def get_current_admin():
+    """Return the current user if someone logged in and is an admin or None otherwise"""
     user = get_current_user()
     if not user or not user.isAdmin():
         return None
