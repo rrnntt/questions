@@ -46,18 +46,55 @@ def list_visible_chapters(user, parent = None):
 
 def get_chapter_by_encoded_key(encoded_key):
     encoded_chapter_key = encoded_key
-    if encoded_chapter_key == 'root':
+    if encoded_chapter_key == 'root' or encoded_chapter_key == 'None':
         chapter_key = root_key()
         encoded_chapter_key = str(chapter_key)
         chapter = Chapter.get(chapter_key)
         if not chapter:
-            chapter = Chapter()
+            chapter = Chapter(key_name='root')
+            chapter.title = 'Root'
             chapter.put()
     else:
         chapter_key = db.Key(encoded=encoded_chapter_key)
         chapter = Chapter.get(chapter_key)
     return chapter, encoded_chapter_key
+
+def add_chapter_values(template_values, chapter):
+        chapter_parent_key = chapter.parent_key()
+        if not chapter_parent_key:
+            chapter_parent_key = 'root'
+        
+        template_values['chapter'] = chapter
+        parent_key = chapter.parent_key()
+        if not parent_key:
+            parent_key = 'root'
+        template_values['chapter_parent_key'] = parent_key 
+    
+
+#------------------------------------------------------------------------------------------
+#     Request handlers
             
+class ChapterPage(webapp2.RequestHandler):
+    def get(self):
+        user = get_current_user()
+        if not user:
+            self.redirect('/')
+        
+        encoded_chapter_key = self.request.get('chapter')
+        
+        chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
+        subchapters = list_visible_chapters(user, chapter)
+        subchapters_empty = len(subchapters) == 0
+        
+        template_values = {
+                           'subchapters': subchapters,
+                           'subchapters_empty': subchapters_empty,
+                           }
+        
+        add_chapter_values(template_values, chapter)
+        
+        write_template(self, user, 'chapter.html',template_values)
+        
 class AddChapterPage(webapp2.RequestHandler):
     def get(self):
 
@@ -67,11 +104,8 @@ class AddChapterPage(webapp2.RequestHandler):
         
         encoded_chapter_key = self.request.get('chapter')
         chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
-            
-        template_values = {
-                           'chapter': chapter,
-                           'chapter_key':encoded_chapter_key,
-                           }
+        template_values = {}
+        add_chapter_values(template_values, chapter)
         
         write_template(self, user, 'add_chapter.html',template_values)
         
@@ -102,31 +136,6 @@ class AddChapterPage(webapp2.RequestHandler):
 #        else:
 #            self.redirect('/chapterpage?chapter='+str(parent_key))
             
-class ChapterPage(webapp2.RequestHandler):
-    def get(self):
-        user = get_current_user()
-        if not user:
-            self.redirect('/')
-        
-        encoded_chapter_key = self.request.get('chapter')
-        chapter_key = db.Key(encoded=encoded_chapter_key)
-        
-        if chapter_key == root_key():
-            self.redirect('/')
-        else:
-            chapter = Chapter.get(chapter_key)
-            subchapters = list_visible_chapters(user, chapter)
-            
-            subchapters_empty = len(subchapters) == 0
-            
-            template_values = {
-                               'chapter': chapter,
-                               'subchapters': subchapters,
-                               'subchapters_empty': subchapters_empty,
-                               }
-            
-            write_template(self, user, 'chapter.html',template_values)
-        
 #class DeleteChapter(webapp2.RequestHandler):
 #    def post(self):
 #        

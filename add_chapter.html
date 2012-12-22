@@ -3,7 +3,7 @@
 {% block head_script %}
 	var chapter = new Chapter();
 	chapter.set('title','{{chapter.title}}');
-	chapter.set('parent_key','{{chapter.parent_key()}}');
+	chapter.set('parent_key','{{chapter_parent_key}}');
     var c = new Chapter();
 	$(function(){
 		$("#addbutton").button().click(function(event){
@@ -31,7 +31,7 @@
 	Add a new chapter
 	{% endif %}
 	<br/>
-	<form action="/addchapter?parent={{chapter_key}}" method="post">
+	<form action="/addchapter?parent={{chapter.key()}}" method="post">
 		<div>Title: <input type="text" name="title" id="title_text" /> </div>
 		<div><input type="submit" value="Add" /></div>
 	</form>

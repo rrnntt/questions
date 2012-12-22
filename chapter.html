@@ -3,7 +3,7 @@
 {% block head_script %}
 	var chapter = new Chapter();
 	chapter.set('title','{{chapter.title}}');
-	chapter.set('parent_key','{{chapter.parent_key()}}');
+	chapter.set('parent_key','{{chapter_parent_key}}');
 	$(function(){
 		$("#add_chapter_page").hide();
 		$("#add_button").button().click(function(event){
@@ -26,7 +26,7 @@
 	<div><input type="submit" value="Delete this chapter" /></div>
 </form>
 {% endif %}
-<a href="/chapterpage?chapter={{chapter.parent_key()}}">Up</a>
+<a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a>
 <a href="/addchapterpage?chapter={{chapter.key()}}">Add subchapter</a>
 <div><button id="add_button">Add</button></div>
 
