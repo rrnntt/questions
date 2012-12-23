@@ -1,0 +1,19 @@
+
+$("#addbutton").button().click(function(event){
+    var new_chapter = new Chapter();
+	new_chapter.save({title: $("#title_text").val(),parent_key: '{{chapter.key()}}'},
+	       {
+    		success: function(model,resp,opt){
+    			//alert("Response: "+JSON.stringify(resp.id));
+    			model.id = resp.id;
+    			location.reload();
+    			},
+    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+    		wait: true
+    	   });
+});
+
+$("#savebutton").button().click(function(event){
+	c.set('title',$("#title_text").val());
+	c.save({title: $("#title_text").val()});
+});

@@ -6,9 +6,10 @@
 	chapter.set('parent_key','{{chapter_parent_key}}');
 	$(function(){
 		$("#add_chapter_page").hide();
-		$("#add_button").button().click(function(event){
+		$("#show_add_form_button").button().click(function(event){
 			$("#add_chapter_page").show();
 		});
+		{% include 'edit_chapter_script.html' %}
 	});
 {% endblock %}
 
@@ -27,9 +28,12 @@
 </form>
 {% endif %}
 <a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a>
-<a href="/addchapterpage?chapter={{chapter.key()}}">Add subchapter</a>
-<div><button id="add_button">Add</button></div>
+<div><button id="show_add_form_button">Add</button></div>
 
-<div id="add_chapter_page">Hidden</div>
+<div id="add_chapter_page">
+	Add a sub-chapter to {{chapter.title}}
+	<br/>
+	{% include 'edit_chapter_form.html' %}
+</div>
 
 {% endblock %}
