@@ -4,10 +4,15 @@
 	var chapter = new Chapter();
 	chapter.set('title','{{chapter.title}}');
 	chapter.set('parent_key','{{chapter_parent_key}}');
+	chapter.id = '{{chapter.key()}}';
 	$(function(){
 		$("#add_chapter_page").hide();
 		$("#show_add_form_button").button().click(function(event){
 			$("#add_chapter_page").show();
+			$("#show_add_form_button").hide();
+		});
+		$("#delete_button").button().click(function(event){
+			chapter.destroy();
 		});
 		{% include 'edit_chapter_script.html' %}
 	});
@@ -23,14 +28,13 @@
 </ul>
 {% endif %}
 {% if chapter.canEdit(user) %}
-<form action="/deletechapter?chapter={{chapter.key()}}" method="post">
-	<div><input type="submit" value="Delete this chapter" /></div>
-</form>
+<div><button id="delete_button">Delete this chapter</button></div>
 {% endif %}
 <a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a>
 <div><button id="show_add_form_button">Add</button></div>
 
 <div id="add_chapter_page">
+	<hr />
 	Add a sub-chapter to {{chapter.title}}
 	<br/>
 	{% include 'edit_chapter_form.html' %}

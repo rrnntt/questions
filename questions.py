@@ -1,12 +1,4 @@
-#import cgi
-#import datetime
-#import urllib
 import webapp2
-
-#from google.appengine.ext import db
-#from google.appengine.api import users
-
-
 import myuser
 from mytemplate import write_template
 from chapter_module import list_visible_chapters
@@ -26,9 +18,6 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/users', myuser.UserList),
                                (r'/deleteuser', myuser.DeleteUser),
                                (r'/adduser', myuser.AddUser),
-                               #(r'/addchapterpage', chapter_module.AddChapterPage),
-                               #(r'/addchapter', chapter_module.AddChapter),
-                               #(r'/deletechapter', chapter_module.DeleteChapter),
                                (r'/chapterpage', chapter_module.ChapterPage),
                                (r'/chapters', chapter_module.Chapters),
                                (r'/chapters/(.+)', chapter_module.Chapters),

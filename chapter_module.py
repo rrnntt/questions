@@ -109,52 +109,6 @@ class AddChapterPage(webapp2.RequestHandler):
         
         write_template(self, user, 'add_chapter.html',template_values)
         
-#class AddChapter(webapp2.RequestHandler):
-#    def post(self):
-#
-#        user = get_current_user()
-#        if not user:
-#            self.redirect('/')
-#        
-#        root = root_key()
-#        encoded_parent_key = self.request.get('parent')
-#        if encoded_parent_key == 'root':
-#            parent_key = root
-#        else:
-#            parent_key = db.Key(encoded=encoded_parent_key)
-#        
-#        title = self.request.get('title')
-#            
-#        if len(title) > 0:
-#            chapter = Chapter(parent=parent_key)
-#            chapter.authors.append(user.nickname())
-#            chapter.title = title
-#            chapter.put()
-#        
-#        if parent_key == root:
-#            self.redirect('/')
-#        else:
-#            self.redirect('/chapterpage?chapter='+str(parent_key))
-            
-#class DeleteChapter(webapp2.RequestHandler):
-#    def post(self):
-#        
-#        user = get_current_user()
-#        if not user:
-#            self.redirect('/')
-#        
-#        encoded_chapter_key = self.request.get('chapter')
-#        chapter = Chapter.get(db.Key(encoded=encoded_chapter_key))
-#        
-#        if not chapter.canEdit(user):
-#            self.redirect('/')
-#            
-#        parent_key = chapter.parent_key()
-#            
-#        chapter.delete()
-#        
-#        self.redirect('/chapterpage?chapter='+str(parent_key))
-        
 class Chapters(webapp2.RequestHandler):
     def put(self,Id):
         #raise Exception(self.request.arguments())
@@ -163,7 +117,7 @@ class Chapters(webapp2.RequestHandler):
 
     def post(self):
         """Create new chapter instance and retirn its id which is its key"""
-        #raise Exception(str(self.request.get('model')))
+        raise Exception(str(self.request.get('model')))
         user = get_current_user()
         if not user:
             self.redirect('/')
@@ -195,6 +149,11 @@ class Chapters(webapp2.RequestHandler):
         
         self.response.out.write('{"id":"'+str(chapter.key())+'"}')
 
-    def delete(self):
-        raise Exception('deletin')
+    def delete(self, Id):
+        """Delete a chapter with key == Id"""
+        chapter,ekey = get_chapter_by_encoded_key(Id)
+        if chapter:
+            chapter.delete()
+        else:
+            raise Exception('Deleting of chapter failed')
 
