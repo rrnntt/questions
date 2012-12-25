@@ -7,8 +7,10 @@
     <script type="text/javascript" src="/jquery/js/jquery-ui-1.9.2.custom.min.js"></script>
 	<script type="text/javascript" src="/backbone/underscore-min.js" ></script>
 	<script type="text/javascript" src="/backbone/backbone.js" ></script>
+    {% block header %}
+    {% endblock %}
   </head>
-  
+  	
   <script type="text/javascript"> 
     Backbone.emulateJSON = true;
 	var Chapter = Backbone.Model.extend({

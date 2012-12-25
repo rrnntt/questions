@@ -111,13 +111,15 @@ class AddChapterPage(webapp2.RequestHandler):
         
 class Chapters(webapp2.RequestHandler):
     def put(self,Id):
-        #raise Exception(self.request.arguments())
-        raise Exception(str(self.request.params))
-        raise Exception('puttin '+str(self.request.str_POST)+' id:'+Id)
+        """Save a chapter with key == Id"""
+        chapter,ekey = get_chapter_by_encoded_key(Id)
+        if chapter:
+            chapter.put()
+        else:
+            raise Exception('Saving of chapter failed')
 
     def post(self):
         """Create new chapter instance and retirn its id which is its key"""
-        raise Exception(str(self.request.get('model')))
         user = get_current_user()
         if not user:
             self.redirect('/')

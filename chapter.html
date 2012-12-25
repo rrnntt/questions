@@ -1,43 +1,91 @@
 {% extends "base.html" %}
 
-{% block head_script %}
+{% import "edit_chapter_form.html" as edit %}
+
+{% block head_script scoped %}
 	var chapter = new Chapter();
 	chapter.set('title','{{chapter.title}}');
 	chapter.set('parent_key','{{chapter_parent_key}}');
 	chapter.id = '{{chapter.key()}}';
 	$(function(){
 		$("#add_chapter_page").hide();
+		$("#edit_chapter_page").hide();
 		$("#show_add_form_button").button().click(function(event){
 			$("#add_chapter_page").show();
+			$("#edit_chapter_page").hide();
 			$("#show_add_form_button").hide();
+			$("#show_edit_form_button").show();
+		});
+		$("#show_edit_form_button").button().click(function(event){
+			$("#edit_chapter_page").show();
+			$("#add_chapter_page").hide();
+			$("#show_edit_form_button").hide();
+			$("#show_add_form_button").show();
 		});
 		$("#delete_button").button().click(function(event){
-			chapter.destroy();
+			chapter.destroy({success:function(model,responce){
+				window.location.replace("/chapterpage?chapter={{chapter_parent_key}}");				
+			}});
 		});
-		{% include 'edit_chapter_script.html' %}
+		$("#addbutton").button().click(function(event){
+	      var new_chapter = new Chapter();
+		  new_chapter.save({title: $("#addbutton_title_text").val(),parent_key: '{{chapter.key()}}'},
+		       {
+	    		success: function(model,resp,opt){
+	    			model.id = resp.id;
+	    			location.reload();
+	    			},
+	    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+	    		wait: true
+	    	   });
+        });
+        $("#savebutton").button().click(function(event){
+        	chapter.save({title: $("#savebutton_title_text").val()},
+		       {
+	    		success: function(model,resp,opt){
+	    			location.reload();
+	    			},
+	    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+	    		wait: true
+	    	   });
+        });
+
+		{{ edit.addButtonScript("savebutton",chapter.parent_key()) }}
 	});
 {% endblock %}
 
-{% block main %}  	
+{% block main scoped %}
+{% import "edit_chapter_form.html" as edit %}
 <div>Chapter {{chapter.title}}:</div>
+<div><a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a></div>
 {% if not subchapters_empty %}
 <ul>
 {% for subchapter in subchapters %}
-  <li><a href="/chapterpage?chapter={{subchapter.key()}}">{{ subchapter.title }}</a></li>
+  <li>
+  	<a href="/chapterpage?chapter={{subchapter.key()}}">{{ subchapter.title }}</a>
+  </li>
 {% endfor %}
 </ul>
 {% endif %}
 {% if chapter.canEdit(user) %}
-<div><button id="delete_button">Delete this chapter</button></div>
-{% endif %}
-<a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a>
-<div><button id="show_add_form_button">Add</button></div>
+<div>
+	<button id="show_add_form_button">Add</button>
+	<button id="show_edit_form_button">Edit</button>
+	<button id="delete_button">Delete this chapter</button>
+</div>
 
 <div id="add_chapter_page">
 	<hr />
 	Add a sub-chapter to {{chapter.title}}
 	<br/>
-	{% include 'edit_chapter_form.html' %}
+	{{ edit.editChapter("addbutton","Add") }}
 </div>
+<div id="edit_chapter_page">
+	<hr/>
+	Edit chapter {{chapter.title}}
+	{{ edit.editChapter("savebutton","Save") }}
+</div>
+{% endif %}
+
 
 {% endblock %}
