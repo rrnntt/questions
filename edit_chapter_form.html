@@ -4,35 +4,3 @@
 </form>
 <div><button id="{{buttonID}}">{{buttonText}}</button></div>
 {% endmacro %}
-
-{% macro addButtonScript(buttonID,parentKey) %}
-$("#{{buttonID}}").button().click(function(event){
-    var new_chapter = new Chapter();
-	new_chapter.save({title: $("#{{buttonID}}_title_text").val(),parent_key: '{{parentKey}}'},
-	       {
-    		success: function(model,resp,opt){
-    			//alert("Response: "+JSON.stringify(resp.id));
-    			model.id = resp.id;
-    			location.reload();
-    			},
-    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
-    		wait: true
-    	   });
-});
-{% endmacro %}
-
-{% macro saveButtonScript(buttonID,parentKey) %}
-$("#{{buttonID}}").button().click(function(event){
-    var new_chapter = new Chapter();
-	new_chapter.save({title: $("#{{buttonID}}_title_text").val(),parent_key: '{{parentKey}}'},
-	       {
-    		success: function(model,resp,opt){
-    			//alert("Response: "+JSON.stringify(resp.id));
-    			model.id = resp.id;
-    			location.reload();
-    			},
-    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
-    		wait: true
-    	   });
-});
-{% endmacro %}

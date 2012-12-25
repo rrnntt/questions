@@ -40,6 +40,7 @@
 	    	   });
         });
         $("#savebutton").button().click(function(event){
+        	//chapter.save();
         	chapter.save({title: $("#savebutton_title_text").val()},
 		       {
 	    		success: function(model,resp,opt){
@@ -49,8 +50,6 @@
 	    		wait: true
 	    	   });
         });
-
-		{{ edit.addButtonScript("savebutton",chapter.parent_key()) }}
 	});
 {% endblock %}
 

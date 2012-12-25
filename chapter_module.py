@@ -26,6 +26,14 @@ class Chapter(db.Model):
         """Check if a user can edit this chapter"""
         return (user.nickname() in self.authors) or user.isAdmin()
     
+    def deleteAll(self):
+        """Delete this chater and all child chapters recursively"""
+        chapter_query = Chapter.all().ancestor(self.key())
+        all_chapters = chapter_query.fetch(1000)
+        for chapter in all_chapters:
+            chapter.delete()
+        self.delete()
+    
 def root_key():
     """Constructs a Datastore key for a root chapter."""
     return db.Key.from_path('Chapter', 'root')
@@ -112,17 +120,37 @@ class AddChapterPage(webapp2.RequestHandler):
 class Chapters(webapp2.RequestHandler):
     def put(self,Id):
         """Save a chapter with key == Id"""
+        #raise Exception(self.request.arguments())
         chapter,ekey = get_chapter_by_encoded_key(Id)
         if chapter:
+            json = simplejson.decoder.JSONDecoder()
+            model = json.decode( self.request.get('model'))
+            #raise Exception(model[0])
+            if not 'parent_key' in model:
+                self.response.out.write('error')
+                return
+            chapter.title = model['title']
             chapter.put()
         else:
             raise Exception('Saving of chapter failed')
 
-    def post(self):
+    def post(self,Id=None):
         """Create new chapter instance and retirn its id which is its key"""
         user = get_current_user()
         if not user:
             self.redirect('/')
+            
+        #raise Exception(self.request.get('_method'))
+        httpMethod = self.request.get('_method')
+        if httpMethod == 'PUT':
+            self.put(Id)
+            return
+        if httpMethod == 'DELETE':
+            self.delete(Id)
+            return
+        if httpMethod == 'GET':
+            raise Exception('GET not implemented')
+            return
             
         json = simplejson.decoder.JSONDecoder()
         model = json.decode( self.request.get('model'))
@@ -155,7 +183,7 @@ class Chapters(webapp2.RequestHandler):
         """Delete a chapter with key == Id"""
         chapter,ekey = get_chapter_by_encoded_key(Id)
         if chapter:
-            chapter.delete()
+            chapter.deleteAll()
         else:
             raise Exception('Deleting of chapter failed')
 
