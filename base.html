@@ -25,11 +25,17 @@
   
   <body>
   	
-  	<a href="/">Home</a>
-  	<a href="{{ login_url }}">{{ login_url_text }}</a>
+  	<div id="main-body">
+  	
+  	<img src="/images/1px.png" width="85%" height="1" style="float:left"/> 
+  	<nav id="main-menu">
+  	  <a href="/">Home</a> |
+  	  <a href="{{ login_url }}">{{ login_url_text }}</a>
+  	</nav>
     
   	{% block main %}
   	{% endblock %}
   	
+  	</div>
   </body>
 </html>

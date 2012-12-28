@@ -2,3 +2,25 @@ body {
   font-family: Verdana, Helvetica, sans-serif;
   font-size: 80%;
 }
+
+#main-menu {
+	background: url("/images/main-menu-bg.png");
+	height: 25px;
+	overflow-y: hidden;
+	border-radius: 8px;
+	padding-top: 5px;
+	padding-left: 10px;
+}
+#main-menu a {
+  text-decoration: none;
+}
+
+#main-body {
+  width: 800px;
+  box-shadow: 0 0 30px #ccc;
+  margin-left: auto;
+  margin-right: auto;
+  height: inherit;
+  padding: 5px 5px 5px 5px;
+}
+

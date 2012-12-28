@@ -14,6 +14,9 @@ handlers:
 - url: /jquery
   static_dir: jquery-ui
 
+- url: /images
+  static_dir: images
+
 - url: /.*
   script: questions.app
 
