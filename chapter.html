@@ -37,6 +37,10 @@
 	    		wait: true
 	    	   });
         });
+		$("#addbutton_cancel_button").button().click(function(event){
+			$("#add_chapter_page").hide();
+            $("#show_add_form_button").show();
+		});
         $("#savebutton").button().click(function(event){
 			chapter.save({title: $("#savebutton_title_text").val()},
 			   {
@@ -47,6 +51,10 @@
 				wait: true
 			   });
         });
+		$("#savebutton_cancel_button").button().click(function(event){
+			$("#edit_chapter_page").hide();
+			$("#show_edit_form_button").show();
+		});
         $( "#dialog-confirm" ).dialog({
 			//resizable: false,
 			//height:140,
@@ -69,8 +77,13 @@
 
 {% block main scoped %}
 {% import "edit_chapter_form.html" as edit %}
-<div>Chapter {{chapter.title}}:</div>
+<h1>Chapter {{chapter.title}}</h1>
+<hr />
+
+{% if chapter.title != 'Root' %}
 <div><a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a></div>
+{% endif %}
+
 {% if not subchapters_empty %}
 <ul>
 {% for subchapter in subchapters %}

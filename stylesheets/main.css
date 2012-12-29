@@ -7,7 +7,8 @@ body {
 	background: url("/images/main-menu-bg.png");
 	height: 25px;
 	overflow-y: hidden;
-	border-radius: 8px;
+	border: 1px solid #CCCCCC;
+	border-radius: 6px;
 	padding-top: 5px;
 	padding-left: 10px;
 }
