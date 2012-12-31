@@ -25,3 +25,7 @@ body {
   padding: 5px 5px 5px 5px;
 }
 
+#chapter_title {
+	font-size: 200%;
+	font-weight: 200;
+}

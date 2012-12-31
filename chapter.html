@@ -8,6 +8,9 @@
 	chapter.set('parent_key','{{chapter_parent_key}}');
 	chapter.id = '{{chapter.key()}}';
 	$(function(){
+		$("#up_button").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+			window.location.replace("/chapterpage?chapter={{chapter_parent_key}}");
+		});
 		$("#add_chapter_page").hide();
 		$("#edit_chapter_page").hide();
 		$("#show_add_form_button").button().click(function(event){
@@ -76,13 +79,13 @@
 {% endblock %}
 
 {% block main scoped %}
-{% import "edit_chapter_form.html" as edit %}
-<h1>Chapter {{chapter.title}}</h1>
-<hr />
 
+{% import "edit_chapter_form.html" as edit %}
 {% if chapter.title != 'Root' %}
-<div><a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a></div>
+<span id="up_button"><a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a></span>
 {% endif %}
+<span id="chapter_title">{{chapter.title}}</span> 
+<hr />
 
 {% if not subchapters_empty %}
 <ul>
@@ -94,6 +97,7 @@
 </ul>
 {% endif %}
 {% if chapter.canEdit(user) %}
+<hr />
 <div>
 	<button id="show_add_form_button">Add</button>
 	<button id="show_edit_form_button">Edit</button>
