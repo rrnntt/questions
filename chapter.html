@@ -98,10 +98,12 @@
 {% endif %}
 {% if chapter.canEdit(user) %}
 <hr />
-<div>
+<div style="background-color: #eee">
 	<button id="show_add_form_button">Add</button>
+	{% if chapter.title != 'Root' %}
 	<button id="show_edit_form_button">Edit</button>
 	<button id="delete_button">Delete this chapter</button>
+	{% endif %}
 </div>
 
 <div id="add_chapter_page">
