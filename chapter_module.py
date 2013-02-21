@@ -9,6 +9,10 @@ Chapters are a way of organising questions. A chapter may either include other
 chapters or questions.
 """
 
+###########################################################################
+#     Chapter model class
+###########################################################################
+
 class Chapter(db.Model):
     """A chapter"""
     title = db.StringProperty()
@@ -35,36 +39,71 @@ class Chapter(db.Model):
         self.delete()
     
 def root_key():
-    """Constructs a Datastore key for a root chapter."""
+    """Constructs a Datastore key for the root chapter.
+    
+    The root chapter is just a container for the top-level chapters. It doesn't have a title
+    or text or questions, only the key.
+    """
     return db.Key.from_path('Chapter', 'root')
 
 def list_visible_chapters(user, parent = None):
-    """Retrieve from the datastore chapters visible to a user"""
+    """Retrieve from the datastore chapters visible to a user.
+    
+    Args:
+        user (MyUser): the user requestion the list.
+        parent (Chapter): the parent chapter. This function returns only the immediate
+            sub-chapters of parent. If parent is None the function returns the top-level
+            chapters.
+            
+    Return: 
+        A list of Chapter
+    """
     if parent:
         parent_key = parent.key()
     else:
         parent_key = root_key()
+    # find all descendants (sub-chapters of all levels) of parent
     chapter_query = Chapter.all().ancestor(parent_key).order('title')
+    # try to fetch all of them. I hope 1000 is a large enogh number.
     all_chapters = chapter_query.fetch(1000)
     chapters = []
+    # collect only visible to user and direct descendants of parent chapters
     for chapter in all_chapters:
         if chapter.isVisible(user) and chapter.parent_key() == parent_key:
             chapters.append(chapter)
+    # return the result
     return chapters
 
 def get_chapter_by_encoded_key(encoded_key):
+    """Get the chapter from datastore by its encoded key.
+    
+    An encoded key is the string representation of a key that can be used in URLs.
+    This function is for retrieving chapters in http handlers. 
+    
+    Args:
+        encoded_key (str): an encoded datastore key for a real chapter or string 'root'
+        for the root chapter
+        
+    Return:
+        tuple (Chapter,encoded_key). If you get the root chapter encoded_key will be real
+        encoded key of the root chapter.
+    """
     encoded_chapter_key = encoded_key
+    # if root chapter requested get the real key for it
     if encoded_chapter_key == 'root' or encoded_chapter_key == 'None':
         chapter_key = root_key()
         encoded_chapter_key = str(chapter_key)
         chapter = Chapter.get(chapter_key)
+        # in case root chapter doesn't exist yet in datastore, create and put it there
         if not chapter:
             chapter = Chapter(key_name='root')
             chapter.title = 'Root'
             chapter.put()
     else:
+        # if it's a real key just get the chapter from datastore
         chapter_key = db.Key(encoded=encoded_chapter_key)
         chapter = Chapter.get(chapter_key)
+    # return the result
     return chapter, encoded_chapter_key
 
 def add_chapter_values(template_values, chapter):
@@ -79,8 +118,9 @@ def add_chapter_values(template_values, chapter):
         template_values['chapter_parent_key'] = parent_key 
     
 
-#------------------------------------------------------------------------------------------
+###########################################################################
 #     Request handlers
+###########################################################################
             
 class ChapterPage(webapp2.RequestHandler):
     def get(self):
@@ -117,7 +157,11 @@ class AddChapterPage(webapp2.RequestHandler):
         
         write_template(self, user, 'add_chapter.html',template_values)
         
+###########################################################################
+#     Chapters
+###########################################################################
 class Chapters(webapp2.RequestHandler):
+    """Implements REST service for managing chapters"""
     def put(self,Id):
         """Save a chapter with key == Id"""
         #raise Exception(self.request.arguments())
