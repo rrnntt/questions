@@ -1,27 +1,56 @@
 import webapp2
 from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.api import memcache
 from mytemplate import write_template
 
 class MyUser(db.Model):
+    """User of the system"""
+    # google user
     user = db.UserProperty()
+    # admin, teacher, student 
     roles = db.StringListProperty()
     _nickname = db.StringProperty()
+    # password for user without google account
+    _passwd = db.StringProperty()
+    
     def nickname(self):
+        """Return user nickname"""
         if self.user:
             return self.user.nickname()
         else:
             return self._nickname
+        
+    def password(self):
+        """Return password if registered without google. Raise otherwise."""
+        if self.user or self._passwd == '':
+            raise Exception('Use google login')
+        else:
+            return self._passwd
+        
     def isAdmin(self):
-        return 'admin' in self.roles 
+        """Check if user is admin"""
+        return 'admin' in self.roles
+     
     def __str__(self):
+        """Print the user"""
         return '{'+self.nickname()+'}'
     
 def get_user(name):
+    """Get user from datastore by nickname"""
     user = MyUser.get_by_key_name(name)
     return user
 
 def create_user(name,roles=None):
+    """Create a user with given nickname. 
+    
+    If user with this nickname already exists just return him/her.
+    
+    Args:
+        name (str): Nickname for a user
+    Return (MyUser):
+        Created or existing user 
+    """
     user = get_user(name)
     if not user:
         user = MyUser(key_name=name)
@@ -37,6 +66,17 @@ def create_user(name,roles=None):
         user._nickname = name
     return user
 
+def local_login(nickname,passwd):
+    """Log in user without google account.
+    
+    Return (MyUser):
+        Logged in user or raise an exception if failed.
+    """
+    user = get_user(nickname)
+    if not user or user.password() != passwd:
+        raise Exception('Local login failed')
+    memcache.add('local_user',user)
+
 def get_current_user():
     """Return the current user if someone logged in or None otherwise"""
     default_user = 'test@example.com'
@@ -47,6 +87,7 @@ def get_current_user():
     user = get_user(gUser.nickname())
     if user and not user.user:
         user.user = gUser 
+    # if default user logged in but not registered - register him (me)
     if not user and gUser.nickname() == default_user:
         user = MyUser(key_name=default_user)
         user.user = gUser
@@ -72,6 +113,10 @@ def get_current_admin():
     if not user or not user.isAdmin():
         return None
     return user
+
+#########################################################################
+#    Request handlers
+#########################################################################
 
 class UserList(webapp2.RequestHandler):
     def get(self):
