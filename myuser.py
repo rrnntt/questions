@@ -41,13 +41,14 @@ def get_user(name):
     user = MyUser.get_by_key_name(name)
     return user
 
-def create_user(name,roles=None):
+def create_user(name,roles, passwd = None):
     """Create a user with given nickname. 
     
     If user with this nickname already exists just return him/her.
     
     Args:
         name (str): Nickname for a user
+        roles (list of str): roles for this user
     Return (MyUser):
         Created or existing user 
     """
@@ -60,6 +61,8 @@ def create_user(name,roles=None):
                 user.roles = roles
             else:
                 user.roles.append(roles)
+        if passwd:
+            user._passwd = passwd
         user.put()
     else:
         #raise Exception('User '+name+' exists')
@@ -69,22 +72,33 @@ def create_user(name,roles=None):
 def local_login(nickname,passwd):
     """Log in user without google account.
     
+    Args:
+        nickname (str): Nickname to login with
+        passwd (str): User local password
+    
     Return (MyUser):
-        Logged in user or raise an exception if failed.
+        Logged in user or None if failed.
     """
     user = get_user(nickname)
     if not user or user.password() != passwd:
-        raise Exception('Local login failed')
+        return None
     memcache.add('local_user',user)
-
+    return user
+    
+def local_logout():
+    """Log out user without google account."""
+    memcache.delete('local_user')
+    
 def get_current_user():
     """Return the current user if someone logged in or None otherwise"""
     default_user = 'test@example.com'
     gUser = users.get_current_user()
     if not gUser:
-        return None
-    #raise Exception(str(gUser))
-    user = get_user(gUser.nickname())
+        user = memcache.get('local_user')
+        if not user:
+            return None
+    else:
+        user = get_user(gUser.nickname())
     if user and not user.user:
         user.user = gUser 
     # if default user logged in but not registered - register him (me)
@@ -94,7 +108,7 @@ def get_current_user():
         user.roles.append('admin')
         user.put()
     # temporary:
-    if gUser.nickname() == default_user:
+    if gUser and gUser.nickname() == default_user:
         user.roles = ['admin']
     return user
 

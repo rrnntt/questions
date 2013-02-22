@@ -16,19 +16,11 @@ chapters or questions.
 class Chapter(db.Model):
     """A chapter"""
     title = db.StringProperty()
-    authors = db.StringListProperty()
-    students = db.StringListProperty()
+    authors = db.ListProperty(db.Key)
     
-    def isVisible(self,user):
-        """Check if the chapter is visile to a user"""
-        if len(self.students) == 0 or user.isAdmin():
-            return True
-        user_name = user.nickname()
-        return (user_name in self.students) or (user_name in self.authors)
-
     def canEdit(self,user):
         """Check if a user can edit this chapter"""
-        return (user.nickname() in self.authors) or user.isAdmin()
+        return user.key() in self.authors
     
     def deleteAll(self):
         """Delete this chater and all child chapters recursively"""
@@ -37,6 +29,41 @@ class Chapter(db.Model):
         for chapter in all_chapters:
             chapter.delete()
         self.delete()
+        
+    def get_author(self,i = None):
+        if i == None:
+            i = 0
+        author = MyUser.get( self.authors[i] )
+        return author
+    
+    def get_author_count(self):
+        return len( self.authors )
+    
+    def add_author(self, author):
+        k = author.key()
+        if k in self.authors:
+            return
+        self.authors.append( k )
+        
+    def remove_author(self, author):
+        if len(self.authors) == 1:
+            return
+        k = author.key()
+        if not k in self.authors:
+            return
+        i = self.authors.index(k)
+        del self.authors[i:i+1]
+        
+        
+def create_chapter(parent_chapter, author, title):
+    parent_key = parent_chapter
+    if not isinstance( parent_key, db.Key ):
+        parent_key = parent_key.key()
+    chapter = Chapter(parent=parent_key)
+    chapter.authors.append(author.key())
+    chapter.title = title
+    chapter.put()
+    return chapter
     
 def root_key():
     """Constructs a Datastore key for the root chapter.
