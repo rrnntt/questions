@@ -38,16 +38,31 @@ class TestClass(unittest.TestCase):
         self.assertEqual( len( c ), 2 )
         self.assertEqual(  c[1].nickname(), 'stu2' )
         
-    def test_get_classes(self):    
+    def test_get_teacher_classes(self):    
         t = create_user('teacher1','teacher')
         create_class(t,'aaa')
         create_class(t,'bbb')
         create_class(t,'ccc')
         
-        classes = get_classes(t)
+        classes = get_teacher_classes(t)
         self.assertEqual( len(classes), 3 )
         self.assertEqual( classes[0].name, 'aaa' )
         self.assertEqual( classes[1].name, 'bbb' )
         self.assertEqual( classes[2].name, 'ccc' )
         
-    
+    def test_get_student_classes(self):    
+        t = create_user('teacher1','teacher')
+        s1 = create_user('stu1','student')
+
+        create_class(t,'aaa')
+        bbb = create_class(t,'bbb')
+        ccc = create_class(t,'ccc')
+        
+        bbb.add_student(s1)
+        ccc.add_student(s1)
+        
+        classes = get_student_classes(s1)
+        self.assertEqual( len(classes), 2 )
+        self.assertTrue( s1.key() in bbb.students )
+        self.assertTrue( s1.key() in ccc.students )
+        
