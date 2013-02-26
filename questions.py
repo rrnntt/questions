@@ -8,9 +8,10 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
 
         user = myuser.get_current_user()
-        chapters = list_visible_chapters(user)
+        #chapters = list_visible_chapters(user)
         
-        template_values = {'chapters': chapters}
+        #template_values = {'chapters': chapters}
+        template_values = {}
         
         write_template(self, user, 'index.html', template_values)
 

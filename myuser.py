@@ -13,6 +13,8 @@ class MyUser(db.Model):
     _nickname = db.StringProperty()
     # password for user without google account
     _passwd = db.StringProperty()
+    first_name = db.StringProperty()
+    last_name = db.StringProperty()
     
     def nickname(self):
         """Return user nickname"""
