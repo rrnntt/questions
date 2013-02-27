@@ -7,16 +7,16 @@ import myuser_handlers
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
-
         user = myuser.get_current_user()
-        #chapters = list_visible_chapters(user)
-        
-        #template_values = {'chapters': chapters}
         template_values = {}
-        
         write_template(self, user, 'index.html', template_values)
+        
+class StudentLogin(webapp2.RequestHandler):
+    def get(self):
+        write_template(self, None, 'student_login.html', {'in_local_login': True})
 
 app = webapp2.WSGIApplication([(r'/', MainPage),
+                               (r'/studentlogin', StudentLogin),
                                (r'/userlist', myuser.UserList),
                                (r'/users', myuser_handlers.MyUsers),
                                (r'/users/(.+)', myuser_handlers.MyUsers),

@@ -32,11 +32,11 @@ $(function(){
 {% block main%}
 
     Users:<br/>
-	<table>
+	<table width="100%">
     {% for u in user_list %}
 		<tr>
     		<td> {{ u.nickname() }} </td>
-    		<td> <button id="{{ u.key() }}_delete">Delete</button> </td>
+    		<td style="text-align: right"> <button id="{{ u.key() }}_delete">Delete</button> </td>
 		</tr>
     {% endfor %}
 	</table>

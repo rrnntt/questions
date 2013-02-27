@@ -19,6 +19,9 @@ def write_template(handler, user, file_name, template_values = {}):
     template_values['user_name'] = user_name
     template_values['login_url'] = url
     template_values['login_url_text'] = url_linktext
+    template_values['local_login_url'] = '/studentlogin'
+    if not 'in_local_login' in template_values:
+        template_values['in_local_login'] = 'False'
     template = jinja_environment.get_template(file_name)
     handler.response.out.write(template.render(template_values))
 
