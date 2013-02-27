@@ -1,21 +1,54 @@
 {% extends "base.html" %}
 
+{% block head_script %}
+$(function(){
+	$("#addbutton").button().click(function(event){
+      var new_user = new User();
+	  new_user.save(
+            {
+             nickname: $("#nickname_text").val(),
+             password: $("#password_text").val(),
+             email: $("#email_text").val(),
+            },
+	       {
+    		success: function(model,resp,opt){
+    			model.id = resp.id;
+    			location.reload();
+    			},
+    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+    		wait: true
+    	   });
+    });
+    {% for u in user_list %}
+      $("#{{ u.key() }}_delete").button().click(function(event){
+      	var duser = new User();
+      	duser.id = '{{u.key()}}';
+      	duser.destroy({success: function(){location.reload();}});
+      });
+    {% endfor %}
+});
+{% endblock %}
+
 {% block main%}
 
     Users:<br/>
-    <ul>
+	<table>
     {% for u in user_list %}
-    	<li>
-    		<form action="/deleteuser?name={{ u.nickname() }}" method="post">
-	    		{{ u.nickname() }}
-    			<input type="submit" value="Delete" />
-    		</form>
-    	</li>
+		<tr>
+    		<td> {{ u.nickname() }} </td>
+    		<td> <button id="{{ u.key() }}_delete">Delete</button> </td>
+		</tr>
     {% endfor %}
-    </ul>
-    <form action="/adduser" method="post">
-    	<div><textarea name="new-name" cols="60"></textarea></div>
-    	<div><input type="submit" value="Add new user" /></div>
-    </form>
+	</table>
+
+	<hr />
+	<table>
+		<tr> <td> Nickname: </td> <td> <input type="text" name="nickname" id="nickname_text" /> </td></tr>
+		<tr> <td> Password: </td> <td> <input type="text" name="password" id="password_text" /> </td></tr>
+		<tr> <td> EMail:    </td> <td> <input type="text" name="email" id="email_text" />       </td></tr>
+	</table>
+	<div>
+		<button id="addbutton">Add</button>
+	</div>
 
 {% endblock %}

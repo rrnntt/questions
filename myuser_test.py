@@ -28,21 +28,32 @@ class TestMyUser(unittest.TestCase):
         test_user = get_user('user1')
         self.assertEqual(test_user.nickname(), 'user1')
         
-    def test_users(self):
+    def test_user_with_gmail_domain(self):
         # create user with nickname 'tst'
         create_user('tst','student')
         # log in
         google_login('tst@gmail.com','bob')
-        usr = get_current_user()
-        self.assertTrue(usr != None)
-        self.assertEqual( usr.nickname(), 'tst' )
+        user = get_current_user()
+        self.assertTrue(user != None)
+        self.assertEqual( user.nickname(), 'tst' )
+        self.assertEqual( user.email(), 'tst@gmail.com' )
+        self.assertEqual( user.roles, ['student'] )
+        user.set_email('bob@example.com')
+        user = get_current_user()
+        self.assertEqual( user.email(), 'bob@example.com' )
 
+    def test_user_with_different_domain(self):
         # user from different domain
-        create_user('test@exaple.com','student')
-        google_login('test@exaple.com','bob')
-        usr = get_current_user()
-        self.assertTrue(usr != None)
-        self.assertEqual( usr.nickname(), 'test@exaple.com' )
+        create_user('tst@example.com','student')
+        google_login('tst@example.com','bob')
+        user = get_current_user()
+        self.assertTrue(user != None)
+        self.assertEqual( user.nickname(), 'tst@example.com' )
+        self.assertEqual( user.email(), 'tst@example.com' )
+        self.assertEqual( user.roles, ['student'] )
+        user.set_email('bob@example.com')
+        user = get_current_user()
+        self.assertEqual( user.email(), 'bob@example.com' )
                 
     def test_local_login(self):
         create_user('user1','student','123')
@@ -51,6 +62,10 @@ class TestMyUser(unittest.TestCase):
         self.assertTrue(user != None)
         self.assertEqual( user.nickname(), 'user1' )
         self.assertEqual( user.roles, ['student'] )
+        self.assertEqual( user.email(), None )
+        user.set_email('user1@example.com')
+        user = get_current_user()
+        self.assertEqual( user.email(), 'user1@example.com' )
         
     def test_wrong_local_login(self):
         create_user('user1','student','123')

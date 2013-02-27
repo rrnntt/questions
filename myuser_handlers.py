@@ -1,7 +1,7 @@
 import webapp2
 import simplejson
 from google.appengine.ext import db
-from myuser import MyUser
+from myuser import MyUser,create_user,get_current_admin
 
 
 ####################################################################
@@ -16,23 +16,24 @@ class MyUsers(webapp2.RequestHandler):
         if user:
             json = simplejson.decoder.JSONDecoder()
             model = json.decode( self.request.get('model'))
-            user.first_name = model['first_name']
-            user.last_name = model['last_name']
+            user._first_name = model['first_name']
+            user._last_name = model['last_name']
             user.put()
         else:
             raise Exception('Saving of chapter failed')
 
     def post(self,Id=None):
         """Create new user instance and retirn its id which is its key"""
-#        user = get_current_user()
-#        if not user:
-#            self.redirect('/')
+        admin = get_current_admin()
+        if not admin:
+            self.redirect('/')
             
         httpMethod = self.request.get('_method')
         if httpMethod == 'PUT':
             self.put(Id)
             return
         if httpMethod == 'DELETE':
+            #raise Exception("deleting...")
             self.delete(Id)
             return
         if httpMethod == 'GET':
@@ -45,30 +46,18 @@ class MyUsers(webapp2.RequestHandler):
         if not 'nickname' in model:
             self.response.out.write('error')
         
-        root = root_key()
-        encoded_parent_key = model['parent_key']
-        if encoded_parent_key == 'root':
-            parent_key = root
-        else:
-            parent_key = db.Key(encoded=encoded_parent_key)
-        
-        title = model['title']
+        nickname = model['nickname']
             
-        if len(title) > 0:
-            chapter = Chapter(parent=parent_key)
-            chapter.authors.append(user.nickname())
-            chapter.title = title
-            chapter.put()
+        if len(nickname) > 0:
+            new_user = create_user(nickname, 'student', 'passwd')
         else:
             self.response.out.write('error')
         
-        self.response.out.write('{"id":"'+str(chapter.key())+'"}')
+        self.response.out.write('{"id":"'+str(new_user.key())+'"}')
 
     def delete(self, Id):
-        """Delete a chapter with key == Id"""
-        chapter,ekey = get_chapter_by_encoded_key(Id)
-        if chapter:
-            chapter.deleteAll()
-        else:
-            raise Exception('Deleting of chapter failed')
+        """Delete a user with key == Id"""
+        user = MyUser.get( db.Key(encoded=Id) )
+        if user:
+            user.delete()
 

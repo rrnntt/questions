@@ -3,6 +3,11 @@ body {
   font-size: 80%;
 }
 
+table {
+  font-family: Verdana, Helvetica, sans-serif;
+  font-size: 100%;
+}
+
 #main-menu {
 	background: url("/images/main-menu-bg.png");
 	height: 25px;

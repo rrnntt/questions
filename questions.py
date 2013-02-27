@@ -1,8 +1,9 @@
 import webapp2
 import myuser
 from mytemplate import write_template
-from chapter_module import list_visible_chapters
+#from chapter_module import list_visible_chapters
 import chapter_module
+import myuser_handlers
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -16,7 +17,9 @@ class MainPage(webapp2.RequestHandler):
         write_template(self, user, 'index.html', template_values)
 
 app = webapp2.WSGIApplication([(r'/', MainPage),
-                               (r'/users', myuser.UserList),
+                               (r'/userlist', myuser.UserList),
+                               (r'/users', myuser_handlers.MyUsers),
+                               (r'/users/(.+)', myuser_handlers.MyUsers),
                                (r'/deleteuser', myuser.DeleteUser),
                                (r'/adduser', myuser.AddUser),
                                (r'/chapterpage', chapter_module.ChapterPage),

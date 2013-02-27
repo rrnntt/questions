@@ -13,8 +13,9 @@ class MyUser(db.Model):
     _nickname = db.StringProperty()
     # password for user without google account
     _passwd = db.StringProperty()
-    first_name = db.StringProperty()
-    last_name = db.StringProperty()
+    _first_name = db.StringProperty()
+    _last_name = db.StringProperty()
+    _email = db.StringProperty()
     
     def nickname(self):
         """Return user nickname"""
@@ -30,13 +31,56 @@ class MyUser(db.Model):
         else:
             return self._passwd
         
+    def email(self):
+        """Return email"""
+        if self._email:
+            return self._email
+        if self.user:
+            return self.user.email()
+        return None
+    
+    def set_email(self, email):
+        """Set new email for all types of users"""
+        self._email = email
+        self.put()
+        
     def isAdmin(self):
         """Check if user is admin"""
         return 'admin' in self.roles
      
+    def isTeacher(self):
+        """Check if user is teacher"""
+        return 'teacher' in self.roles
+     
+    def isStudent(self):
+        """Check if user is student"""
+        return 'student' in self.roles
+    
+    def set_role(self, role):
+        if not role in self.roles:
+            self.roles.append( role )
+        self.put()
+        
+    def set_full_name(self, first_name, last_name):
+        self._first_name = first_name
+        self._last_name = last_name
+        self.put()
+        
+    def first_name(self):
+        return self._first_name
+     
+    def last_name(self):
+        return self._last_name
+     
+    def full_name(self):
+        return self._first_name + ' '  + self._last_name
+     
     def __str__(self):
         """Print the user"""
-        return '{'+self.nickname()+'}'
+        email = self.email()
+        if not email:
+            email = ''
+        return '{'+self.nickname()+', '+email+'}'
     
 def get_user(name):
     """Get user from datastore by nickname"""
@@ -84,7 +128,7 @@ def local_login(nickname,passwd):
     user = get_user(nickname)
     if not user or user.password() != passwd:
         return None
-    memcache.add('local_user',user)
+    memcache.add('local_user',user.key())
     return user
     
 def local_logout():
@@ -96,9 +140,10 @@ def get_current_user():
     default_user = 'test@example.com'
     gUser = users.get_current_user()
     if not gUser:
-        user = memcache.get('local_user')
-        if not user:
+        user_key = memcache.get('local_user')
+        if not user_key:
             return None
+        user = MyUser.get(user_key)
     else:
         user = get_user(gUser.nickname())
     if user and not user.user:
@@ -150,16 +195,17 @@ class UserList(webapp2.RequestHandler):
         
 class DeleteUser(webapp2.RequestHandler):
     def post(self):
-        name = self.request.get('name')
-        user = get_user(name)
+        encoded_key = self.request.get('key')
+        key = db.Key(encoded=encoded_key)
+        user = MyUser.get(key)
         if user:
             user.delete()
-        self.redirect('/')
+        self.redirect('/userlist')
         
 class AddUser(webapp2.RequestHandler):
     def post(self):
         name = self.request.get('new-name')
         if len(name) > 0:
             create_user(name)
-        self.redirect('/users')
+        self.redirect('/userlist')
         

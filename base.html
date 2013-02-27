@@ -19,6 +19,11 @@
 		title: '', 
 		parent_key: ''
 		});
+	var User = Backbone.Model.extend({
+		urlRoot : '/users', 
+		nickname: '', 
+		email: ''
+		});
   	{% block head_script %}
   	{% endblock %}
   </script>
