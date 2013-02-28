@@ -2,6 +2,7 @@
 
 {% block head_script %}
 $(function(){
+	//$("#roles").combobox();
 	$("#addbutton").button().click(function(event){
       var new_user = new User();
 	  new_user.save(
@@ -9,6 +10,7 @@ $(function(){
              nickname: $("#nickname_text").val(),
              password: $("#password_text").val(),
              email: $("#email_text").val(),
+             roles: $("#roles").val(),
             },
 	       {
     		success: function(model,resp,opt){
@@ -46,6 +48,15 @@ $(function(){
 		<tr> <td> Nickname: </td> <td> <input type="text" name="nickname" id="nickname_text" /> </td></tr>
 		<tr> <td> Password: </td> <td> <input type="text" name="password" id="password_text" /> </td></tr>
 		<tr> <td> EMail:    </td> <td> <input type="text" name="email" id="email_text" />       </td></tr>
+		<tr>
+			<td> <label>Role: </label> </td>
+			<td><select id="roles">
+				<option value="student">Student</option>
+				<option value="teacher">Teacher</option>
+				<option value="admin">Admin</option>
+			</select></td>
+		</tr>
+
 	</table>
 	<div>
 		<button id="addbutton">Add</button>

@@ -13,10 +13,35 @@ class MainPage(webapp2.RequestHandler):
         
 class StudentLogin(webapp2.RequestHandler):
     def get(self):
-        write_template(self, None, 'student_login.html', {'in_local_login': True})
+        values = {'in_local_login': True,'page': self.request.get('page')}
+        write_template(self, None, 'student_login.html', values)
+
+class Login(webapp2.RequestHandler):
+    def post(self):
+        nickname = self.request.get('nickname')
+        password = self.request.get('password')
+        page = str(self.request.get('page'))
+        user = myuser.local_login(nickname, password)
+        if not isinstance(page, str):
+            raise Exception('not str!')
+        self.redirect(page)
+
+class Logout(webapp2.RequestHandler):
+    def get(self):
+        myuser.local_logout()
+        self.redirect('/')
+
+class TestPage(webapp2.RequestHandler):
+    def get(self):
+        user = myuser.get_current_user()
+        values = {'page': self.request.get('page')}
+        write_template(self, user, 'test.html', values)
 
 app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/studentlogin', StudentLogin),
+                               (r'/login', Login),
+                               (r'/logout', Logout),
+                               (r'/test', TestPage),
                                (r'/userlist', myuser.UserList),
                                (r'/users', myuser_handlers.MyUsers),
                                (r'/users/(.+)', myuser_handlers.MyUsers),

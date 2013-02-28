@@ -1,5 +1,20 @@
 {% extends "base.html" %}
 
+{% block head_script %}
+$(function(){
+	$("#loginbutton").button();
+});
+{% endblock %}
+
 {% block main%}
-Student login
+<h3> Student login </h3>
+
+<form method="post" action="/login?page={{page}}">
+Nickname <br />
+<input type="text" name="nickname" id="nickname" /> <br />
+Password <br />
+<input type="password" name="password" id="password" /> <br />
+<button id="loginbutton">Login</button>
+</form>
+
 {% endblock %}

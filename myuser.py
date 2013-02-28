@@ -115,7 +115,7 @@ def create_user(name,roles, passwd = None):
         user._nickname = name
     return user
 
-def local_login(nickname,passwd):
+def local_login(nickname,password):
     """Log in user without google account.
     
     Args:
@@ -126,7 +126,7 @@ def local_login(nickname,passwd):
         Logged in user or None if failed.
     """
     user = get_user(nickname)
-    if not user or user.password() != passwd:
+    if not user or user.password() != password:
         return None
     memcache.add('local_user',user.key())
     return user

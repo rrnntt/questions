@@ -20,7 +20,7 @@ class MyUsers(webapp2.RequestHandler):
             user._last_name = model['last_name']
             user.put()
         else:
-            raise Exception('Saving of chapter failed')
+            raise Exception('Saving of user failed')
 
     def post(self,Id=None):
         """Create new user instance and retirn its id which is its key"""
@@ -47,9 +47,17 @@ class MyUsers(webapp2.RequestHandler):
             self.response.out.write('error')
         
         nickname = model['nickname']
+        password = model['password']
+        email = model['email']
+        roles = model['roles']
             
         if len(nickname) > 0:
-            new_user = create_user(nickname, 'student', 'passwd')
+            new_user = create_user(nickname, roles, password)
+            if not new_user:
+                self.response.out.write('error')
+                return
+            if len(email) > 0:
+                new_user.set_email(email)
         else:
             self.response.out.write('error')
         

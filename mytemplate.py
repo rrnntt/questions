@@ -8,7 +8,10 @@ jinja_environment = jinja2.Environment(
 
 def write_template(handler, user, file_name, template_values = {}):
     if user:
-        url = users.create_logout_url(handler.request.uri)
+        if user.user:
+            url = users.create_logout_url(handler.request.uri)
+        else:
+            url = '/logout'
         url_linktext = 'Logout'
         user_name = user.nickname()
     else:
@@ -19,7 +22,7 @@ def write_template(handler, user, file_name, template_values = {}):
     template_values['user_name'] = user_name
     template_values['login_url'] = url
     template_values['login_url_text'] = url_linktext
-    template_values['local_login_url'] = '/studentlogin'
+    template_values['local_login_url'] = '/studentlogin?page='+str(handler.request.uri)
     if not 'in_local_login' in template_values:
         template_values['in_local_login'] = 'False'
     template = jinja_environment.get_template(file_name)
