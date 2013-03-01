@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{%block main%}
+<h3> classes: </h3>
+<hr />
+<ul>
+	{% for c in classes%}
+		<li>{{ c.name }}</li>  	  
+	{% endfor %}
+</ul>
+{%endblock%}

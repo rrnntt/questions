@@ -4,12 +4,22 @@ from mytemplate import write_template
 #from chapter_module import list_visible_chapters
 import chapter_module
 import myuser_handlers
+import admin_handlers
+import teacher_handlers
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
         user = myuser.get_current_user()
         template_values = {}
-        write_template(self, user, 'index.html', template_values)
+        if user:
+            if user.isAdmin():
+                self.redirect('/adminstart')
+            elif user.isTeacher():
+                self.redirect('/teacherstart')
+            else:
+                write_template(self, user, 'index.html', template_values)
+        else:
+            write_template(self, user, 'index.html', template_values)
         
 class StudentLogin(webapp2.RequestHandler):
     def get(self):
@@ -37,11 +47,19 @@ class TestPage(webapp2.RequestHandler):
         values = {'page': self.request.get('page')}
         write_template(self, user, 'test.html', values)
 
+class StartPage(webapp2.RequestHandler):
+    def get(self):
+        user = myuser.get_current_user()
+        values = {'page': self.request.get('page')}
+        write_template(self, user, 'test.html', values)
+
 app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/studentlogin', StudentLogin),
                                (r'/login', Login),
                                (r'/logout', Logout),
                                (r'/test', TestPage),
+                               (r'/adminstart', admin_handlers.AdminStartPage),
+                               (r'/teacherstart', teacher_handlers.TeacherStartPage),
                                (r'/userlist', myuser.UserList),
                                (r'/users', myuser_handlers.MyUsers),
                                (r'/users/(.+)', myuser_handlers.MyUsers),

@@ -175,6 +175,13 @@ def get_current_admin():
         return None
     return user
 
+def get_current_teacher():
+    """Return the current user if someone logged in and is an admin or None otherwise"""
+    user = get_current_user()
+    if not user or not user.isTeacher():
+        return None
+    return user
+
 #########################################################################
 #    Request handlers
 #########################################################################

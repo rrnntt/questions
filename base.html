@@ -38,6 +38,14 @@
 		<td style="text-align: right">   
 		  	<nav id="main-menu">
 		  	  <a href="/">Home</a>
+
+			  {%if user %}
+				  {% if user.isAdmin() %}
+				  | <a href="/userlist">Manage users</a>
+				  | <a href="/_ah/admin">Admin</a>
+				  {% endif %}
+			  {% endif %}
+
 		  	  {%if in_local_login != True %} 
 			  	  |
 			  	  <a href="{{ login_url }}">{{ login_url_text }}</a>
@@ -45,10 +53,14 @@
 				  	  | <a href="{{ local_login_url }}"> Student </a>
 			  	  {%endif%}
 		  	  {%endif%}
+
 		  	</nav>
 		</td> 
   		</tr>
   	</table>
+	{% if user %}
+	  <div>User: {{ user_name }}</div>
+	{% endif %}
     
   	{% block main %}
   	{% endblock %}

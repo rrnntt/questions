@@ -18,11 +18,15 @@ def write_template(handler, user, file_name, template_values = {}):
         url = users.create_login_url(handler.request.uri)
         url_linktext = 'Login'
         user_name = ''
+        
+    # default template values for base.html
     template_values['user'] = user
     template_values['user_name'] = user_name
     template_values['login_url'] = url
     template_values['login_url_text'] = url_linktext
     template_values['local_login_url'] = '/studentlogin?page='+str(handler.request.uri)
+    # in_local_login means in student_lgin.html page. This page is different
+    # as it shouldn't show neither login nor logout link
     if not 'in_local_login' in template_values:
         template_values['in_local_login'] = 'False'
     template = jinja_environment.get_template(file_name)
