@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block head_script %}
+$(function(){
+	$("#addbutton").button().click(function(event){
+      var new_user = new User();
+	  new_user.save(
+            {
+             nickname: $("#nickname_text").val(),
+             password: $("#password_text").val(),
+             email: '',
+             roles: 'student',
+             clss: '{{aclass.key()}}',
+            },
+	       {
+    		success: function(model,resp,opt){
+    			model.id = resp.id;
+    			location.reload();
+    			},
+    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+    		wait: true
+    	   });
+    });
+    {% for u in user_list %}
+      $("#{{ u.key() }}_delete").button().click(function(event){
+      	var duser = new User();
+      	duser.id = '{{u.key()}}';
+      	duser.destroy({success: function(){location.reload();}});
+      });
+    {% endfor %}
+});
+{% endblock %}
+
+{%block main%}
+<h3> Class {{ aclass.name }} </h3>
+<hr />
+<ul>
+	{% for student in students %}
+		<li>{{ student.nickname() }}</li>  	  
+	{% endfor %}
+</ul>
+
+<hr />
+<table>
+	<tr> <td> Nickname: </td> <td> <input type="text" name="nickname" id="nickname_text" /> </td></tr>
+	<tr> <td> Password: </td> <td> <input type="text" name="password" id="password_text" /> </td></tr>
+	</tr>
+</table>
+<div>
+	<button id="addbutton">Add</button>
+</div>
+{%endblock%}

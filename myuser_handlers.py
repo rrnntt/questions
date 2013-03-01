@@ -2,7 +2,7 @@ import webapp2
 import simplejson
 from google.appengine.ext import db
 from myuser import MyUser,create_user,get_current_admin
-
+from aclass import Class
 
 ####################################################################
 #   MyUser REST service
@@ -58,6 +58,12 @@ class MyUsers(webapp2.RequestHandler):
                 return
             if len(email) > 0:
                 new_user.set_email(email)
+            if new_user.isStudent():
+                clss_encoded_key = model['clss']
+                if len(clss_encoded_key) > 0:
+                    clss = Class.get( db.Key(encoded=clss_encoded_key) )
+                    if clss:
+                        clss.add_student(new_user)
         else:
             self.response.out.write('error')
         

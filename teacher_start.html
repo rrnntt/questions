@@ -1,11 +1,54 @@
 {% extends "base.html" %}
 
+{% block head_script %}
+$(function(){
+	$("#addbutton").button().click(function(event){
+      var clss = new Class();
+	  clss.save(
+            {
+             name: $("#name").val(),
+            },
+	       {
+    		success: function(model,resp,opt){
+    			model.id = resp.id;
+    			location.reload();
+    			},
+    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+    		wait: true
+    	   });
+    });
+    {% for c in classes %}
+      $("#{{c.key()}}_delete").button().click(function(event){
+      	var clss = new Class();
+      	clss.id = '{{c.key()}}';
+      	clss.destroy({success: function(){location.reload();}});
+      });
+    {% endfor %}
+});
+{% endblock %}
+
+
 {%block main%}
 <h3> classes: </h3>
 <hr />
 <ul>
+	<table width="100%">
 	{% for c in classes%}
-		<li>{{ c.name }}</li>  	  
+		<tr>
+    		<td> <a href="/teacherclass?class={{c.key()}}">{{ c.name }}</a> </td>
+    		<td style="text-align: right"> <button id="{{c.key()}}_delete">Delete</button> </td>
+		</tr>
 	{% endfor %}
+	</table>
 </ul>
+
+<hr />
+<table>
+	<tr> <td> Name: </td> <td> <input type="text" name="name" id="name" /> </td></tr>
+	</tr>
+</table>
+<div>
+	<button id="addbutton">Add</button>
+</div>
+
 {%endblock%}

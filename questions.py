@@ -6,6 +6,7 @@ import chapter_module
 import myuser_handlers
 import admin_handlers
 import teacher_handlers
+import aclass_handlers
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -59,7 +60,9 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/logout', Logout),
                                (r'/test', TestPage),
                                (r'/adminstart', admin_handlers.AdminStartPage),
-                               (r'/teacherstart', teacher_handlers.TeacherStartPage),
+                               (r'/teacherstart', teacher_handlers.StartPage),
+                               (r'/teacherclass', teacher_handlers.ClassPage),
+                               (r'/classes', aclass_handlers.Classes),
                                (r'/userlist', myuser.UserList),
                                (r'/users', myuser_handlers.MyUsers),
                                (r'/users/(.+)', myuser_handlers.MyUsers),

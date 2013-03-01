@@ -18,6 +18,7 @@ class Class(db.Model):
         
     def add_student(self, student):
         self.students.append( student.key() )
+        student.set_class(self)
         self.put()
         
     def get_student(self,i):
@@ -44,3 +45,14 @@ def get_student_classes(student):
     query = Class.all()
     query.filter('students = ', student.key())
     return query.fetch(100)
+
+def get_class_students(aclass):
+    stu_list = []
+    if not aclass:
+        return stu_list
+    for key in aclass.students:
+        stu = MyUser.get(key)
+        if stu and stu.isStudent():
+            stu_list.append( stu )
+    return stu_list 
+    

@@ -16,6 +16,7 @@ class MyUser(db.Model):
     _first_name = db.StringProperty()
     _last_name = db.StringProperty()
     _email = db.StringProperty()
+    _clss = db.ReferenceProperty()
     
     def nickname(self):
         """Return user nickname"""
@@ -74,6 +75,10 @@ class MyUser(db.Model):
      
     def full_name(self):
         return self._first_name + ' '  + self._last_name
+    
+    def set_class(self, clss):
+        self._clss = clss.key()
+        self.put()
      
     def __str__(self):
         """Print the user"""
