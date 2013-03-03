@@ -15,8 +15,10 @@ class MainPage(webapp2.RequestHandler):
         if user:
             if user.isAdmin():
                 self.redirect('/adminstart')
+                return
             elif user.isTeacher():
                 self.redirect('/teacherstart')
+                return
             else:
                 write_template(self, user, 'index.html', template_values)
         else:
@@ -63,6 +65,9 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/teacherstart', teacher_handlers.StartPage),
                                (r'/teacherclass', teacher_handlers.ClassPage),
                                (r'/classes', aclass_handlers.Classes),
+                               (r'/classes/(.+)', aclass_handlers.Classes),
+                               (r'/students', aclass_handlers.Students),
+                               (r'/students/(.+)', aclass_handlers.Students),
                                (r'/userlist', myuser.UserList),
                                (r'/users', myuser_handlers.MyUsers),
                                (r'/users/(.+)', myuser_handlers.MyUsers),

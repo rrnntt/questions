@@ -34,3 +34,10 @@ table {
 	font-size: 200%;
 	font-weight: 200;
 }
+
+.underlined {
+	/*display: block;*/
+    border-bottom: 1px solid #000;
+    width: 100%;
+}
+

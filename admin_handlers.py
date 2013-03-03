@@ -8,6 +8,7 @@ class AdminStartPage(webapp2.RequestHandler):
         admin = get_current_admin()
         if not admin:
             self.redirect('/')
+            return
             
         query = MyUser.all().filter('roles = ', 'teacher')
         teachers = query.fetch(1000)

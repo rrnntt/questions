@@ -154,6 +154,7 @@ class ChapterPage(webapp2.RequestHandler):
         user = get_current_user()
         if not user:
             self.redirect('/')
+            return
         
         encoded_chapter_key = self.request.get('chapter')
         
@@ -176,6 +177,7 @@ class AddChapterPage(webapp2.RequestHandler):
         user = get_current_user()
         if not user:
             self.redirect('/')
+            return
         
         encoded_chapter_key = self.request.get('chapter')
         chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
@@ -210,6 +212,7 @@ class Chapters(webapp2.RequestHandler):
         user = get_current_user()
         if not user:
             self.redirect('/')
+            return
             
         #raise Exception(self.request.get('_method'))
         httpMethod = self.request.get('_method')

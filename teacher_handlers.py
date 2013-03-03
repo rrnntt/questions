@@ -9,6 +9,7 @@ class StartPage(webapp2.RequestHandler):
         teacher = get_current_teacher()
         if not teacher:
             self.redirect('/')
+            return
             
         template_values = {'classes': get_teacher_classes(teacher)}
         write_template(self, teacher, 'teacher_start.html', template_values)
@@ -18,9 +19,14 @@ class ClassPage(webapp2.RequestHandler):
         teacher = get_current_teacher()
         if not teacher:
             self.redirect('/')
+            return
             
         class_key = db.Key(encoded=self.request.get('class'))
-        aclass = Class.get(class_key)
-        template_values = {'students': get_class_students(aclass)}
+        clss = Class.get(class_key)
+        students = get_class_students(clss)
+        #raise Exception('stu:'+str(len(clss)))
+        template_values = {'students': students,
+                           'clss': clss,
+                           }
         write_template(self, teacher, 'teacher_class.html', template_values)
                 

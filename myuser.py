@@ -57,6 +57,10 @@ class MyUser(db.Model):
         """Check if user is student"""
         return 'student' in self.roles
     
+    def isLocal(self):
+        """Check if user is local (not logged in with google)"""
+        return self.user == None
+    
     def set_role(self, role):
         if not role in self.roles:
             self.roles.append( role )
@@ -79,6 +83,28 @@ class MyUser(db.Model):
     def set_class(self, clss):
         self._clss = clss.key()
         self.put()
+        
+    def from_json(self, model):
+        if 'nickname' in model:
+            self._nickname = model['nickname']
+        else:
+            raise Exception('Model doesn\'t have nickname.')
+        if 'roles' in model:
+            roles = model['roles'].split(',')
+            self.roles = roles
+        else:
+            raise Exception('Roles is missing form model.')
+        if 'password' in model:
+            self._passwd = model['password']
+        if 'first_name' in model:
+            self._first_name = model['first_name']
+        if 'last_name' in model:
+            self._last_name = model['last_name']
+        if 'email' in model:
+            self._email = model['email']
+        #if 'clss' in model:
+        #    self._clss = db.Key(encoded=model['clss'])
+        
      
     def __str__(self):
         """Print the user"""
@@ -92,7 +118,7 @@ def get_user(name):
     user = MyUser.get_by_key_name(name)
     return user
 
-def create_user(name,roles, passwd = None):
+def create_user(name,roles = None, passwd = None):
     """Create a user with given nickname. 
     
     If user with this nickname already exists just return him/her.
@@ -103,21 +129,28 @@ def create_user(name,roles, passwd = None):
     Return (MyUser):
         Created or existing user 
     """
-    user = get_user(name)
-    if not user:
-        user = MyUser(key_name=name)
-        user._nickname = name
-        if roles:
-            if isinstance(roles, list):
-                user.roles = roles
-            else:
-                user.roles.append(roles)
-        if passwd:
-            user._passwd = passwd
+    if roles == None:
+        nickname = name['nickname']
+    else:
+        nickname = name
+    user = get_user(nickname)
+    if user == None:
+        user = MyUser(key_name=nickname)
+        if roles == None:
+            user.from_json(name)
+        else:
+            user._nickname = name
+            if roles:
+                if isinstance(roles, list):
+                    user.roles = roles
+                else:
+                    user.roles.append(roles)
+            if passwd:
+                user._passwd = passwd
         user.put()
     else:
-        #raise Exception('User '+name+' exists')
-        user._nickname = name
+        raise Exception('User '+nickname+' exists')
+
     return user
 
 def local_login(nickname,password):
@@ -170,6 +203,7 @@ def check_loggedin(func):
         user = get_current_user()
         if not user:
             self.redirect('/')
+            return
         func(self)
     return check_loggedin_wrapper
 
@@ -181,11 +215,26 @@ def get_current_admin():
     return user
 
 def get_current_teacher():
-    """Return the current user if someone logged in and is an admin or None otherwise"""
+    """Return the current user if someone logged in and is a teacher or None otherwise"""
     user = get_current_user()
     if not user or not user.isTeacher():
         return None
     return user
+
+def get_current_student():
+    """Return the current user if someone logged in and is a student or None otherwise"""
+    user = get_current_user()
+    if not user or not user.isStudent():
+        return None
+    return user
+
+def google_login(email,user_id):
+    """Emulate google login for testing"""
+    import os
+    os.environ['USER_EMAIL']= email
+    os.environ['USER_ID']= user_id
+    #os.environ['FEDERATED_IDENTITY']= 'abc321'
+    #os.environ['FEDERATED_PROVIDER']= '321'
 
 #########################################################################
 #    Request handlers
@@ -197,6 +246,7 @@ class UserList(webapp2.RequestHandler):
         user = get_current_admin()
         if not user:
             self.redirect('/')
+            return
         
         user_list = MyUser.all().fetch(1000)
             

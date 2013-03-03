@@ -21,6 +21,12 @@ class Class(db.Model):
         student.set_class(self)
         self.put()
         
+    def remove_student(self, student):
+        for s in self.students:
+            if s == student.key():
+                i = self.index(s)
+                del self.students[i:i+1]
+        
     def get_student(self,i):
         k = self.students[i]
         return MyUser.get(k)
@@ -38,6 +44,8 @@ def create_class(teacher, name):
     return c
     
 def get_teacher_classes(teacher):
+    if teacher == None:
+        return []
     query = Class.all().ancestor(teacher.key())
     return query.fetch(1000)
     
@@ -48,7 +56,7 @@ def get_student_classes(student):
 
 def get_class_students(aclass):
     stu_list = []
-    if not aclass:
+    if aclass == None:
         return stu_list
     for key in aclass.students:
         stu = MyUser.get(key)

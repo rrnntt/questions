@@ -1,8 +1,8 @@
 import webapp2
 import simplejson
 from google.appengine.ext import db
-from aclass import Class, create_class
-from myuser import get_current_teacher
+from aclass import Class, create_class, get_student_classes
+from myuser import get_current_teacher,get_current_student,MyUser,create_user
 
 ####################################################################
 #   Class REST service
@@ -10,7 +10,7 @@ from myuser import get_current_teacher
 class Classes(webapp2.RequestHandler):
     """Implements REST service for managing classes"""
     def put(self,Id):
-        """Save a user with key == Id"""
+        """Save a class with key == Id"""
         clss = Class.get( db.Key(encoded=Id) )
         if clss:
             json = simplejson.decoder.JSONDecoder()
@@ -25,6 +25,7 @@ class Classes(webapp2.RequestHandler):
         teacher = get_current_teacher()
         if not teacher:
             self.redirect('/')
+            return
             
         httpMethod = self.request.get('_method')
         if httpMethod == 'PUT':
@@ -60,4 +61,74 @@ class Classes(webapp2.RequestHandler):
         user = Class.get( db.Key(encoded=Id) )
         if user:
             user.delete()
+
+####################################################################
+#   Student REST service
+####################################################################
+class Students(webapp2.RequestHandler):
+    """Implements REST service for managing students"""
+    def put(self,Id):
+        """Save a student with key == Id"""
+        student = MyUser.get( db.Key(encoded=Id) )
+        if student:
+            json = simplejson.decoder.JSONDecoder()
+            model = json.decode( self.request.get('model'))
+            student.from_json( model )
+            student.put()
+        else:
+            raise Exception('Saving of student failed')
+
+    def post(self,Id=None):
+        """Create new class instance and retirn its id which is its key"""
+        teacher = get_current_teacher()
+        if not teacher:
+            self.redirect('/')
+            return
+            
+        httpMethod = self.request.get('_method')
+        if httpMethod == 'PUT':
+            self.put(Id)
+            return
+        if httpMethod == 'DELETE':
+            #raise Exception("deleting...")
+            self.delete(Id)
+            return
+        if httpMethod == 'GET':
+            raise Exception('GET not implemented')
+            return
+            
+        json = simplejson.decoder.JSONDecoder()
+        #raise Exception('model '+self.request.get('model'))
+        model = json.decode( self.request.get('model'))
+        
+        if not 'clss' in model:
+            raise Exception('Class is missing from model.')
+            
+        student = create_user(model)
+        if student == None:
+            self.response.out.write('error')
+            return
+        
+        clss_encoded_key = model['clss']
+        clss = Class.get( db.Key(encoded=clss_encoded_key) )
+        if clss != None:
+            #try:
+            clss.add_student(student)
+            #except:
+            #    raise Exception('failed to add student')
+        else:
+            raise Exception('Class not found.')
+
+        #raise Exception('stu key: '+str(self.request.uri) + ' ' + str(model))
+        self.response.out.write('{"id":"'+str(student.key())+'"}')
+
+    def delete(self, Id):
+        """Delete a student with key == Id"""
+        student = MyUser.get( db.Key(encoded=Id) )
+        if student != None:
+            classes = get_student_classes(student)
+            for c in classes:
+                c.remove_student(student)
+            if student.isLocal():
+                student.delete()
 

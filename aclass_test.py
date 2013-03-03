@@ -66,3 +66,15 @@ class TestClass(unittest.TestCase):
         self.assertTrue( s1.key() in bbb.students )
         self.assertTrue( s1.key() in ccc.students )
         
+    def test_get_class_students(self):
+        t = create_user('teacher1','teacher')
+        c = create_class(t,'aaa')
+        s1 = create_user('stu1','student')
+        c.add_student(s1)
+        s2 = create_user('stu2','student')
+        c.add_student(s2)
+        students = get_class_students(c)
+        self.assertEqual( len(students), 2 )
+        self.assertEqual( students[0].key(), s1.key() )
+        self.assertEqual( students[1].key(), s2.key() )
+        

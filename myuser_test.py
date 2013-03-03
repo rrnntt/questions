@@ -3,12 +3,6 @@ import os
 from google.appengine.ext import testbed
 from myuser import *
 
-def google_login(email,user_id):
-    os.environ['USER_EMAIL']= email
-    os.environ['USER_ID']= user_id
-    #os.environ['FEDERATED_IDENTITY']= 'abc321'
-    #os.environ['FEDERATED_PROVIDER']= '321'
-
 class TestMyUser(unittest.TestCase):
     
     def setUp(self):

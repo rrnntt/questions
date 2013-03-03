@@ -27,6 +27,7 @@ class MyUsers(webapp2.RequestHandler):
         admin = get_current_admin()
         if not admin:
             self.redirect('/')
+            return
             
         httpMethod = self.request.get('_method')
         if httpMethod == 'PUT':
@@ -50,23 +51,22 @@ class MyUsers(webapp2.RequestHandler):
         password = model['password']
         email = model['email']
         roles = model['roles']
+        
+        if roles == 'student' and not 'clss' in model: 
+            self.response.out.write('error: no clss keyword')
+            return
             
         if len(nickname) > 0:
             new_user = create_user(nickname, roles, password)
             if not new_user:
                 self.response.out.write('error')
                 return
-            if len(email) > 0:
-                new_user.set_email(email)
-            if new_user.isStudent():
-                clss_encoded_key = model['clss']
-                if len(clss_encoded_key) > 0:
-                    clss = Class.get( db.Key(encoded=clss_encoded_key) )
-                    if clss:
-                        clss.add_student(new_user)
+            new_user.from_json(model)
+
         else:
             self.response.out.write('error')
         
+        #raise Exception('OK: '+str(new_user.key()))
         self.response.out.write('{"id":"'+str(new_user.key())+'"}')
 
     def delete(self, Id):

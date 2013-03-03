@@ -24,11 +24,17 @@
 		nickname: '', 
 		email: '',
 		roles: '',
-		clss: '',
 		});
 	var Class = Backbone.Model.extend({
 		urlRoot : '/classes', 
 		name: '', 
+		});
+	var Student = Backbone.Model.extend({
+		urlRoot : '/students', 
+		nickname: '', 
+		email: '',
+		roles: 'student',
+		clss: '',
 		});
   	{% block head_script %}
   	{% endblock %}
