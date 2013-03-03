@@ -5,7 +5,7 @@ import unittest
 import webtest
 import aclass_handlers
 import teacher_handlers
-from myuser import google_login,create_user
+from myuser import MyUser,google_login,create_user
 from aclass import Class,create_class,get_class_students
 
 class HelloWorldHandler(webapp2.RequestHandler):
@@ -21,6 +21,7 @@ class AppTest(unittest.TestCase):
         app = webapp2.WSGIApplication([
                                        ('/', HelloWorldHandler),
                                        ('/students', aclass_handlers.Students),
+                                       ('/students/(.+)', aclass_handlers.Students),
                                        ('/teacherclass', teacher_handlers.ClassPage),
                                        ])
         self.testapp = webtest.TestApp(app)
@@ -41,7 +42,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(response.normal_body, 'Hello World!')
         self.assertEqual(response.content_type, 'text/plain')
         
-    def testStudentsAdd(self):
+    def xtestStudentsAdd(self):
         teacher = create_user('te', 'teacher')
         google_login('te@gmail.com', 'te')
         clss = create_class(teacher,'class1')
@@ -54,6 +55,30 @@ class AppTest(unittest.TestCase):
         clss = Class.get(clss.key())
         students = get_class_students(clss)
         self.assertEqual( len(students), 1)
+        
+    def testStudentsRemove(self):
+        teacher = create_user('te', 'teacher')
+        google_login('te@gmail.com', 'te')
+        clss = create_class(teacher,'class1')
+        model = '{"nickname":"stu1", "roles": "student", "clss": "'+str(clss.key())+'"}'
+        params = {'_method': 'POST', 'model':model}
+        response = self.testapp.post('/students',params)
+        clss = Class.get(clss.key())
+        students = get_class_students(clss)
+        self.assertEqual( len(students), 1)
+        model = '{"nickname":"stu2", "roles": "student", "clss": "'+str(clss.key())+'"}'
+        params = {'_method': 'POST', 'model':model}
+        response = self.testapp.post('/students',params)
+        clss = Class.get(clss.key())
+        students = get_class_students(clss)
+        self.assertEqual( len(students), 2)
+        #print str(clss[0].key())
+        response = self.testapp.post('/students/'+str(clss[0].key()),{'_method':'DELETE'})
+        clss = Class.get(clss.key())
+        self.assertEqual( len(clss), 1)
+        response = self.testapp.post('/students/'+str(clss[0].key()),{'_method':'DELETE'})
+        clss = Class.get(clss.key())
+        self.assertEqual( len(clss), 0)
         
     def testClassPage(self):
         teacher = create_user('te', 'teacher')

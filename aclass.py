@@ -22,10 +22,13 @@ class Class(db.Model):
         self.put()
         
     def remove_student(self, student):
-        for s in self.students:
+        n = len(self.students)
+        for i in range(0,n):
+            s = self.students[i]
             if s == student.key():
-                i = self.index(s)
                 del self.students[i:i+1]
+                self.put()
+                break
         
     def get_student(self,i):
         k = self.students[i]

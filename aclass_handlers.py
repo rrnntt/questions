@@ -84,6 +84,8 @@ class Students(webapp2.RequestHandler):
         if not teacher:
             self.redirect('/')
             return
+        
+        #raise Exception('uri='+self.request.uri)
             
         httpMethod = self.request.get('_method')
         if httpMethod == 'PUT':

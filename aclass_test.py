@@ -38,6 +38,19 @@ class TestClass(unittest.TestCase):
         self.assertEqual( len( c ), 2 )
         self.assertEqual(  c[1].nickname(), 'stu2' )
         
+    def test_remove_student(self):
+        t = create_user('teacher1','teacher')
+        c = create_class(t,'aaa')
+        s1 = create_user('stu1','student')
+        c.add_student(s1)
+        s2 = create_user('stu2','student')
+        c.add_student(s2)
+        self.assertEqual( len( c ), 2 )
+        c.remove_student(s1)
+        self.assertEqual( len( c ), 1 )
+
+        
+        
     def test_get_teacher_classes(self):    
         t = create_user('teacher1','teacher')
         create_class(t,'aaa')
