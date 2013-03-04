@@ -55,6 +55,9 @@
 				  | <a href="/userlist">Manage users</a>
 				  | <a href="/_ah/admin">Admin</a>
 				  {% endif %}
+				  {% if user.isTeacher() %}
+				  | <a href="/chapterpage?chapter=root">My chapters</a>
+				  {% endif %}
 			  {% endif %}
 
 		  	  {%if in_local_login != True %} 

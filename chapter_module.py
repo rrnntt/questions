@@ -20,7 +20,7 @@ class Chapter(db.Model):
     
     def canEdit(self,user):
         """Check if a user can edit this chapter"""
-        return user.key() in self.authors
+        return self.key() == root_key() or user.key() in self.authors
     
     def deleteAll(self):
         """Delete this chater and all child chapters recursively"""
@@ -96,7 +96,7 @@ def list_visible_chapters(user, parent = None):
     chapters = []
     # collect only visible to user and direct descendants of parent chapters
     for chapter in all_chapters:
-        if chapter.isVisible(user) and chapter.parent_key() == parent_key:
+        if chapter.canEdit(user) and chapter.parent_key() == parent_key:
             chapters.append(chapter)
     # return the result
     return chapters
