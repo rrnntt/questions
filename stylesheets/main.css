@@ -3,6 +3,8 @@ body {
   font-size: 80%;
 }
 
+a:link {text-decoration:none;}
+
 table {
   font-family: Verdana, Helvetica, sans-serif;
   font-size: 100%;
@@ -33,6 +35,10 @@ table {
 #chapter_title {
 	font-size: 200%;
 	font-weight: 200;
+}
+
+#chapter-chain {
+  margin: 0px 0px 5px 0px;
 }
 
 /*.underlined {

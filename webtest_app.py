@@ -42,7 +42,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(response.normal_body, 'Hello World!')
         self.assertEqual(response.content_type, 'text/plain')
         
-    def xtestStudentsAdd(self):
+    def testStudentsAdd(self):
         teacher = create_user('te', 'teacher')
         google_login('te@gmail.com', 'te')
         clss = create_class(teacher,'class1')
@@ -87,3 +87,5 @@ class AppTest(unittest.TestCase):
         params = {'class': str(clss.key())}
         response = self.testapp.get('/teacherclass',params)
         self.assertTrue( len(response.normal_body) > 0 )
+        
+    

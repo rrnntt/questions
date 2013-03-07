@@ -1,7 +1,10 @@
 {% macro editChapter(buttonID, buttonText) %}
-<form method="post">
-	<div>Title: <input type="text" name="title" id="{{buttonID}}_title_text" /> </div>
-</form>
+<table>
+	<tr>
+	<td>Title:</td> 
+	<td><input type="text" name="title" id="{{buttonID}}_title_text"  style="width: 500px"/> </td>
+	</tr>
+</table>
 <div>
 	<button id="{{buttonID}}">{{buttonText}}</button>
 	<button id="{{buttonID}}_cancel_button">Cancel</button>

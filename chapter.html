@@ -18,12 +18,15 @@
 			$("#edit_chapter_page").hide();
 			$("#show_add_form_button").hide();
 			$("#show_edit_form_button").show();
+			$("#addbutton_title_text").focus();
 		});
 		$("#show_edit_form_button").button().click(function(event){
 			$("#edit_chapter_page").show();
 			$("#add_chapter_page").hide();
 			$("#show_edit_form_button").hide();
 			$("#show_add_form_button").show();
+			$("#savebutton_title_text").val("{{chapter.title}}");
+			$("#savebutton_title_text").focus();
 		});
 		$("#delete_button").button().click(function(event){
             $("#dialog-confirm").dialog('open');
@@ -81,9 +84,17 @@
 {% block main scoped %}
 
 {% import "edit_chapter_form.html" as edit %}
+
 {% if chapter.title != 'Root' %}
-<span id="up_button"><a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a></span>
+    <div id="chapter-chain">
+	{% for p in parents %}
+	  <a href="/chapterpage?chapter={{p.key()}}">{{p.title}} :</a>  
+	{% endfor %}
+	</div>
+  <br />
+  <span id="up_button"><a href="/chapterpage?chapter={{chapter_parent_key}}">Up</a></span>
 {% endif %}
+
 <span id="chapter_title">{{chapter.title}}</span> 
 <hr />
 
@@ -97,8 +108,6 @@
 </ul>
 {% endif %}
 {% if chapter.canEdit(user) %}
-	Hello!<br />
-	<hr />
 	<div style="background-color: #eee">
 		<button id="show_add_form_button">Add</button>
 		{% if chapter.title != 'Root' %}
@@ -108,7 +117,7 @@
 	</div>
 	
 	
-	<div id="add_chapter_page">
+	<div id="add_chapter_page" style="width: 100%">
 		<hr />
 		Add a sub-chapter to {{chapter.title}}
 		<br/>

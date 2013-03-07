@@ -101,6 +101,34 @@ def list_visible_chapters(user, parent = None):
     # return the result
     return chapters
 
+def list_edit_chapters(user, parent = None):
+    """Retrieve from the datastore chapters a user can edit (is an author of).
+    
+    Args:
+        user (MyUser): the user requestion the list.
+        parent (Chapter): the parent chapter. This function returns only the immediate
+            sub-chapters of parent. If parent is None the function returns the top-level
+            chapters.
+            
+    Return: 
+        A list of Chapter
+    """
+    if parent:
+        parent_key = parent.key()
+    else:
+        parent_key = root_key()
+    # find all descendants (sub-chapters of all levels) of parent
+    chapter_query = Chapter.all().ancestor(parent_key)#.order('title')
+    # try to fetch all of them. I hope 1000 is a large enogh number.
+    all_chapters = chapter_query.fetch(1000)
+    chapters = []
+    # collect only visible to user and direct descendants of parent chapters
+    for chapter in all_chapters:
+        if chapter.canEdit(user) and chapter.parent_key() == parent_key:
+            chapters.append(chapter)
+    # return the result
+    return chapters
+
 def get_chapter_by_encoded_key(encoded_key):
     """Get the chapter from datastore by its encoded key.
     
@@ -143,6 +171,16 @@ def add_chapter_values(template_values, chapter):
         if not parent_key:
             parent_key = 'root'
         template_values['chapter_parent_key'] = parent_key 
+        
+def list_parents(chapter):
+    parents = []
+    if chapter == None:
+        return parents
+    p = chapter.parent()
+    while p != None:
+        parents.append(p)
+        p = p.parent()
+    return parents
     
 
 ###########################################################################
@@ -159,12 +197,15 @@ class ChapterPage(webapp2.RequestHandler):
         encoded_chapter_key = self.request.get('chapter')
         
         chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
-        subchapters = list_visible_chapters(user, chapter)
+        subchapters = list_edit_chapters(user, chapter)
         subchapters_empty = len(subchapters) == 0
+        parents = list_parents(chapter)
+        parents.reverse()
         
         template_values = {
                            'subchapters': subchapters,
                            'subchapters_empty': subchapters_empty,
+                           'parents' : parents,
                            }
         
         add_chapter_values(template_values, chapter)
@@ -245,11 +286,12 @@ class Chapters(webapp2.RequestHandler):
             
         if len(title) > 0:
             chapter = Chapter(parent=parent_key)
-            chapter.authors.append(user.nickname())
+            chapter.authors.append(user.key())
             chapter.title = title
             chapter.put()
         else:
             self.response.out.write('error')
+            return
         
         self.response.out.write('{"id":"'+str(chapter.key())+'"}')
 
