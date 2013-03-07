@@ -7,12 +7,14 @@
 	chapter.set('parent_key','{{chapter_parent_key}}');
 	chapter.id = '{{chapter.key()}}';
 	
+	var question = new Question();
+	question.id = '{{question.key()}}';
+	question.type = '{{question.type}}';
+
 	$(function(){
 		
         $("#save_button").button().click(function(event){
-			var question = new Question();
-			question.id = '{{question.key()}}';
-			question.save({text: $("#question-text").val(), answer:$("#question-answer").val()},
+			question.save({text: $("#question-text").val(), answer:$("#question-answer").val(), type: question.type},
 			   {
 				success: function(model,resp,opt){
 					window.location.replace("/chapterpage?chapter={{chapter.key()}}");
@@ -26,6 +28,28 @@
 			window.location.replace("/chapterpage?chapter={{chapter.key()}}");
 		});
 		
+		$( "#radio" ).buttonset();
+		
+		$('[for=type-text]').click(function(){
+			question.type = 'text';
+		});
+		
+		$('[for=type-numeric]').click(function(){
+			question.type = 'numeric';
+		});
+
+		$('[for=type-formula]').click(function(){
+			question.type = 'formula';
+		});
+
+		if ( question.type == 'text' )
+		{
+			$('[for=type-text]').click();
+		}
+		else if ( question.type == 'formula' )
+		{
+			$('[for=type-formula]').click();
+		};
 		
 	});
 
@@ -43,7 +67,13 @@ Answer:<br />
 <textarea id="question-answer" rows="10" cols="80">{{question.answer}}</textarea>
 <br />
 
-<div style="margin-top: 5px">
+<div id="radio">
+	<input type="radio" id="type-numeric" name="radio" checked="checked" /><label for="type-numeric">Numeric</label>
+	<input type="radio" id="type-formula" name="radio" /><label for="type-formula">Formula</label>
+	<input type="radio" id="type-text" name="radio" /><label for="type-text">Text</label>
+</div>
+
+<div style="margin-top: 20px">
 	<button id="save_button">Save</button>
 	<button id="cancel_button">Cancel</button>
 </div>

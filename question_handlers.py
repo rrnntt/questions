@@ -7,6 +7,19 @@ from question import *
 from chapter_module import get_chapter_by_encoded_key
 
 ###########################################################################
+#     Questions helper functions
+###########################################################################
+
+def create_question(chapter, typ = 'numeric'):
+    question = Question(parent=chapter.key())
+    question.title = 'new'
+    question.text = ''
+    question.answer = ''
+    question.type = typ
+    question.put()
+    return question
+
+###########################################################################
 #     Questions pages
 ###########################################################################
 
@@ -23,11 +36,7 @@ class EditQuestionPage(webapp2.RequestHandler):
         
         question_key = self.request.get('question')
         if question_key == 'new':
-            question = Question(parent=chapter.key())
-            question.title = 'new'
-            question.text = ''
-            question.answer = ''
-            question.put()
+            question = create_question(chapter)
         else:
             question = Question.get(db.Key(encoded=question_key))
         question_key = question.key()
@@ -59,6 +68,8 @@ class Questions(webapp2.RequestHandler):
                 question.text = model['text']
             if 'answer' in model:
                 question.answer = model['answer']
+            if 'type' in model:
+                question.type = model['type']
             question.put()
         else:
             raise Exception('Saving of question failed')
