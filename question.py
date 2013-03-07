@@ -2,8 +2,9 @@ from google.appengine.ext import db
 from google.appengine.ext.db import polymodel
 
 class Question(polymodel.PolyModel):
+    title = db.StringProperty()
     text = db.TextProperty()
-    answer = db.StringProperty()
+    answer = db.TextProperty()
     solution = db.TextProperty() # ? should it be a model itself ?
     
     def get_answer(self):

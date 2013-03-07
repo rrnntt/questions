@@ -3,6 +3,7 @@ from google.appengine.ext import db
 import simplejson
 from myuser import *
 import mytemplate
+from question import Question
 
 """
 Chapters are a way of organising questions. A chapter may either include other
@@ -183,6 +184,22 @@ def list_parents(chapter):
         p = p.parent()
     return parents
     
+def list_questions(chapter):
+    parent_key = chapter.key()
+    query = Question.all().ancestor(parent_key)
+    # try to fetch all of them. I hope 1000 is a large enogh number.
+    all_qs = query.fetch(1000)
+    qs = []
+    i = 1
+    for q in all_qs:
+        if q.parent_key() == parent_key:
+            qs.append(q)
+            stri = str(i)
+            i += 1
+            if q.title != stri:
+                q.title = stri
+                q.put()
+    return qs
 
 ###########################################################################
 #     Request handlers
@@ -207,12 +224,17 @@ class ChapterPage(webapp2.RequestHandler):
             chapter_formatted_text = chapter.text
         else:
             chapter_formatted_text = ''
+            
+        questions = list_questions(chapter)
+        has_questions = len(questions) > 0
         
         template_values = {
                            'subchapters': subchapters,
                            'subchapters_empty': subchapters_empty,
                            'parents' : parents,
                            'chapter_formatted_text' : chapter_formatted_text,
+                           'questions' : questions,
+                           'has_questions' : has_questions,
                            }
         
         add_chapter_values(template_values, chapter)
@@ -244,7 +266,13 @@ class EditChapterPage(webapp2.RequestHandler):
         
         encoded_chapter_key = self.request.get('chapter')
         chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
-        template_values = {}
+
+        questions = list_questions(chapter)
+        has_questions = len(questions) > 0
+        template_values = {
+                           'questions' : questions,
+                           'has_questions' : has_questions,
+                           }
         add_chapter_values(template_values, chapter)
         template_values['title'] = 'Edit chapter ' + chapter.title
         

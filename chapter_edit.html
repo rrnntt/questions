@@ -28,6 +28,10 @@
 			window.location.replace("/chapterpage?chapter={{chapter.key()}}");
 		});
 		
+		$("#add_question_button").button().click(function(event){
+			window.location.replace("/questioneditpage?chapter={{chapter.key()}}&question=new");
+		});
+		
 	});
 
 {% endblock %}
@@ -49,7 +53,18 @@
 {% endif %}
 </textarea>
 
-<div style="margin-top: 5px">
+{% if has_questions %}
+<h2>Questions</h2>
+{% for q in questions %}
+<h3>Question {{q.title}} </h3>
+{{q.text}}<br />
+<a href="/questioneditpage?chapter={{chapter.key()}}&question={{q.key()}}">Edit...</a>
+{% endfor %}
+{% endif %}
+<br />
+<button id="add_question_button" style="margin-top: 20px">Add question</button>
+
+<div style="margin-top: 10px">
 	<button id="save_button">Save</button>
 	<button id="cancel_button">Cancel</button>
 </div>

@@ -101,7 +101,16 @@
 
 {{chapter_formatted_text}}
 
+{% if has_questions %}
+<h2>Questions</h2>
+{% for q in questions %}
+<h3>Question {{q.title}} </h3>
+{{q.text}}
+{% endfor %}
+{% endif %}
+
 {% if not subchapters_empty %}
+<h2>Sub-chapters</h2>
 <ul>
 {% for subchapter in subchapters %}
   <li>

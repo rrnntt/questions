@@ -7,6 +7,7 @@ import myuser_handlers
 import admin_handlers
 import teacher_handlers
 import aclass_handlers
+import question_handlers
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -77,5 +78,8 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/chaptereditpage', chapter_module.EditChapterPage),
                                (r'/chapters', chapter_module.Chapters),
                                (r'/chapters/(.+)', chapter_module.Chapters),
+                               (r'/questions', question_handlers.Questions),
+                               (r'/questions/(.+)', question_handlers.Questions),
+                               (r'/questioneditpage', question_handlers.EditQuestionPage),
                                ],
                               debug=True)

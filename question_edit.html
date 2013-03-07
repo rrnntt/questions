@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block head_script%}
+
+	var chapter = new Chapter();
+	chapter.set('title','{{chapter.title}}');
+	chapter.set('parent_key','{{chapter_parent_key}}');
+	chapter.id = '{{chapter.key()}}';
+	
+	$(function(){
+		
+        $("#save_button").button().click(function(event){
+			var question = new Question();
+			question.id = '{{question.key()}}';
+			question.save({text: $("#question-text").val(), answer:$("#question-answer").val()},
+			   {
+				success: function(model,resp,opt){
+					window.location.replace("/chapterpage?chapter={{chapter.key()}}");
+					},
+				error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+				wait: true
+			   });
+        });
+        
+		$("#cancel_button").button().click(function(event){
+			window.location.replace("/chapterpage?chapter={{chapter.key()}}");
+		});
+		
+		
+	});
+
+{% endblock %}
+
+{% block main %}
+
+<div id="chapter_title">Edit question {{question.title}} in chapter "{{chapter.title}}"</div> 
+
+Question:<br />
+<textarea id="question-text" rows="15" cols="80">{{question.text}}</textarea>
+<br />
+
+Answer:<br />
+<textarea id="question-answer" rows="10" cols="80">{{question.answer}}</textarea>
+<br />
+
+<div style="margin-top: 5px">
+	<button id="save_button">Save</button>
+	<button id="cancel_button">Cancel</button>
+</div>
+
+{% endblock %}
