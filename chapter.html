@@ -21,12 +21,13 @@
 			$("#addbutton_title_text").focus();
 		});
 		$("#show_edit_form_button").button().click(function(event){
-			$("#edit_chapter_page").show();
-			$("#add_chapter_page").hide();
-			$("#show_edit_form_button").hide();
-			$("#show_add_form_button").show();
-			$("#savebutton_title_text").val("{{chapter.title}}");
-			$("#savebutton_title_text").focus();
+			window.location.replace("/chaptereditpage?chapter={{chapter.key()}}");
+			//$("#edit_chapter_page").show();
+			//$("#add_chapter_page").hide();
+			//$("#show_edit_form_button").hide();
+			//$("#show_add_form_button").show();
+			//$("#savebutton_title_text").val("{{chapter.title}}");
+			//$("#savebutton_title_text").focus();
 		});
 		$("#delete_button").button().click(function(event){
             $("#dialog-confirm").dialog('open');
@@ -97,6 +98,8 @@
 
 <span id="chapter_title">{{chapter.title}}</span> 
 <hr />
+
+{{chapter_formatted_text}}
 
 {% if not subchapters_empty %}
 <ul>

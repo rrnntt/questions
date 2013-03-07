@@ -17,6 +17,7 @@ class Chapter(db.Model):
     """A chapter"""
     title = db.StringProperty()
     authors = db.ListProperty(db.Key)
+    text = db.TextProperty()
     
     def canEdit(self,user):
         """Check if a user can edit this chapter"""
@@ -202,10 +203,16 @@ class ChapterPage(webapp2.RequestHandler):
         parents = list_parents(chapter)
         parents.reverse()
         
+        if chapter.text != None:
+            chapter_formatted_text = chapter.text
+        else:
+            chapter_formatted_text = ''
+        
         template_values = {
                            'subchapters': subchapters,
                            'subchapters_empty': subchapters_empty,
                            'parents' : parents,
+                           'chapter_formatted_text' : chapter_formatted_text,
                            }
         
         add_chapter_values(template_values, chapter)
@@ -227,6 +234,22 @@ class AddChapterPage(webapp2.RequestHandler):
         
         write_template(self, user, 'add_chapter.html',template_values)
         
+class EditChapterPage(webapp2.RequestHandler):
+    def get(self):
+
+        user = get_current_user()
+        if not user:
+            self.redirect('/')
+            return
+        
+        encoded_chapter_key = self.request.get('chapter')
+        chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
+        template_values = {}
+        add_chapter_values(template_values, chapter)
+        template_values['title'] = 'Edit chapter ' + chapter.title
+        
+        write_template(self, user, 'chapter_edit.html',template_values)
+        
 ###########################################################################
 #     Chapters
 ###########################################################################
@@ -244,6 +267,8 @@ class Chapters(webapp2.RequestHandler):
                 self.response.out.write('error')
                 return
             chapter.title = model['title']
+            if 'text' in model:
+                chapter.text = model['text']
             chapter.put()
         else:
             raise Exception('Saving of chapter failed')

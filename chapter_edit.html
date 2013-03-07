@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block head_script%}
+
+	var chapter = new Chapter();
+	chapter.set('title','{{chapter.title}}');
+	chapter.set('parent_key','{{chapter_parent_key}}');
+	chapter.id = '{{chapter.key()}}';
+	
+	$(function(){
+
+		$("#title").val("{{chapter.title}}");
+		$("#chapter-text").focus();
+		
+        $("#save_button").button().click(function(event){
+			chapter.save({title: $("#title").val(), text:$("#chapter-text").val()},
+			   {
+				success: function(model,resp,opt){
+					//location.reload();
+					window.location.replace("/chapterpage?chapter={{chapter.key()}}");
+					},
+				error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+				wait: true
+			   });
+        });
+        
+		$("#cancel_button").button().click(function(event){
+			window.location.replace("/chapterpage?chapter={{chapter.key()}}");
+		});
+		
+	});
+
+{% endblock %}
+
+{% block main %}
+
+<div id="chapter_title">Edit chapter "{{chapter.title}}"</div> 
+
+<table >
+	<tr>
+	<td>Title:</td> 
+	<td><input type="text" name="title" id="title"  style="width: 500px"/> </td>
+	</tr>
+</table>
+
+<textarea id="chapter-text" rows="25" cols="80">
+{% if chapter.text != None%}
+{{chapter.text}}
+{% endif %}
+</textarea>
+
+<div style="margin-top: 5px">
+	<button id="save_button">Save</button>
+	<button id="cancel_button">Cancel</button>
+</div>
+
+{% endblock %}

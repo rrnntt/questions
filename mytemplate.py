@@ -29,6 +29,8 @@ def write_template(handler, user, file_name, template_values = {}):
     # as it shouldn't show neither login nor logout link
     if not 'in_local_login' in template_values:
         template_values['in_local_login'] = 'False'
+    if not 'title' in template_values:
+        template_values['title'] = 'Questions'
     template = jinja_environment.get_template(file_name)
     handler.response.out.write(template.render(template_values))
 

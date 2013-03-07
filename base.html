@@ -8,6 +8,7 @@
 	<script type="text/javascript" src="/backbone/underscore-min.js" ></script>
 	<script type="text/javascript" src="/backbone/backbone.js" ></script>
     {% block header %}
+    <title>{{title}}</title>
     {% endblock %}
   </head>
   	
@@ -17,6 +18,7 @@
 	var Chapter = Backbone.Model.extend({
 		urlRoot : '/chapters', 
 		title: '', 
+		text: '', 
 		parent_key: ''
 		});
 	var User = Backbone.Model.extend({
@@ -73,7 +75,7 @@
   		</tr>
   	</table>
 	{% if user %}
-	  <div>User: {{ user_name }}</div>
+	  <div style="margin-bottom: 10px">User: {{ user_name }}</div>
 	{% endif %}
     
   	{% block main %}
