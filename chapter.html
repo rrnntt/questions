@@ -104,7 +104,7 @@
 {% if has_questions %}
 <h2>Questions</h2>
 {% for q in questions %}
-<h3>Question {{q.title}} </h3>
+<h3> <input type="checkbox" name="vehicle" value="{{q.key()}}"/> Question {{q.title}} </h3>
 {{q.text}}
 {% endfor %}
 {% endif %}
@@ -121,9 +121,9 @@
 {% endif %}
 {% if chapter.canEdit(user) %}
 	<div style="background-color: #eee; margin-top: 30px">
-		<button id="show_add_form_button">Add</button>
+		<button id="show_add_form_button">Add sub-chapter</button>
 		{% if chapter.title != 'Root' %}
-		<button id="show_edit_form_button">Edit</button>
+		<button id="show_edit_form_button">Edit this chapter</button>
 		<button id="delete_button">Delete this chapter</button>
 		{% endif %}
 	</div>
