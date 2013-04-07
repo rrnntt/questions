@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block main%}
+<h2>Questions {{qlist.name}}</h2>
+
+{% for q in questions %}
+<h3>Question {{q.title}} </h3>
+{{q.text}}
+{% endfor %}
+
+{% endblock %}

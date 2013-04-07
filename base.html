@@ -47,6 +47,10 @@
 		answer: '',
 		type: 'numeric',
 		});
+	var QuestionList = Backbone.Model.extend({
+		urlRoot : '/questionlist', 
+		name: '',
+		});
   	{% block head_script %}
   	{% endblock %}
   </script>

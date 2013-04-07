@@ -41,23 +41,35 @@ class Class(db.Model):
         return len(self.students)
     
 def create_class(teacher, name):
+    """
+    Create a new class. A class must have a teacher and a name.
+    """
     c = Class(parent = teacher)
     c.name = name
     c.put()
     return c
     
 def get_teacher_classes(teacher):
+    """
+    Get a list of all classes of a teacher.
+    """
     if teacher == None:
         return []
     query = Class.all().ancestor(teacher.key())
     return query.fetch(1000)
     
 def get_student_classes(student):
+    """
+    Get a list of all classes a student is a member of.
+    """
     query = Class.all()
     query.filter('students = ', student.key())
     return query.fetch(100)
 
 def get_class_students(aclass):
+    """
+    Get a list of all students in a class.
+    """
     stu_list = []
     if aclass == None:
         return stu_list
