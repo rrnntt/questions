@@ -337,10 +337,13 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+      	//alert('parse '+JSON.stringify(model.parse(resp, xhr)));
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp);
+        //alert('fetch1: '+JSON.stringify(model.attributes));//+' name:'+this.get('name'));
       };
       options.error = Backbone.wrapError(options.error, model, options);
+      //alert('fetch2: '+JSON.stringify(model.attributes));//+' name:'+this.get('name'));
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 

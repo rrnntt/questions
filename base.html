@@ -49,8 +49,13 @@
 		});
 	var QuestionList = Backbone.Model.extend({
 		urlRoot : '/questionlist', 
-		name: '',
 		});
+	var editQuestionList = new QuestionList({name: '1', questions: []});
+	{% if edit_question_list %}
+		//editQuestionList.on('change',function(){alert('name='+JSON.stringify(editQuestionList.get('name')));});
+		editQuestionList.id = '{{edit_question_list.key()}}';
+		editQuestionList.fetch();
+	{% endif %}
   	{% block head_script %}
   	{% endblock %}
   </script>
@@ -72,6 +77,9 @@
 				  {% endif %}
 				  {% if user.isTeacher() %}
 				  | <a href="/chapterpage?chapter=root">My chapters</a>
+     			  {% if edit_question_list %}
+				  |	 <a href="/questionlistpage?key={{edit_question_list.key()}}">Q List</a>;
+				  {% endif %}
 				  {% endif %}
 			  {% endif %}
 
@@ -88,7 +96,16 @@
   		</tr>
   	</table>
 	{% if user %}
-	  <div style="margin-bottom: 10px">User: {{ user_name }}</div>
+	  <div style="margin-bottom: 10px">
+	  	User: {{ user_name }}
+	  	{% if edit_question_list %}
+	  		{{edit_question_list.key()}}
+	  		+++++++++{{edit_question_list.name}}
+	  		---------{{edit_question_list.size()}}
+	  	{% else %}
+	  		No edit list
+	  	{% endif %}
+	  </div>
 	{% endif %}
     
   	{% block main %}

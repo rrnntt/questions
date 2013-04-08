@@ -79,7 +79,50 @@
 				}
 			}
 		});
+		$("#add_to_question_list").button().click(function(event){
+			if (questions_to_add.length > 0)
+			{
+				qlist = editQuestionList.get('questions').concat(questions_to_add);
+				//alert(editQuestionList.get('name'));
+				//editQuestionList.questions = editQuestionList.questions.concat(questions_to_add);
+				editQuestionList.set('questions',qlist);
+				editQuestionList.save({},
+				{
+				  success: function(model,resp,opt){
+				  	model.id = resp.id;
+				  	location.reload();
+				  	},
+				  error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+				  wait: true
+				});
+			}			
+		});
+		$("#add_to_question_list").hide();
 	});
+	var questions_to_add = [];
+	function question_checked(box)
+	{
+		if (box.checked)
+		{
+			questions_to_add.push(box.value);
+		}
+		else
+		{
+			var i = questions_to_add.indexOf(box.value);
+			questions_to_add.splice(i,1);
+		}
+		if (questions_to_add.length > 0)
+		{
+			$("#add_to_question_list").show();
+			//alert(editQuestionList.get('name'));
+		}
+		else
+		{
+			$("#add_to_question_list").hide();
+		}
+		{% if edit_question_list %}
+		{% endif %}
+	}
 {% endblock %}
 
 {% block main scoped %}
@@ -104,9 +147,12 @@
 {% if has_questions %}
 <h2>Questions</h2>
 {% for q in questions %}
-<h3> <input type="checkbox" name="vehicle" value="{{q.key()}}"/> Question {{q.title}} </h3>
+<h3> <input type="checkbox" name="question" value="{{q.key()}}" onchange="question_checked(this)"/> Question {{q.title}} </h3>
 {{q.text}}
 {% endfor %}
+<div>
+	<button id="add_to_question_list">Add to list</button>
+</div>
 {% endif %}
 
 {% if not subchapters_empty %}

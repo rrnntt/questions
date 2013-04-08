@@ -2,6 +2,7 @@ import jinja2
 import os
 
 from google.appengine.api import users
+from question_list import get_edit_question_list
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -31,6 +32,7 @@ def write_template(handler, user, file_name, template_values = {}):
         template_values['in_local_login'] = 'False'
     if not 'title' in template_values:
         template_values['title'] = 'Questions'
+    template_values['edit_question_list'] = get_edit_question_list()
     template = jinja_environment.get_template(file_name)
     handler.response.out.write(template.render(template_values))
 
