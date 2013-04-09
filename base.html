@@ -7,7 +7,9 @@
     <script type="text/javascript" src="/jquery/js/jquery-ui-1.9.2.custom.min.js"></script>
 	<script type="text/javascript" src="/backbone/underscore-min.js" ></script>
 	<script type="text/javascript" src="/backbone/backbone.js" ></script>
+	<!--
 	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+	-->
 	
     {% block header %}
     <title>{{title}}</title>
@@ -15,6 +17,11 @@
   </head>
   	
   <script type="text/javascript"> 
+    function debug(mess)
+    {
+    	var html = $('#debug').html() + mess + '<br/>';
+    	$('#debug').html(html);
+    }
     Backbone.emulateJSON = true;
     Backbone.emulateHTTP = true;
 	var Chapter = Backbone.Model.extend({
@@ -50,12 +57,33 @@
 	var QuestionList = Backbone.Model.extend({
 		urlRoot : '/questionlist', 
 		});
-	var editQuestionList = new QuestionList({name: '1', questions: []});
+	function createQuestionList()
+	{
+		var QuestionList = Backbone.Model.extend({
+			urlRoot : '/questionlist', 
+			});
+		return new QuestionList({name: '1', questions: []});
+	}
+	var editQuestionList = createQuestionList();
+	editQuestionList.on('change',function()
+	{
+		qlist = editQuestionList.get('questions');
+		if (qlist.length > 0)
+		{
+			$("#edit_question_list").html("|	 <a href=\"/questionlistpage?key="+editQuestionList.id+"\">Q List</a>");
+			$("#edit_question_list").show();
+		}
+		else
+		{
+			$("#edit_question_list").html("");
+			$("#edit_question_list").hide();
+		}
+	});
 	{% if edit_question_list %}
-		//editQuestionList.on('change',function(){alert('name='+JSON.stringify(editQuestionList.get('name')));});
 		editQuestionList.id = '{{edit_question_list.key()}}';
 		editQuestionList.fetch();
 	{% endif %}
+	$(function(){$("#edit_question_list").hide();});
   	{% block head_script %}
   	{% endblock %}
   </script>
@@ -77,9 +105,7 @@
 				  {% endif %}
 				  {% if user.isTeacher() %}
 				  | <a href="/chapterpage?chapter=root">My chapters</a>
-     			  {% if edit_question_list %}
-				  |	 <a href="/questionlistpage?key={{edit_question_list.key()}}">Q List</a>;
-				  {% endif %}
+     			  <span id="edit_question_list"></span>
 				  {% endif %}
 			  {% endif %}
 
@@ -98,18 +124,13 @@
 	{% if user %}
 	  <div style="margin-bottom: 10px">
 	  	User: {{ user_name }}
-	  	{% if edit_question_list %}
-	  		{{edit_question_list.key()}}
-	  		+++++++++{{edit_question_list.name}}
-	  		---------{{edit_question_list.size()}}
-	  	{% else %}
-	  		No edit list
-	  	{% endif %}
 	  </div>
 	{% endif %}
     
   	{% block main %}
   	{% endblock %}
+  	
+  	<div id="debug"></div>
   	
   	</div>
   </body>

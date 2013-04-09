@@ -83,21 +83,26 @@
 			if (questions_to_add.length > 0)
 			{
 				qlist = editQuestionList.get('questions').concat(questions_to_add);
-				//alert(editQuestionList.get('name'));
-				//editQuestionList.questions = editQuestionList.questions.concat(questions_to_add);
 				editQuestionList.set('questions',qlist);
 				editQuestionList.save({},
 				{
 				  success: function(model,resp,opt){
-				  	model.id = resp.id;
-				  	location.reload();
+				  	if (resp)
+				  	{
+				  		model.id = resp.id;
+				  	}
+				  	//location.reload();
 				  	},
 				  error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
 				  wait: true
 				});
+				$("#add_to_question_list").hide();
+				$(".question").attr('checked',false);
+				questions_to_add = [];
 			}			
 		});
 		$("#add_to_question_list").hide();
+		$(".question").attr('checked',false);
 	});
 	var questions_to_add = [];
 	function question_checked(box)
@@ -114,14 +119,11 @@
 		if (questions_to_add.length > 0)
 		{
 			$("#add_to_question_list").show();
-			//alert(editQuestionList.get('name'));
 		}
 		else
 		{
 			$("#add_to_question_list").hide();
 		}
-		{% if edit_question_list %}
-		{% endif %}
 	}
 {% endblock %}
 
@@ -147,7 +149,7 @@
 {% if has_questions %}
 <h2>Questions</h2>
 {% for q in questions %}
-<h3> <input type="checkbox" name="question" value="{{q.key()}}" onchange="question_checked(this)"/> Question {{q.title}} </h3>
+<h3> <input type="checkbox" name="question" value="{{q.key()}}" class="question" onchange="question_checked(this)"/> Question {{q.title}} </h3>
 {{q.text}}
 {% endfor %}
 <div>

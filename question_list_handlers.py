@@ -46,27 +46,6 @@ class QuestionListPage(webapp2.RequestHandler):
                            }
         write_template(self, user, 'question_list.html', template_values)
                 
-class AddQuestionsToQuestionList(webapp2.RequestHandler):
-    def get(self):
-        user = get_current_teacher()
-        if not user:
-            self.redirect('/')
-            return
-        
-        qlist = get_edit_question_list()
-        if qlist == None:
-            qlist = create_question_list('new')
-            
-        lst = self.request.get('questions')
-        if not isinstance(lst,list):
-            raise Exception('List of questions must be a list')
-        
-        for key in lst:
-            qlist.questions.append(db.Key(encoded=key))
-            
-        url = self.request.get('goto')
-        self.redirect(url)
-    
 class SaveQuestionList(webapp2.RequestHandler):
     
     def get(self):

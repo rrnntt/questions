@@ -22,20 +22,39 @@ class RESTHandlerClass(webapp2.RequestHandler):
         By default returns input value without convertion
         """
         return value
+    
+    def for_json(self,field):
+        """
+        Return string representation of a model's field.
+        
+        Args:
+            field (str): Name of a field.
+        """
+        if self.obj == None:
+            raise Exception('REST: object does not exist.')
+        
+        value = getattr(self.obj,field)
+        if isinstance(value, list):
+            out = []
+            for v in value:
+                out.append(str(v))
+        else:
+            out = value
+        return out
 
     def get(self,Id):
         """Save a instance of a model with key == Id"""
         self.obj = self.ModelClass.get(db.Key(encoded = Id))
         if self.obj:
             attrs = self.ModelClass.__dict__
-            out = '{'
+            out = {}
             for attr in attrs:
                 prop = attrs[attr]
                 if isinstance(prop,db.Property):
-                    out += '"' + attr + '":"' + str(getattr(self.obj,attr)) + '",'
-            out += '}'
-            raise Exception(out) 
-            self.response.out.write('{"name":"hello1"}')
+                    out[attr] = self.for_json(attr)
+            #raise Exception(simplejson.dumps(out))
+            #self.response.out.write('{"name":"1","questions":["123","456"]}')
+            self.response.out.write(simplejson.dumps(out))
         else:
             raise Exception('Object not found '+Id)
     
@@ -145,9 +164,13 @@ class MemcachedRESTHandler(RESTHandlerClass):
 
     def put(self,Id):
         RESTHandlerClass.put(self, Id)
+        #raise Exception('put '+Id +'\n'+self.to_str('questions'))
         qlist = memcache.get(self.cache_key)
         if qlist.key() == self.obj.key():
-            qlist = self.obj
+            #qlist = self.obj
+            memcache.set(self.cache_key, self.obj)
+        else:
+            raise Exception('Object is not in memcache')
 
     def delete(self,Id):
         qlist = memcache.get(self.cache_key)

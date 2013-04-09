@@ -8,4 +8,9 @@
 {{q.text}}
 {% endfor %}
 
+{% for q in qlist.questions %}
+<h3>-Question- {{qlist.size()}} </h3>
+{{q.text}}
+{% endfor %}
+
 {% endblock %}
