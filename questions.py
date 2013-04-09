@@ -86,5 +86,6 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/questionlist/(.+)', question_list_handlers.QuestionListRESTHandler),
                                (r'/questionlistpage', question_list_handlers.QuestionListPage),
                                (r'/savequestionlist', question_list_handlers.SaveQuestionList),
+                               (r'/createquestionlist', question_list_handlers.CreateQuestionList),
                                ],
                               debug=True)

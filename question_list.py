@@ -17,18 +17,21 @@ def get_edit_question_list():
     return memcache.get('question_list')
 
 def delete_edit_question_list():
-    qlist = memcache.get('question_list')
-    if qlist != None:
-        memcache.delete('question_list')
-        qlist.delete()
+    memcache.delete('question_list')
 
-def create_question_list(name):
-    qlist = QuestionList()
+def create_edit_question_list(qlist):
+    memcache.add('question_list',qlist)
+
+def create_question_list(clss, name = ''):
+    qlist = QuestionList(parent=clss)
     qlist.name = name
     qlist.put()
     return qlist
 
 def get_question_list(parent):
+    """
+    Get all question lists belonging to a parent (eg Class)
+    """
     query = QuestionList.all().ancestor(parent)
     qlist = query.fetch(1000)
     return qlist

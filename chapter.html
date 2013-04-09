@@ -149,7 +149,12 @@
 {% if has_questions %}
 <h2>Questions</h2>
 {% for q in questions %}
-<h3> <input type="checkbox" name="question" value="{{q.key()}}" class="question" onchange="question_checked(this)"/> Question {{q.title}} </h3>
+<h3> 
+	{% if edit_question_list %}
+	<input type="checkbox" name="question" value="{{q.key()}}" class="question" onchange="question_checked(this)"/>
+	{% endif %} 
+	Question {{q.title}} 
+</h3>
 {{q.text}}
 {% endfor %}
 <div>

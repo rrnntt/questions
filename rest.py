@@ -13,6 +13,7 @@ class RESTHandlerClass(webapp2.RequestHandler):
     def __init__(self, request=None, response=None):
         webapp2.RequestHandler.__init__(self, request, response)
         self.obj = None
+        self.parent_required = False
         
     def convert(self,field,value):
         """
@@ -107,6 +108,8 @@ class RESTHandlerClass(webapp2.RequestHandler):
             parent_key = db.Key(encoded=model['parent'])
 #            obj = self.__class__.ModelClass( parent = parent_key )
             self.obj = self.ModelClass( parent = parent_key )
+        elif self.parent_required:
+            raise Exception('Parent required for '+self.ModelClass.__name__)
         else:
 #            obj = self.__class__.ModelClass()
             self.obj = self.ModelClass()

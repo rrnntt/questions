@@ -7,9 +7,7 @@
     <script type="text/javascript" src="/jquery/js/jquery-ui-1.9.2.custom.min.js"></script>
 	<script type="text/javascript" src="/backbone/underscore-min.js" ></script>
 	<script type="text/javascript" src="/backbone/backbone.js" ></script>
-	<!--
 	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-	-->
 	
     {% block header %}
     <title>{{title}}</title>
@@ -69,25 +67,35 @@
 		return new QuestionList({name: '1', questions: []});
 	}
 	var editQuestionList = createQuestionList();
+	function enableQList()
+	{
+		$("#edit_question_list").html("|	 <a href=\"/questionlistpage?key="+editQuestionList.id+"&edit=true\">Q List</a>");
+		$("#edit_question_list").show();
+	}
+	function disableQList()
+	{
+		$("#edit_question_list").html("");
+		$("#edit_question_list").hide();
+	}
 	editQuestionList.on('change',function()
 	{
-		qlist = editQuestionList.get('questions');
-		if (qlist.length > 0)
+		if (editQuestionList.id == undefined)
 		{
-			$("#edit_question_list").html("|	 <a href=\"/questionlistpage?key="+editQuestionList.id+"&edit=true\">Q List</a>");
-			$("#edit_question_list").show();
+			disableQList();
+			return;
 		}
-		else
-		{
-			$("#edit_question_list").html("");
-			$("#edit_question_list").hide();
-		}
+		enableQList();
 	});
 	{% if edit_question_list %}
 		editQuestionList.id = '{{edit_question_list.key()}}';
 		editQuestionList.fetch();
 	{% endif %}
-	$(function(){$("#edit_question_list").hide();});
+	$(function(){
+		$("#edit_question_list").hide();
+		{% if edit_question_list %}
+			enableQList();
+		{% endif %}
+	});
   	{% block head_script %}
   	{% endblock %}
   </script>

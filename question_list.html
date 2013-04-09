@@ -8,8 +8,8 @@ $(function(){
 	});
 	{% if edit %}
 		$("#save_button").button().click(function(event){
-			editQuestionList.set('name',$('#title').val());
-			editQuestionList.save({},{
+			questionList.set('name',$('#title').val());
+			questionList.save({},{
 				success: function(){location.replace('/savequestionlist?key={{qlist.key()}}&class='+$('#classes').val());}
 			});
 		});
@@ -20,14 +20,14 @@ $(function(){
 		$('#classes').html(html);
 		$('#title').val('{{qlist.name}}');
 		$("#delete_from_question_list").button().click(function(event){
-			qlist = editQuestionList.get('questions');
+			qlist = questionList.get('questions');
 			for(q in questions_to_delete)
 			{
 				var i = qlist.indexOf(questions_to_delete[q]); 
 				qlist.splice(i,1);
 			}
-			editQuestionList.set('questions',qlist);
-			editQuestionList.save({},{
+			questionList.set('questions',qlist);
+			questionList.save({},{
 				success:function(){
 					location.reload();
 				}
@@ -38,6 +38,10 @@ $(function(){
 	{% endif %}
 });
 
+var questionList = createQuestionList();
+questionList.id = '{{qlist.key()}}';
+questionList.name = '{{qlist.name}}';
+questionList.questions = {{question_keys}};
 var questions_to_delete = [];
 function question_checked(box)
 {

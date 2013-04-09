@@ -28,6 +28,9 @@ $(function(){
       	stu.destroy({success: function(){location.reload();}});
       });
     {% endfor %}
+    $("#add_question_list").button().click(function(event){
+    	location.replace('/createquestionlist?parent={{clss.key()}}&goto=/teacherclass?class={{clss.key()}}');
+    });
 });
 {% endblock %}
 
@@ -54,8 +57,10 @@ $(function(){
 
 <h3>Question lists</h3>
 {% for qlist in qlists %}
-<a href="/questionlistpage?key={{qlist.key()}}&goto=/teacherclass?class={{clss.key()}}">{{qlist.name}}</a>
+<a href="/questionlistpage?key={{qlist.key()}}&edit=true&goto=/teacherclass?class={{clss.key()}}">{{qlist.name}}</a>
 <br />
 {% endfor %}
+
+<button id="add_question_list">Add question list</button>
 
 {%endblock%}
