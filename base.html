@@ -22,6 +22,10 @@
     	var html = $('#debug').html() + mess + '<br/>';
     	$('#debug').html(html);
     }
+    function debug1(mess)
+    {
+    	$('#debug').html(mess);
+    }
     Backbone.emulateJSON = true;
     Backbone.emulateHTTP = true;
 	var Chapter = Backbone.Model.extend({
@@ -70,7 +74,7 @@
 		qlist = editQuestionList.get('questions');
 		if (qlist.length > 0)
 		{
-			$("#edit_question_list").html("|	 <a href=\"/questionlistpage?key="+editQuestionList.id+"\">Q List</a>");
+			$("#edit_question_list").html("|	 <a href=\"/questionlistpage?key="+editQuestionList.id+"&edit=true\">Q List</a>");
 			$("#edit_question_list").show();
 		}
 		else

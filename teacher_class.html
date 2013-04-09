@@ -51,4 +51,11 @@ $(function(){
 <div>
 	<button id="addbutton">Add</button>
 </div>
+
+<h3>Question lists</h3>
+{% for qlist in qlists %}
+<a href="/questionlistpage?key={{qlist.key()}}&goto=/teacherclass?class={{clss.key()}}">{{qlist.name}}</a>
+<br />
+{% endfor %}
+
 {%endblock%}

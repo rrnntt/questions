@@ -1,16 +1,103 @@
 {% extends "base.html" %}
 
+{% block head_script%}
+
+$(function(){
+	$("#goto_button").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+		window.location.replace("{{goto}}");
+	});
+	{% if edit %}
+		$("#save_button").button().click(function(event){
+			editQuestionList.set('name',$('#title').val());
+			editQuestionList.save({},{
+				success: function(){location.replace('/savequestionlist?key={{qlist.key()}}&class='+$('#classes').val());}
+			});
+		});
+		var html = '';
+		{% for c in class_list %}
+			html += '<option value="{{c.key()}}">{{c.name}}</option>';
+		{% endfor %}
+		$('#classes').html(html);
+		$('#title').val('{{qlist.name}}');
+		$("#delete_from_question_list").button().click(function(event){
+			qlist = editQuestionList.get('questions');
+			for(q in questions_to_delete)
+			{
+				var i = qlist.indexOf(questions_to_delete[q]); 
+				qlist.splice(i,1);
+			}
+			editQuestionList.set('questions',qlist);
+			editQuestionList.save({},{
+				success:function(){
+					location.reload();
+				}
+			});
+		});
+		$(".question").attr('checked',false);
+		$("#delete_from_question_list").hide();
+	{% endif %}
+});
+
+var questions_to_delete = [];
+function question_checked(box)
+{
+	if (box.checked)
+	{
+		questions_to_delete.push(box.value);
+	}
+	else
+	{
+		var i = questions_to_delete.indexOf(box.value);
+		questions_to_delete.splice(i,1);
+	}
+	if (questions_to_delete.length > 0)
+	{
+		$("#delete_from_question_list").show();
+	}
+	else
+	{
+		$("#delete_from_question_list").hide();
+	}
+}
+
+{% endblock %}
+
 {% block main%}
+<span id="goto_button">Back</span>
 <h2>Questions {{qlist.name}}</h2>
 
+{% if edit %}
+<table >
+	<tr>
+		<td>Title:</td>
+		<td>
+		<input type="text" id="title"  style="width: 500px"/>
+		</td>
+	</tr>
+	<tr>
+		<td>Class:</td>
+		<td><select id="classes"></select></td>
+	</tr>
+</table>
+{% endif %}
+
 {% for q in questions %}
-<h3>Question {{q.title}} </h3>
+<h3>
+	{% if edit %}
+	<input type="checkbox" value="{{q.key()}}" class="question" onchange="question_checked(this)"/>
+	{% endif %}
+	Question {{q.title}} 
+</h3>
 {{q.text}}
 {% endfor %}
 
-{% for q in qlist.questions %}
-<h3>-Question- {{qlist.size()}} </h3>
-{{q.text}}
-{% endfor %}
+{% if edit %}
+
+<div style="margin-top: 20px">
+	<button id="save_button">Save</button>
+	<button id="delete_from_question_list">Delete selected questions</button>
+</div>
+
+{% endif %}
 
 {% endblock %}
