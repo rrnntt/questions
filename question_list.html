@@ -16,6 +16,22 @@ $(function(){
 		$("#cancel_button").button().click(function(event){
 			location.replace('/cancelquestionlist?goto={{goto}}');
 		});
+		$("#delete_button").button().click(function(event){
+			$("#dialog-confirm").dialog('open');
+		});
+        $( "#dialog-confirm" ).dialog({
+			modal: true,
+			autoOpen: false,
+			buttons: {
+				"Delete": function() {
+					location.replace('/deletequestionlist?goto={{goto}}');
+					$( this ).dialog( "close" );
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
 		var html = '';
 		{% for c in class_list %}
 			html += "<" + "option value=\"{{c.key()}}\" ";
@@ -107,9 +123,17 @@ function question_checked(box)
 <div style="margin-top: 20px">
 	<button id="save_button">Save</button>
 	<button id="cancel_button">Cancel</button>
+	<button id="delete_button">Delete</button>
 	<button id="delete_from_question_list">Delete selected questions</button>
 </div>
 
 {% endif %}
+
+<div id="dialog-confirm" title="Delete this list">
+	<p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+		Do you really want to delete this list?
+	</p>
+</div>
 
 {% endblock %}

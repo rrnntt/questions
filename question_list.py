@@ -22,7 +22,7 @@ def stop_edit_question_list():
 def start_edit_question_list(qlist):
     memcache.add('question_list',qlist)
 
-def create_question_list(clss, name = ''):
+def create_question_list(clss, name = 'new'):
     qlist = QuestionList(parent=clss)
     qlist.name = name
     qlist.put()

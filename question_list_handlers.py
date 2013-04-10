@@ -113,6 +113,29 @@ class CancelEditQuestionList(webapp2.RequestHandler):
         
         self.redirect(goto)
 
+class DeleteEditQuestionList(webapp2.RequestHandler):
+    """
+    Delete list editing and remove it from shopping list.
+    URL: /deletequestionlist?goto=<url>
+    """
+    def get(self):
+        user = get_current_user()
+        if not user:
+            self.redirect('/')
+            return
+            
+        qlist = get_edit_question_list()
+        if qlist != None:
+            qlist.delete()
+        
+        goto = self.request.get("goto")
+        if goto == None or goto == '':
+            goto = '/'
+        
+        stop_edit_question_list()
+        
+        self.redirect(goto)
+
 class CreateQuestionList(webapp2.RequestHandler):
     """
     Open page showing single question list.

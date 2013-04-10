@@ -117,6 +117,29 @@ class CancelEditCourse(webapp2.RequestHandler):
         
         self.redirect(goto)
 
+class DeleteEditCourse(webapp2.RequestHandler):
+    """
+    Delete course editing and remove it from shopping list.
+    URL: /deletecourse?goto=<url>
+    """
+    def get(self):
+        user = get_current_user()
+        if not user:
+            self.redirect('/')
+            return
+            
+        course = get_edit_course()
+        if course != None:
+            course.delete()
+            
+        goto = self.request.get("goto")
+        if goto == None or goto == '':
+            goto = '/'
+        
+        stop_edit_course()
+        
+        self.redirect(goto)
+
 class CreateCourse(webapp2.RequestHandler):
     """
     Create new course.

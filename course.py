@@ -22,7 +22,7 @@ def stop_edit_course():
 def start_edit_course(course):
     memcache.add('course',course)
 
-def create_course(clss, name = ''):
+def create_course(clss, name = 'new'):
     course = Course(parent=clss)
     course.name = name
     course.put()
