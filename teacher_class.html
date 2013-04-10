@@ -31,6 +31,9 @@ $(function(){
     $("#add_question_list").button().click(function(event){
     	location.replace('/createquestionlist?parent={{clss.key()}}&goto=/teacherclass?class={{clss.key()}}');
     });
+    $("#add_course").button().click(function(event){
+    	location.replace('/createcourse?parent={{clss.key()}}&goto=/teacherclass?class={{clss.key()}}');
+    });
 });
 {% endblock %}
 
@@ -54,6 +57,14 @@ $(function(){
 <div>
 	<button id="addbutton">Add</button>
 </div>
+
+<h3>Courses</h3>
+{% for course in courses %}
+<a href="/coursepage?key={{course.key()}}&edit=true&goto=/teacherclass?class={{clss.key()}}">{{course.name}}</a>
+<br />
+{% endfor %}
+
+<button id="add_course">Add course</button>
 
 <h3>Question lists</h3>
 {% for qlist in qlists %}

@@ -66,6 +66,15 @@
 			});
 		return new QuestionList({name: '1', questions: []});
 	}
+	function createCourse()
+	{
+		var Course = Backbone.Model.extend({
+			urlRoot : '/course', 
+			});
+		return new Course({name: 'new', chapters: []});
+	}
+	
+	
 	var editQuestionList = createQuestionList();
 	function enableQList()
 	{
@@ -96,6 +105,41 @@
 			enableQList();
 		{% endif %}
 	});
+	
+	var editCourse = createCourse();
+	function enableCourse()
+	{
+		$("#edit_course").html("|	 <a href=\"/coursepage?key="+editCourse.id+"&edit=true\">Course</a>");
+		$("#edit_course").show();
+	}
+	function disableCourse()
+	{
+		$("#edit_course").html("");
+		$("#edit_course").hide();
+	}
+	editCourse.on('change',function()
+	{
+		if (editCourse.id == undefined)
+		{
+			disableCourse();
+			return;
+		}
+		enableCourse();
+	});
+	{% if edit_course %}
+		editCourse.id = '{{edit_course.key()}}';
+		editCourse.set('name','{{edit_course.name}}');
+		editCourse.set('chapters','{{edit_course.chapters}}');
+	{% endif %}
+	$(function(){
+		$("#edit_course").hide();
+		{% if edit_course %}
+			enableCourse();
+		{% endif %}
+	});
+	
+	
+	
   	{% block head_script %}
   	{% endblock %}
   </script>
@@ -117,6 +161,7 @@
 				  {% endif %}
 				  {% if user.isTeacher() %}
 				  | <a href="/chapterpage?chapter=root">My chapters</a>
+     			  <span id="edit_course"></span>
      			  <span id="edit_question_list"></span>
 				  {% endif %}
 			  {% endif %}

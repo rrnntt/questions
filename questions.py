@@ -9,6 +9,7 @@ import teacher_handlers
 import aclass_handlers
 import question_handlers
 import question_list_handlers
+import course_handlers
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -63,18 +64,23 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/login', Login),
                                (r'/logout', Logout),
                                (r'/test', TestPage),
+                               
                                (r'/adminstart', admin_handlers.AdminStartPage),
+                               
                                (r'/teacherstart', teacher_handlers.StartPage),
                                (r'/teacherclass', teacher_handlers.ClassPage),
+                               
                                (r'/classes', aclass_handlers.Classes),
                                (r'/classes/(.+)', aclass_handlers.Classes),
                                (r'/students', aclass_handlers.Students),
                                (r'/students/(.+)', aclass_handlers.Students),
+                               
                                (r'/userlist', myuser.UserList),
                                (r'/users', myuser_handlers.MyUsers),
                                (r'/users/(.+)', myuser_handlers.MyUsers),
                                (r'/deleteuser', myuser.DeleteUser),
                                (r'/adduser', myuser.AddUser),
+                               
                                (r'/chapterpage', chapter_module.ChapterPage),
                                (r'/chaptereditpage', chapter_module.EditChapterPage),
                                (r'/chapters', chapter_module.Chapters),
@@ -82,10 +88,17 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/questions', question_handlers.Questions),
                                (r'/questions/(.+)', question_handlers.Questions),
                                (r'/questioneditpage', question_handlers.EditQuestionPage),
+                               
                                (r'/questionlist', question_list_handlers.QuestionListRESTHandler),
                                (r'/questionlist/(.+)', question_list_handlers.QuestionListRESTHandler),
                                (r'/questionlistpage', question_list_handlers.QuestionListPage),
                                (r'/savequestionlist', question_list_handlers.SaveQuestionList),
                                (r'/createquestionlist', question_list_handlers.CreateQuestionList),
+                               
+                               (r'/course', course_handlers.CourseRESTHandler),
+                               (r'/course/(.+)', course_handlers.CourseRESTHandler),
+                               (r'/coursepage', course_handlers.CoursePage),
+                               (r'/savecourse', course_handlers.SaveCourse),
+                               (r'/createcourse', course_handlers.CreateCourse),
                                ],
                               debug=True)

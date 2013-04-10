@@ -4,6 +4,7 @@ from myuser import MyUser,create_user,get_current_teacher
 from mytemplate import write_template
 from aclass import *
 from question_list import QuestionList, get_question_list
+from course import Course, get_courses
 
 class StartPage(webapp2.RequestHandler):
     def get(self):
@@ -30,6 +31,7 @@ class ClassPage(webapp2.RequestHandler):
         template_values = {'students': students,
                            'clss': clss,
                            'qlists': get_question_list(clss),
+                           'courses': get_courses(clss)
                            }
         write_template(self, teacher, 'teacher_class.html', template_values)
                 

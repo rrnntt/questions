@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block head_script%}
+
+$(function(){
+	$("#goto_button").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+		window.location.replace("{{goto}}");
+	});
+	{% if edit %}
+		$("#save_button").button().click(function(event){
+			course.set('name',$('#title').val());
+			course.save({},{
+				success: function(){location.replace('/savecourse?key={{course.key()}}&class='+$('#classes').val());}
+			});
+		});
+		var html = '';
+		{% for c in class_list %}
+			html += '<option value="{{c.key()}}">{{c.name}}</option>';
+		{% endfor %}
+		$('#classes').html(html);
+		$('#title').val('{{course.name}}');
+		$("#delete_from_course").button().click(function(event){
+			chapters = course.get('chapters');
+			for(q in chapters_to_delete)
+			{
+				var i = chapters.indexOf(chapters_to_delete[q]); 
+				chapters.splice(i,1);
+			}
+			course.set('chapters',chapters);
+			course.save({},{
+				success:function(){
+					location.reload();
+				}
+			});
+		});
+		$(".chapter").attr('checked',false);
+		$("#delete_from_course").hide();
+	{% endif %}
+});
+
+var course = createCourse();
+course.id = '{{course.key()}}';
+course.set('name','{{course.name}}');
+course.set('chapters', {{chapter_keys}});
+var chapters_to_delete = [];
+function chapter_checked(box)
+{
+	if (box.checked)
+	{
+		chapters_to_delete.push(box.value);
+	}
+	else
+	{
+		var i = chapters_to_delete.indexOf(box.value);
+		chapters_to_delete.splice(i,1);
+	}
+	if (chapters_to_delete.length > 0)
+	{
+		$("#delete_from_course").show();
+	}
+	else
+	{
+		$("#delete_from_course").hide();
+	}
+}
+
+{% endblock %}
+
+{% block main%}
+<span id="goto_button">Back</span>
+<h2>Course {{course.name}}</h2>
+
+{% if edit %}
+<table >
+	<tr>
+		<td>Title:</td>
+		<td>
+		<input type="text" id="title"  style="width: 500px"/>
+		</td>
+	</tr>
+	<tr>
+		<td>Class:</td>
+		<td><select id="classes"></select></td>
+	</tr>
+</table>
+{% endif %}
+
+{% for q in chapters %}
+<h3>
+	{% if edit %}
+	<input type="checkbox" value="{{q.key()}}" class="chapter" onchange="question_checked(this)"/>
+	{% endif %}
+	Chapter {{q.title}} 
+</h3>
+{% endfor %}
+
+{% if edit %}
+
+<div style="margin-top: 20px">
+	<button id="save_button">Save</button>
+	<button id="delete_from_course">Delete selected chapterss</button>
+</div>
+
+{% endif %}
+
+{% endblock %}
