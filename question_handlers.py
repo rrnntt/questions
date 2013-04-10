@@ -1,7 +1,7 @@
 import webapp2
 from google.appengine.ext import db
 import simplejson
-import mytemplate
+from mytemplate import write_template
 from myuser import *
 from question import *
 from chapter_module import get_chapter_by_encoded_key

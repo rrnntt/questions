@@ -94,11 +94,13 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/questionlistpage', question_list_handlers.QuestionListPage),
                                (r'/savequestionlist', question_list_handlers.SaveQuestionList),
                                (r'/createquestionlist', question_list_handlers.CreateQuestionList),
+                               (r'/cancelquestionlist', question_list_handlers.CancelEditQuestionList),
                                
                                (r'/course', course_handlers.CourseRESTHandler),
                                (r'/course/(.+)', course_handlers.CourseRESTHandler),
                                (r'/coursepage', course_handlers.CoursePage),
                                (r'/savecourse', course_handlers.SaveCourse),
                                (r'/createcourse', course_handlers.CreateCourse),
+                               (r'/cancelcourse', course_handlers.CancelEditCourse),
                                ],
                               debug=True)

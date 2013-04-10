@@ -13,9 +13,16 @@ $(function(){
 				success: function(){location.replace('/savequestionlist?key={{qlist.key()}}&class='+$('#classes').val());}
 			});
 		});
+		$("#cancel_button").button().click(function(event){
+			location.replace('/cancelquestionlist?goto={{goto}}');
+		});
 		var html = '';
 		{% for c in class_list %}
-			html += '<option value="{{c.key()}}">{{c.name}}</option>';
+			html += "<" + "option value=\"{{c.key()}}\" ";
+			{% if c.key() == qlist.parent_key() %}
+				html += 'selected="selected" '; 
+			{% endif %}
+			html +=  ">{{c.name}}</option>";
 		{% endfor %}
 		$('#classes').html(html);
 		$('#title').val('{{qlist.name}}');
@@ -99,6 +106,7 @@ function question_checked(box)
 
 <div style="margin-top: 20px">
 	<button id="save_button">Save</button>
+	<button id="cancel_button">Cancel</button>
 	<button id="delete_from_question_list">Delete selected questions</button>
 </div>
 

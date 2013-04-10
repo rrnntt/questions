@@ -89,11 +89,30 @@ class SaveCourse(webapp2.RequestHandler):
         # if class is different copy list to the new class
         if class_key != course.parent_key():
             aclass = Class.get(class_key)
-            newList = Course(parent=aclass)
-            newList.name = course.name
-            newList.questions = course.questions
-            newList.put()
+            newCourse = Course(parent=aclass)
+            newCourse.name = course.name
+            newCourse.chapters = course.chapters
+            newCourse.put()
             
+        stop_edit_course()
+        
+        self.redirect(goto)
+
+class CancelEditCourse(webapp2.RequestHandler):
+    """
+    Cancel course editing and remove it from shopping list.
+    URL: /cancelcourse?goto=<url>
+    """
+    def get(self):
+        user = get_current_user()
+        if not user:
+            self.redirect('/')
+            return
+            
+        goto = self.request.get("goto")
+        if goto == None or goto == '':
+            goto = '/'
+        
         stop_edit_course()
         
         self.redirect(goto)
