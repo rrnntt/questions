@@ -40,7 +40,7 @@ class CoursePage(webapp2.RequestHandler):
         chapters = []
         chapter_keys = []
         for q in course.chapters:
-            chapter = Course.get(q)
+            chapter = Chapter.get(q)
             if chapter:
                 chapters.append(chapter)
                 chapter_keys.append(str(chapter.key()))

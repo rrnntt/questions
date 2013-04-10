@@ -88,7 +88,7 @@ function chapter_checked(box)
 {% for q in chapters %}
 <h3>
 	{% if edit %}
-	<input type="checkbox" value="{{q.key()}}" class="chapter" onchange="question_checked(this)"/>
+	<input type="checkbox" value="{{q.key()}}" class="chapter" onchange="chapter_checked(this)"/>
 	{% endif %}
 	Chapter {{q.title}} 
 </h3>

@@ -129,7 +129,7 @@
 	{% if edit_course %}
 		editCourse.id = '{{edit_course.key()}}';
 		editCourse.set('name','{{edit_course.name}}');
-		editCourse.set('chapters','{{edit_course.chapters}}');
+		editCourse.set('chapters',{{edit_course_chapter_keys}});
 	{% endif %}
 	$(function(){
 		$("#edit_course").hide();

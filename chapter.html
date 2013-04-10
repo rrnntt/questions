@@ -103,6 +103,31 @@
 		});
 		$("#add_to_question_list").hide();
 		$(".question").attr('checked',false);
+
+		$("#add_to_course").button().click(function(event){
+			if (chapters_to_add.length > 0)
+			{
+				course = editCourse.get('chapters').concat(chapters_to_add);
+				editCourse.set('chapters',course);
+				editCourse.save({},
+				{
+				  success: function(model,resp,opt){
+				  	if (resp)
+				  	{
+				  		model.id = resp.id;
+				  	}
+				  	//location.reload();
+				  	},
+				  error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+				  wait: true
+				});
+				$("#add_to_course").hide();
+				$(".chapter").attr('checked',false);
+				chapters_to_add = [];
+			}			
+		});
+		$("#add_to_course").hide();
+		$(".chapter").attr('checked',false);
 	});
 	var questions_to_add = [];
 	function question_checked(box)
@@ -123,6 +148,28 @@
 		else
 		{
 			$("#add_to_question_list").hide();
+		}
+	}
+
+	var chapters_to_add = [];
+	function chapter_checked(box)
+	{
+		if (box.checked)
+		{
+			chapters_to_add.push(box.value);
+		}
+		else
+		{
+			var i = chapters_to_add.indexOf(box.value);
+			chapters_to_add.splice(i,1);
+		}
+		if (chapters_to_add.length > 0)
+		{
+			$("#add_to_course").show();
+		}
+		else
+		{
+			$("#add_to_course").hide();
 		}
 	}
 {% endblock %}
@@ -167,10 +214,16 @@
 <ul>
 {% for subchapter in subchapters %}
   <li>
+  	{% if edit_course %}
+  	<input type="checkbox" value="{{subchapter.key()}}" class="chapter" onchange="chapter_checked(this)"/>
+  	{% endif %}
   	<a href="/chapterpage?chapter={{subchapter.key()}}">{{ subchapter.title }}</a>
   </li>
 {% endfor %}
 </ul>
+<div>
+	<button id="add_to_course">Add to course</button>
+</div>
 {% endif %}
 {% if chapter.canEdit(user) %}
 	<div style="background-color: #eee; margin-top: 30px">

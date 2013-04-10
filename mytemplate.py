@@ -4,6 +4,7 @@ import os
 from google.appengine.api import users
 from question_list import get_edit_question_list
 from course import get_edit_course
+from chapter import Chapter
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -34,7 +35,15 @@ def write_template(handler, user, file_name, template_values = {}):
     if not 'title' in template_values:
         template_values['title'] = 'Questions'
     template_values['edit_question_list'] = get_edit_question_list()
-    template_values['edit_course'] = get_edit_course()
+    course = get_edit_course()
+    template_values['edit_course'] = course 
+    chapter_keys = []
+    if course:
+        for q in course.chapters:
+            chapter = Chapter.get(q)
+            if chapter:
+                chapter_keys.append(str(chapter.key()))
+    template_values['edit_course_chapter_keys'] = chapter_keys 
     template = jinja_environment.get_template(file_name)
     handler.response.out.write(template.render(template_values))
 

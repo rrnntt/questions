@@ -2,7 +2,6 @@ import webapp2
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import memcache
-from mytemplate import write_template
 
 class MyUser(db.Model):
     """User of the system"""
@@ -236,38 +235,3 @@ def google_login(email,user_id):
     #os.environ['FEDERATED_IDENTITY']= 'abc321'
     #os.environ['FEDERATED_PROVIDER']= '321'
 
-#########################################################################
-#    Request handlers
-#########################################################################
-
-class UserList(webapp2.RequestHandler):
-    def get(self):
-
-        user = get_current_admin()
-        if not user:
-            self.redirect('/')
-            return
-        
-        user_list = MyUser.all().fetch(1000)
-            
-        template_values = {
-            'user_list': user_list,
-        }
-        write_template(self, user, 'user_list.html',template_values)
-        
-class DeleteUser(webapp2.RequestHandler):
-    def post(self):
-        encoded_key = self.request.get('key')
-        key = db.Key(encoded=encoded_key)
-        user = MyUser.get(key)
-        if user:
-            user.delete()
-        self.redirect('/userlist')
-        
-class AddUser(webapp2.RequestHandler):
-    def post(self):
-        name = self.request.get('new-name')
-        if len(name) > 0:
-            create_user(name)
-        self.redirect('/userlist')
-        

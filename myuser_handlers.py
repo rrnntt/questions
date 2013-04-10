@@ -3,6 +3,7 @@ import simplejson
 from google.appengine.ext import db
 from myuser import MyUser,create_user,get_current_admin
 from aclass import Class
+from mytemplate import write_template
 
 ####################################################################
 #   MyUser REST service
@@ -75,3 +76,38 @@ class MyUsers(webapp2.RequestHandler):
         if user:
             user.delete()
 
+#########################################################################
+#    Request handlers
+#########################################################################
+
+class UserList(webapp2.RequestHandler):
+    def get(self):
+
+        user = get_current_admin()
+        if not user:
+            self.redirect('/')
+            return
+        
+        user_list = MyUser.all().fetch(1000)
+            
+        template_values = {
+            'user_list': user_list,
+        }
+        write_template(self, user, 'user_list.html',template_values)
+        
+class DeleteUser(webapp2.RequestHandler):
+    def post(self):
+        encoded_key = self.request.get('key')
+        key = db.Key(encoded=encoded_key)
+        user = MyUser.get(key)
+        if user:
+            user.delete()
+        self.redirect('/userlist')
+        
+class AddUser(webapp2.RequestHandler):
+    def post(self):
+        name = self.request.get('new-name')
+        if len(name) > 0:
+            create_user(name)
+        self.redirect('/userlist')
+        
