@@ -40,8 +40,8 @@ $(function(){
 
 var questionList = createQuestionList();
 questionList.id = '{{qlist.key()}}';
-questionList.name = '{{qlist.name}}';
-questionList.questions = {{question_keys}};
+questionList.set('name','{{qlist.name}}');
+questionList.set('questions', {{question_keys}});
 var questions_to_delete = [];
 function question_checked(box)
 {

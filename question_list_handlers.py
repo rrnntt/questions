@@ -49,6 +49,7 @@ class QuestionListPage(webapp2.RequestHandler):
         if edit == 'true' and user.isTeacher():
             edit = True
             class_list = get_teacher_classes(user)
+            start_edit_question_list(qlist)
         else:
             edit = False
             class_list = []
@@ -89,7 +90,7 @@ class SaveQuestionList(webapp2.RequestHandler):
             newList.questions = qlist.questions
             newList.put()
             
-        delete_edit_question_list()
+        stop_edit_question_list()
         
         self.redirect('/')
 
@@ -106,7 +107,7 @@ class CreateQuestionList(webapp2.RequestHandler):
             
         parent_key = db.Key(encoded=self.request.get('parent'))
         qlist = create_question_list(parent_key)
-        create_edit_question_list(qlist)
+        start_edit_question_list(qlist)
         
         goto = self.request.get('goto')
         if goto == None and goto == '':

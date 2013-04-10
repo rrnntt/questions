@@ -53,6 +53,7 @@ class Classes(webapp2.RequestHandler):
                 return
         else:
             self.response.out.write('error')
+            return
         
         self.response.out.write('{"id":"'+str(new_clss.key())+'"}')
 

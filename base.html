@@ -136,6 +136,9 @@
 	{% if user %}
 	  <div style="margin-bottom: 10px">
 	  	User: {{ user_name }}
+	  	{% if edit_question_list %}
+	  	<br />Edit list {{edit_question_list.name}}
+	  	{% endif %}
 	  </div>
 	{% endif %}
     
