@@ -1,5 +1,6 @@
 from google.appengine.ext import db
 from google.appengine.api import memcache
+from chapter import Chapter, root_key
 
 class Course(db.Model):
     # Name/Title of the course 
@@ -9,6 +10,29 @@ class Course(db.Model):
     
     def size(self):
         return len(self.chapters)
+    
+    def has_chapter(self, chapter):
+        """
+        Check if the course has a prticular chapter
+        """
+        if isinstance(chapter, Chapter):
+            chapter_key = chapter.key()
+        else:
+            chapter_key = chapter
+            chapter = Chapter.get(chapter_key)
+            
+        if chapter_key in self.chapters:
+            return True
+        
+        root = root_key()
+        parent_chapter_key = chapter.parent_key()
+        while parent_chapter_key != root and parent_chapter_key != None: 
+            if parent_chapter_key in self.chapters:
+                return True
+            chap = Chapter.get(parent_chapter_key)
+            parent_chapter_key = chap.parent_key()
+            
+        return False  
 
 def get_edit_course():
     """
@@ -35,3 +59,4 @@ def get_courses(parent):
     query = Course.all().ancestor(parent)
     course = query.fetch(1000)
     return course
+

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block head_script%}
+
+$(function(){
+	$("#goto_button").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+		window.location.replace("/studentcoursespage");
+	});
+});
+
+var course = createCourse();
+course.id = '{{course.key()}}';
+course.set('name','{{course.name}}');
+course.set('chapters', {{chapter_keys}});
+
+{% endblock %}
+
+{% block main%}
+<span id="goto_button">Back</span>
+<h3>Course {{course.name}}</h3>
+
+{% for c in chapters %}
+<ul>
+	<li>
+		<a href="/studentchapterpage?chapter={{c.key()}}&course={{course.key()}}">Chapter {{c.title}}</a>
+	</li>
+</ul>
+{% endfor %}
+
+
+{% endblock %}

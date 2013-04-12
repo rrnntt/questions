@@ -122,3 +122,33 @@ class Questions(webapp2.RequestHandler):
         else:
             raise Exception('Deleting of question failed')
 
+class Answer(webapp2.RequestHandler):
+    """Implements REST service for receiving answers"""
+    def put(self,Id):
+        question = Question.get(db.Key(encoded = Id))
+
+        if question:
+            json = simplejson.decoder.JSONDecoder()
+            model = json.decode( self.request.get('model'))
+            if not 'answer' in model:
+                raise Exception('Chacking answer failed')
+            
+            answer = model['answer']
+            if question.check_answer(answer):
+                self.response.out.write('{"res":"success"}')
+            else:
+                self.response.out.write('{"res":"failed"}')
+
+    def post(self,Id=None):
+
+        user = get_current_user()
+        if not user:
+            self.redirect('/')
+            return
+            
+        httpMethod = self.request.get('_method')
+        if httpMethod == 'PUT':
+            self.put(Id)
+            return
+        
+        self.redirect('/')

@@ -49,6 +49,22 @@ class Chapter(db.Model):
         i = self.authors.index(k)
         del self.authors[i:i+1]
         
+    def list_all_subchapters(self):
+        query = Chapter.all().ancestor(self.key())
+        return query.fetch(1000)
+    
+    def subchapters(self):
+        query = Chapter.all().ancestor(self.key()).order('title')
+        # try to fetch all of them. I hope 1000 is a large enogh number.
+        all_chapters = query.fetch(1000)
+        chapters = []
+        # collect only direct descendants of parent chapters
+        for chapter in all_chapters:
+            if chapter.parent_key() == self.key():
+                chapters.append(chapter)
+        # return the result
+        return chapters
+
         
 def create_chapter(parent_chapter, author, title):
     parent_key = parent_chapter

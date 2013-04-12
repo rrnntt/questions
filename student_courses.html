@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{%block main%}
+<h3> Courses: </h3>
+<hr />
+<ul>
+	{% for c in courses%}
+		<li> <a href="/studentcoursepage?course={{c.key()}}">{{ c.name }}</a> </li>
+	{% endfor %}
+</ul>
+
+{%endblock%}

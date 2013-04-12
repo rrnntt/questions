@@ -73,6 +73,15 @@
 			});
 		return new Course({name: 'new', chapters: []});
 	}
+	// id - is question's key, text is student's answer
+	function createAnswer(id,answer)
+	{
+		var Answer = Backbone.Model.extend({
+			urlRoot : '/answer',
+			id: id, 
+			});
+		return new Answer({answer: answer});
+	}
 	
 	
 	var editQuestionList = createQuestionList();

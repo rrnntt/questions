@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block head_script %}
+	var chapter = new Chapter();
+	chapter.set('title','{{chapter.title}}');
+	chapter.set('parent_key','{{chapter_parent_key}}');
+	chapter.id = '{{chapter.key()}}';
+	$(function(){
+		$("#up_button").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+			window.location.replace("/studentchapterpage?chapter={{chapter_parent_key}}&course={{course.key()}}");
+		});
+		{% if has_questions %}
+		{% for q in questions %}
+			$("#submit_answer_{{q.key()}}").button().click(function(){
+				var answer = createAnswer("{{q.key()}}",$("#answer-text_{{q.key()}}").val());
+				answer.save({},{
+					success: function(model, resp, opt){
+						alert('OK: '+JSON.stringify(resp));
+					},
+					error: function(model, resp, opt){
+						alert('error'+JSON.stringify(resp));
+					},
+				});
+			});
+		{% endfor %}
+		{% endif %}
+	});
+{% endblock %}
+
+{% block main %}
+
+{% if chapter.title != 'Root' %}
+    <div id="chapter-chain">
+	{% for p in parents %}
+	  <a href="/studentchapterpage?chapter={{p.key()}}&course={{course.key()}}">{{p.title}} :</a>  
+	{% endfor %}
+	</div>
+  <br />
+  <span id="up_button"><a href="/studentchapterpage?chapter={{chapter_parent_key}}&course={{course.key()}}">Up</a></span>
+{% endif %}
+
+<span id="chapter_title">{{chapter.title}}</span> 
+<hr />
+
+{{chapter_formatted_text}}
+
+{% if has_questions %}
+<h2>Questions</h2>
+{% for q in questions %}
+<h3> 
+	Question {{q.title}} 
+</h3>
+{{q.text}}
+<br />
+<table >
+	<tr>
+	<td>Answer:</td> 
+	<td><textarea id="answer-text_{{q.key()}}" rows="1" cols="80"></textarea> </td>
+	</tr>
+</table>
+<button id="submit_answer_{{q.key()}}">Submit</button>
+{% endfor %}
+{% endif %}
+
+{% if not subchapters_empty %}
+<h2>Sub-chapters</h2>
+<ul>
+{% for subchapter in subchapters %}
+  <li>
+  	<a href="/studentchapterpage?chapter={{subchapter.key()}}&course={{course.key()}}">{{ subchapter.title }}</a>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}

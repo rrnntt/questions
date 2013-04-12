@@ -10,6 +10,7 @@ import aclass_handlers
 import question_handlers
 import question_list_handlers
 import course_handlers
+import student_handlers
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -21,6 +22,9 @@ class MainPage(webapp2.RequestHandler):
                 return
             elif user.isTeacher():
                 self.redirect('/teacherstart')
+                return
+            elif user.isStudent():
+                self.redirect('/studentstart')
                 return
             else:
                 write_template(self, user, 'index.html', template_values)
@@ -85,9 +89,11 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/chaptereditpage', chapter_module.EditChapterPage),
                                (r'/chapters', chapter_module.Chapters),
                                (r'/chapters/(.+)', chapter_module.Chapters),
+                               
                                (r'/questions', question_handlers.Questions),
                                (r'/questions/(.+)', question_handlers.Questions),
                                (r'/questioneditpage', question_handlers.EditQuestionPage),
+                               (r'/answer/(.+)', question_handlers.Answer),
                                
                                (r'/questionlist', question_list_handlers.QuestionListRESTHandler),
                                (r'/questionlist/(.+)', question_list_handlers.QuestionListRESTHandler),
@@ -104,5 +110,11 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/createcourse', course_handlers.CreateCourse),
                                (r'/cancelcourse', course_handlers.CancelEditCourse),
                                (r'/deletecourse', course_handlers.DeleteEditCourse),
+                               
+                               (r'/studentstart', student_handlers.StartPage),
+                               (r'/studentchapterpage', student_handlers.ChapterPage),
+                               (r'/studentselectclass', student_handlers.SelectClass),
+                               (r'/studentcoursespage', student_handlers.CoursesPage),
+                               (r'/studentcoursepage', student_handlers.CoursePage),
                                ],
                               debug=True)

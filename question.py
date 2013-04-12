@@ -11,6 +11,9 @@ class Question(polymodel.PolyModel):
     def get_answer(self):
         return self.answer
     
+    def check_answer(self, answer):
+        return self.get_answer() == answer
+    
 class CompositeQuestion(Question):
     questions = db.ListProperty(db.Key)
     
