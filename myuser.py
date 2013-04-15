@@ -174,7 +174,7 @@ def local_logout():
     
 def get_current_user():
     """Return the current user if someone logged in or None otherwise"""
-    default_user = 'test@example.com'
+    default_user = 'roman.tolchenov'
     gUser = users.get_current_user()
     if not gUser:
         user_key = memcache.get('local_user')

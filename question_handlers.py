@@ -1,6 +1,6 @@
 import webapp2
 from google.appengine.ext import db
-import simplejson
+import json
 from mytemplate import write_template
 from myuser import *
 from question import *
@@ -61,8 +61,8 @@ class Questions(webapp2.RequestHandler):
         question = Question.get(db.Key(encoded = Id))
 
         if question:
-            json = simplejson.decoder.JSONDecoder()
-            model = json.decode( self.request.get('model'))
+            jsn = json.decoder.JSONDecoder()
+            model = jsn.decode( self.request.get('model'))
             #raise Exception(model[0])
             if 'text' in model:
                 question.text = model['text']
@@ -93,8 +93,8 @@ class Questions(webapp2.RequestHandler):
             raise Exception('GET not implemented')
             return
             
-        json = simplejson.decoder.JSONDecoder()
-        model = json.decode( self.request.get('model'))
+        jsn = json.decoder.JSONDecoder()
+        model = jsn.decode( self.request.get('model'))
 
         if not 'text' in model or not 'answer' in model or not 'chapter' in model:
             self.response.out.write('error')
@@ -128,8 +128,8 @@ class Answer(webapp2.RequestHandler):
         question = Question.get(db.Key(encoded = Id))
 
         if question:
-            json = simplejson.decoder.JSONDecoder()
-            model = json.decode( self.request.get('model'))
+            jsn = json.decoder.JSONDecoder()
+            model = jsn.decode( self.request.get('model'))
             if not 'answer' in model:
                 raise Exception('Chacking answer failed')
             

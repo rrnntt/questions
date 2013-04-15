@@ -1,5 +1,5 @@
 import webapp2
-import simplejson
+import json
 from google.appengine.ext import db
 from aclass import Class, create_class, get_student_classes
 from myuser import get_current_teacher,get_current_student,MyUser,create_user
@@ -13,8 +13,8 @@ class Classes(webapp2.RequestHandler):
         """Save a class with key == Id"""
         clss = Class.get( db.Key(encoded=Id) )
         if clss:
-            json = simplejson.decoder.JSONDecoder()
-            model = json.decode( self.request.get('model'))
+            jsn = json.decoder.JSONDecoder()
+            model = jsn.decode( self.request.get('model'))
             clss.name = model['name']
             clss.put()
         else:
@@ -39,8 +39,8 @@ class Classes(webapp2.RequestHandler):
             raise Exception('GET not implemented')
             return
             
-        json = simplejson.decoder.JSONDecoder()
-        model = json.decode( self.request.get('model'))
+        jsn = json.decoder.JSONDecoder()
+        model = jsn.decode( self.request.get('model'))
         if not 'name' in model:
             self.response.out.write('error')
         
@@ -72,8 +72,8 @@ class Students(webapp2.RequestHandler):
         """Save a student with key == Id"""
         student = MyUser.get( db.Key(encoded=Id) )
         if student:
-            json = simplejson.decoder.JSONDecoder()
-            model = json.decode( self.request.get('model'))
+            jsn = json.decoder.JSONDecoder()
+            model = jsn.decode( self.request.get('model'))
             student.from_json( model )
             student.put()
         else:
@@ -100,9 +100,9 @@ class Students(webapp2.RequestHandler):
             raise Exception('GET not implemented')
             return
             
-        json = simplejson.decoder.JSONDecoder()
+        jsn = json.decoder.JSONDecoder()
         #raise Exception('model '+self.request.get('model'))
-        model = json.decode( self.request.get('model'))
+        model = jsn.decode( self.request.get('model'))
         
         if not 'clss' in model:
             raise Exception('Class is missing from model.')

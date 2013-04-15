@@ -1,5 +1,5 @@
 import webapp2
-import simplejson
+import json
 from google.appengine.ext import db
 from myuser import MyUser,create_user,get_current_admin
 from aclass import Class
@@ -15,8 +15,8 @@ class MyUsers(webapp2.RequestHandler):
         user = MyUser.get( db.Key(encoded=Id) )
         #chapter,ekey = get_chapter_by_encoded_key(Id)
         if user:
-            json = simplejson.decoder.JSONDecoder()
-            model = json.decode( self.request.get('model'))
+            jsn = json.decoder.JSONDecoder()
+            model = jsn.decode( self.request.get('model'))
             user._first_name = model['first_name']
             user._last_name = model['last_name']
             user.put()
@@ -42,8 +42,8 @@ class MyUsers(webapp2.RequestHandler):
             raise Exception('GET not implemented')
             return
             
-        json = simplejson.decoder.JSONDecoder()
-        model = json.decode( self.request.get('model'))
+        jsn = json.decoder.JSONDecoder()
+        model = jsn.decode( self.request.get('model'))
         #raise Exception(model[0])
         if not 'nickname' in model:
             self.response.out.write('error')

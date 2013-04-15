@@ -1,6 +1,6 @@
 import webapp2
 from google.appengine.ext import db
-import simplejson
+import json
 from google.appengine.api import memcache
 from myuser import get_current_user
 
@@ -53,9 +53,9 @@ class RESTHandlerClass(webapp2.RequestHandler):
                 prop = attrs[attr]
                 if isinstance(prop,db.Property):
                     out[attr] = self.for_json(attr)
-            #raise Exception(simplejson.dumps(out))
+            #raise Exception(json.dumps(out))
             #self.response.out.write('{"name":"1","questions":["123","456"]}')
-            self.response.out.write(simplejson.dumps(out))
+            self.response.out.write(json.dumps(out))
         else:
             raise Exception('Object not found '+Id)
     
@@ -66,8 +66,8 @@ class RESTHandlerClass(webapp2.RequestHandler):
         self.obj = self.ModelClass.get(db.Key(encoded = Id))
 
         if self.obj:
-            json = simplejson.decoder.JSONDecoder()
-            model = json.decode( self.request.get('model'))
+            jsn = json.decoder.JSONDecoder()
+            model = jsn.decode( self.request.get('model'))
             
             for field in model:
                 if not field in model:
@@ -100,8 +100,8 @@ class RESTHandlerClass(webapp2.RequestHandler):
             return
         
         # retrieve and decode the model from the client side
-        json = simplejson.decoder.JSONDecoder()
-        model = json.decode( self.request.get('model'))
+        jsn = json.decoder.JSONDecoder()
+        model = jsn.decode( self.request.get('model'))
         
         # create instance of ModelClass (if asked with a parent)
         if 'parent' in model:

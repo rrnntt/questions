@@ -1,4 +1,4 @@
-import simplejson
+import json
 from chapter import *
 from myuser import *
 from mytemplate import write_template
@@ -96,8 +96,8 @@ class Chapters(webapp2.RequestHandler):
         #raise Exception(self.request.arguments())
         chapter,ekey = get_chapter_by_encoded_key(Id)
         if chapter:
-            json = simplejson.decoder.JSONDecoder()
-            model = json.decode( self.request.get('model'))
+            jsn = json.decoder.JSONDecoder()
+            model = jsn.decode( self.request.get('model'))
             #raise Exception(model[0])
             if not 'parent_key' in model:
                 self.response.out.write('error')
@@ -128,8 +128,8 @@ class Chapters(webapp2.RequestHandler):
             raise Exception('GET not implemented')
             return
             
-        json = simplejson.decoder.JSONDecoder()
-        model = json.decode( self.request.get('model'))
+        jsn = json.decoder.JSONDecoder()
+        model = jsn.decode( self.request.get('model'))
         #raise Exception(model[0])
         if not 'parent_key' in model:
             self.response.out.write('error')
