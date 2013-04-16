@@ -20,7 +20,7 @@ class MyUser(db.Model):
     def nickname(self):
         """Return user nickname"""
         if self.user:
-            return self.user.nickname()
+            return self.user.nickname().lower()
         else:
             return self._nickname
         
@@ -85,7 +85,7 @@ class MyUser(db.Model):
         
     def from_json(self, model):
         if 'nickname' in model:
-            self._nickname = model['nickname']
+            self._nickname = model['nickname'].lower()
         else:
             raise Exception('Model doesn\'t have nickname.')
         if 'roles' in model:
@@ -114,7 +114,7 @@ class MyUser(db.Model):
     
 def get_user(name):
     """Get user from datastore by nickname"""
-    user = MyUser.get_by_key_name(name)
+    user = MyUser.get_by_key_name(name.lower())
     return user
 
 def create_user(name,roles = None, passwd = None):
@@ -129,9 +129,9 @@ def create_user(name,roles = None, passwd = None):
         Created or existing user 
     """
     if roles == None:
-        nickname = name['nickname']
+        nickname = name['nickname'].lower()
     else:
-        nickname = name
+        nickname = name.lower()
     user = get_user(nickname)
     if user == None:
         user = MyUser(key_name=nickname)
@@ -162,7 +162,7 @@ def local_login(nickname,password):
     Return (MyUser):
         Logged in user or None if failed.
     """
-    user = get_user(nickname)
+    user = get_user(nickname.lower())
     if not user or user.password() != password:
         return None
     memcache.add('local_user',user.key())
@@ -177,23 +177,24 @@ def get_current_user():
     default_user = 'roman.tolchenov'
     gUser = users.get_current_user()
     if not gUser:
+        #return MyUser(key_name=default_user)
         user_key = memcache.get('local_user')
         if not user_key:
             return None
         user = MyUser.get(user_key)
     else:
-        user = get_user(gUser.nickname())
+        user = get_user(gUser.nickname().lower())
     if user and not user.user:
         user.user = gUser 
     # if default user logged in but not registered - register him (me)
-    if not user and gUser.nickname() == default_user:
+    if not user and gUser.nickname().lower() == default_user:
         user = MyUser(key_name=default_user)
         user.user = gUser
-        user.roles.append('admin')
+        user.roles = ['admin','teacher']
         user.put()
     # temporary:
-    if gUser and gUser.nickname() == default_user:
-        user.roles = ['admin']
+#    if gUser and gUser.nickname() == default_user:
+#        user.roles = ['admin','teacher']
     return user
 
 def check_loggedin(func):
