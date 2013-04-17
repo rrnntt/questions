@@ -31,17 +31,18 @@ class MainPage(webapp2.RequestHandler):
         else:
             write_template(self, user, 'index.html', template_values)
         
-class StudentLogin(webapp2.RequestHandler):
+class StudentLoginPage(webapp2.RequestHandler):
     def get(self):
         values = {'in_local_login': True,'page': self.request.get('page')}
         write_template(self, None, 'student_login.html', values)
 
 class Login(webapp2.RequestHandler):
     def post(self):
+        class_id = self.request.get('id')
         nickname = self.request.get('nickname')
         password = self.request.get('password')
         page = str(self.request.get('page'))
-        user = myuser.local_login(nickname, password)
+        user = myuser.local_login(nickname, password, class_id)
         if not isinstance(page, str):
             raise Exception('not str!')
         self.redirect(page)
@@ -64,7 +65,7 @@ class StartPage(webapp2.RequestHandler):
         write_template(self, user, 'test.html', values)
 
 app = webapp2.WSGIApplication([(r'/', MainPage),
-                               (r'/studentlogin', StudentLogin),
+                               (r'/studentlogin', StudentLoginPage),
                                (r'/login', Login),
                                (r'/logout', Logout),
                                (r'/test', TestPage),

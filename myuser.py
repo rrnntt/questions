@@ -117,6 +117,11 @@ def get_user(name):
     user = MyUser.get_by_key_name(name.lower())
     return user
 
+def student_nickname(class_id, nickname):
+    if len(class_id) > 0:
+        return class_id + '_' + nickname
+    return nickname
+
 def create_user(name,roles = None, passwd = None):
     """Create a user with given nickname. 
     
@@ -152,16 +157,18 @@ def create_user(name,roles = None, passwd = None):
 
     return user
 
-def local_login(nickname,password):
+def local_login(nickname,password, class_id = ''):
     """Log in user without google account.
     
     Args:
         nickname (str): Nickname to login with
         passwd (str): User local password
+        class_id (str): ID of the class a student is in
     
     Return (MyUser):
         Logged in user or None if failed.
     """
+    nickname = student_nickname(class_id, nickname)
     user = get_user(nickname.lower())
     if not user or user.password() != password:
         return None
