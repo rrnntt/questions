@@ -3,13 +3,10 @@
 {%block main%}
 <h3> Classes: </h3>
 <hr />
-<table>
+<ul>
 	{% for c in classes%}
-		<tr> 
-			<td>{{c.id}}</td>
-			<td><a href="/studentselectclass?class={{c.key()}}">{{ c.name }}</a></td> 
-		</tr>
+		<li> <a href="/studentselectclass?class={{c.key()}}">{{ c.name }}</a> </li>
 	{% endfor %}
-</table>
+</ul>
 
 {%endblock%}

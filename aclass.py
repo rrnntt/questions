@@ -7,7 +7,6 @@ from myuser import *
 class Class(db.Model):
     name = db.StringProperty()
     students = db.ListProperty(db.Key)
-    id = db.IntegerProperty()
     
     def get_teacher(self):
         teacher = MyUser.get(self.parent_key())
@@ -41,22 +40,12 @@ class Class(db.Model):
     def __len__(self):
         return len(self.students)
     
-def get_free_id():
-    classes = Class.all().order('id')
-    i = 0
-    for c in classes.run():
-        if c.id - i > 1:
-            return i + 1
-        i = c.id
-    return i + 1
-    
 def create_class(teacher, name):
     """
     Create a new class. A class must have a teacher and a name.
     """
     c = Class(parent = teacher)
     c.name = name
-    c.id = get_free_id()
     c.put()
     return c
     

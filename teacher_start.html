@@ -35,7 +35,6 @@ $(function(){
 	<table width="100%">
 	{% for c in classes%}
 		<tr>
-			<td>{{c.id}}</td>
     		<td> <a href="/teacherclass?class={{c.key()}}">{{ c.name }}</a> </td>
     		<td style="text-align: right"> <button id="{{c.key()}}_delete">Delete</button> </td>
 		</tr>
