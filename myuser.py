@@ -112,6 +112,19 @@ class MyUser(db.Model):
             email = ''
         return '{'+self.nickname()+', '+email+'}'
     
+def get_unique_nickname():
+    """Create unique student nickname"""
+    query = MyUser.all().filter('roles =','student').order('_nickname')
+    i = 10
+    for user in query.run():
+        n = int(user.nickname())
+        if n > 0 and n - i > 1:
+            new_name = str(i+1) 
+            if get_user(new_name) == None:
+                return new_name
+        i = n
+    return i + 1
+    
 def get_user(name):
     """Get user from datastore by nickname"""
     user = MyUser.get_by_key_name(name.lower())

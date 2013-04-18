@@ -107,8 +107,9 @@ class Students(webapp2.RequestHandler):
         if not 'clss' in model:
             raise Exception('Class is missing from model.')
             
-        student = create_user(model)
-        if student == None:
+        try:
+            student = create_user(model)
+        except:
             self.response.out.write('error')
             return
         

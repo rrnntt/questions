@@ -34,6 +34,11 @@ $(function(){
     $("#add_course").button().click(function(event){
     	location.replace('/createcourse?parent={{clss.key()}}&goto=/teacherclass?class={{clss.key()}}');
     });
+    $("#get_unique_name").button().click(function(event){
+    	$.ajax('/getuniquename',{
+    		success: function(data,status,jqxhr){alert(data);}
+    	})
+    });
 });
 {% endblock %}
 
@@ -56,6 +61,7 @@ $(function(){
 </table>
 <div>
 	<button id="addbutton">Add</button>
+	<button id="get_unique_name">Unique</button>
 </div>
 
 <h3>Courses</h3>

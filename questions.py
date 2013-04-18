@@ -62,12 +62,17 @@ class StartPage(webapp2.RequestHandler):
         user = myuser.get_current_user()
         values = {'page': self.request.get('page')}
         write_template(self, user, 'test.html', values)
+        
+class GetUniqueName(webapp2.RequestHandler):
+    def get(self):
+        self.response.out.write(myuser.get_unique_nickname())
 
 app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/studentlogin', StudentLogin),
                                (r'/login', Login),
                                (r'/logout', Logout),
                                (r'/test', TestPage),
+                               (r'/getuniquename', GetUniqueName),
                                
                                (r'/adminstart', admin_handlers.AdminStartPage),
                                
