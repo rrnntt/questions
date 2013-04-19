@@ -2,6 +2,7 @@ import webapp2
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import memcache
+import re
 
 class MyUser(db.Model):
     """User of the system"""
@@ -113,17 +114,20 @@ class MyUser(db.Model):
         return '{'+self.nickname()+', '+email+'}'
     
 def get_unique_nickname():
-    """Create unique student nickname"""
+    """Create unique student nickname of the form s1234"""
     query = MyUser.all().filter('roles =','student').order('_nickname')
-    i = 10
+    pattern = re.compile(r's(\d{4})')
+    i = 1234
     for user in query.run():
-        n = int(user.nickname())
-        if n > 0 and n - i > 1:
-            new_name = str(i+1) 
-            if get_user(new_name) == None:
-                return new_name
-        i = n
-    return i + 1
+        mo = pattern.match(user.nickname().lower())
+        if mo:
+            n = int(mo.group(1))
+            if n > 0 and n - i > 1:
+                new_name = str(i+1) 
+                if get_user(new_name) == None:
+                    return new_name
+            i = n
+    return 's' + str(i + 1)
     
 def get_user(name):
     """Get user from datastore by nickname"""

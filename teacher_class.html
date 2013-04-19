@@ -36,7 +36,7 @@ $(function(){
     });
     $("#get_unique_name").button().click(function(event){
     	$.ajax('/getuniquename',{
-    		success: function(data,status,jqxhr){alert(data);}
+    		success: function(data,status,jqxhr){$("#nickname").val(data);}
     	})
     });
 });
