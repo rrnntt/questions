@@ -123,7 +123,7 @@ def get_unique_nickname():
         if mo:
             n = int(mo.group(1))
             if n > 0 and n - i > 1:
-                new_name = str(i+1) 
+                new_name = 's' + str(i+1) 
                 if get_user(new_name) == None:
                     return new_name
             i = n

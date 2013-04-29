@@ -7,6 +7,7 @@ from mytemplate import write_template
 from question import Question
 from aclass import get_student_classes
 from course import Course, get_courses
+from student_results import passed
 
 class StartPage(webapp2.RequestHandler):
     def get(self):
@@ -16,6 +17,10 @@ class StartPage(webapp2.RequestHandler):
             return
         
         classes = get_student_classes(student)
+        
+        if len(classes) == 1:
+            self.redirect('/studentselectclass?class='+str(classes[0].key()))
+            
         template_values = {
                            'classes': classes,
                            }
@@ -47,6 +52,8 @@ class CoursesPage(webapp2.RequestHandler):
             self.redirect('/')
             
         courses = get_courses(clss)
+        if len(courses) == 1:
+            self.redirect('/studentcoursepage?course='+str(courses[0].key()))
         
         template_values = {
                            'courses': courses,
@@ -112,6 +119,8 @@ class ChapterPage(webapp2.RequestHandler):
             chapter_formatted_text = ''
             
         questions = list_questions(chapter)
+        for q in questions:
+            q.done = passed(user,q)
         has_questions = len(questions) > 0
         
         template_values = {

@@ -18,13 +18,15 @@
 						//alert('OK: '+JSON.stringify(resp));
 						if ( resp.res == 'success')
 						{
-							$("#check_image_{{q.key()}}").show();
-							$("#cross_image_{{q.key()}}").hide();
+							$("#done_{{q.key()}}").show();
+							$("#check_{{q.key()}}").show();
+							$("#cross_{{q.key()}}").hide();
 						}
 						else
 						{
-							$("#check_image_{{q.key()}}").hide();
-							$("#cross_image_{{q.key()}}").show();
+							$("#done_{{q.key()}}").hide();
+							$("#check_{{q.key()}}").hide();
+							$("#cross_{{q.key()}}").show();
 						}
 					},
 					error: function(model, resp, opt){
@@ -35,8 +37,11 @@
 		{% endfor %}
 		{% endif %}
 		{% for q in questions %}
-			$("#check_image_{{q.key()}}").hide();
-			$("#cross_image_{{q.key()}}").hide();
+			{% if not q.done %}
+				$("#done_{{q.key()}}").hide();
+			{% endif %}
+			$("#check_{{q.key()}}").hide();
+			$("#cross_{{q.key()}}").hide();
 		{% endfor %}
 	});
 {% endblock %}
@@ -62,7 +67,8 @@
 <h2>Questions</h2>
 {% for q in questions %}
 <h3> 
-	Question {{q.title}} 
+	Question {{q.title}}
+	<img src="/images/check.png" id="done_{{q.key()}}" width="20" height="20"/>
 </h3>
 {{q.text}}
 <br />
@@ -70,8 +76,8 @@
 	<tr>
 	<td>Answer:</td> 
 	<td> 
-		<img src="/images/check.png" id="check_image_{{q.key()}}" width="10" height="10"/> 
-		<img src="/images/cross.png" id="cross_image_{{q.key()}}" width="10" height="10" /> 
+		<img src="/images/check.png" id="check_{{q.key()}}" width="10" height="10"/> 
+		<img src="/images/cross.png" id="cross_{{q.key()}}" width="10" height="10" /> 
 	</td> 
 	<td><textarea id="answer-text_{{q.key()}}" rows="1" cols="80"></textarea> </td>
 	</tr>

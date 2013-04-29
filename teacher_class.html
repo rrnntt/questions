@@ -39,21 +39,65 @@ $(function(){
     		success: function(data,status,jqxhr){$("#nickname").val(data);}
     	})
     });
+    $("#delete_students").button().click(function(event){
+    	var n = selected_students.length; 
+    	if (n == 0) return;
+    	for (s in selected_students)
+    	{
+	      	var stu = new Student();
+	      	stu.id = selected_students[s];
+	      	if (s < n - 1)  	{
+	      	   stu.destroy();
+	      	}
+	      	else
+	      	{
+	      	   stu.destroy({success: function(){ location.reload();}  });
+	      	}
+        }
+      });
+    $("#delete_students").hide();
 });
+var selected_students = [];
+function student_checked(box)
+{
+	if (box.checked)
+	{
+		selected_students.push(box.value);
+	}
+	else
+	{
+		var i = selected_students.indexOf(box.value);
+		selected_students.splice(i,1);
+	}
+	if (selected_students.length > 0)
+	{
+		$("#delete_students").show();
+	}
+	else
+	{
+		$("#delete_students").hide();
+	}
+}
 {% endblock %}
 
 {%block main%}
 <h3> Class {{ clss.name }}</h3>
 <hr />
-<table width="100%">
+<table>
+    <tr>
+    	<th></th>
+    	<th>Nickname</th>
+    	<th>Password</th>
+    </tr>
 	{% for student in students %}
 		<tr>
+    		<td > <input type="checkbox" value="{{student.key()}}" class="check_student" onchange="student_checked(this)"/> </td>
     		<td > {{ student.nickname() }} </td>
-    		<td style="text-align: right"> <button id="{{student.key()}}_delete">Delete</button> </td>
+    		<td > {{ student._passwd }} </td>
 		</tr>
 	{% endfor %}
 </table>
-
+<button id="delete_students">Delete students</button>
 <hr />
 <table>
 	<tr> <td> Nickname: </td> <td> <input type="text" name="nickname" id="nickname" /> </td></tr>

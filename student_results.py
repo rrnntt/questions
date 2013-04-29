@@ -12,7 +12,7 @@ class StudentResult(db.Model):
 
 def save_result(student,question,status):
     # find and delete any previous results of same student and same question
-    query = StudentResult.all().filter('student=', student).filter('question=', question)
+    query = StudentResult.all().filter('student =', student).filter('question =', question)
     for res in query.run():
         res.delete()
     
@@ -21,3 +21,7 @@ def save_result(student,question,status):
     result.question = question
     result.result = status
     result.put()
+
+def passed(student,question):
+    query = StudentResult.all().filter('student =', student.key()).filter('question =', question).filter('result =', True)
+    return query.count() != 0 
