@@ -92,6 +92,7 @@ class SaveCourse(webapp2.RequestHandler):
             newCourse = Course(parent=aclass)
             newCourse.name = course.name
             newCourse.chapters = course.chapters
+            newCourse.count_questions()
             newCourse.put()
             
         stop_edit_course()

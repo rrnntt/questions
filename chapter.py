@@ -66,6 +66,10 @@ class Chapter(db.Model):
         # return the result
         return chapters
 
+    def count_questions(self):
+        query = Question.all().ancestor(self.key())
+        return query.count()
+    
         
 def create_chapter(parent_chapter, author, title):
     parent_key = parent_chapter
@@ -197,11 +201,9 @@ def list_parents(chapter):
 def list_questions(chapter):
     parent_key = chapter.key()
     query = Question.all().ancestor(parent_key)
-    # try to fetch all of them. I hope 1000 is a large enogh number.
-    all_qs = query.fetch(1000)
     qs = []
     i = 1
-    for q in all_qs:
+    for q in query.run():
         if q.parent_key() == parent_key:
             qs.append(q)
             stri = str(i)
