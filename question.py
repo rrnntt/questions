@@ -5,7 +5,7 @@ class Question(polymodel.PolyModel):
     title = db.StringProperty()
     text = db.TextProperty()
     answer = db.TextProperty()
-    type = db.StringProperty() # numeric, text
+    type = db.StringProperty() # numeric, formula, text
     solution = db.TextProperty() # ? should it be a model itself ?
     
     def get_answer(self):

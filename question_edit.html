@@ -17,7 +17,7 @@
 			question.save({text: $("#question-text").val(), answer:$("#question-answer").val(), type: question.type},
 			   {
 				success: function(model,resp,opt){
-					window.location.replace("/chapterpage?chapter={{chapter.key()}}");
+					window.location.replace("/chaptereditpage?chapter={{chapter.key()}}");
 					},
 				error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
 				wait: true

@@ -15,7 +15,17 @@
 				var answer = createAnswer("{{q.key()}}",$("#answer-text_{{q.key()}}").val());
 				answer.save({},{
 					success: function(model, resp, opt){
-						alert('OK: '+JSON.stringify(resp));
+						//alert('OK: '+JSON.stringify(resp));
+						if ( resp.res == 'success')
+						{
+							$("#check_image_{{q.key()}}").show();
+							$("#cross_image_{{q.key()}}").hide();
+						}
+						else
+						{
+							$("#check_image_{{q.key()}}").hide();
+							$("#cross_image_{{q.key()}}").show();
+						}
 					},
 					error: function(model, resp, opt){
 						alert('error'+JSON.stringify(resp));
@@ -24,6 +34,10 @@
 			});
 		{% endfor %}
 		{% endif %}
+		{% for q in questions %}
+			$("#check_image_{{q.key()}}").hide();
+			$("#cross_image_{{q.key()}}").hide();
+		{% endfor %}
 	});
 {% endblock %}
 
@@ -55,6 +69,10 @@
 <table >
 	<tr>
 	<td>Answer:</td> 
+	<td> 
+		<img src="/images/check.png" id="check_image_{{q.key()}}" width="10" height="10"/> 
+		<img src="/images/cross.png" id="cross_image_{{q.key()}}" width="10" height="10" /> 
+	</td> 
 	<td><textarea id="answer-text_{{q.key()}}" rows="1" cols="80"></textarea> </td>
 	</tr>
 </table>

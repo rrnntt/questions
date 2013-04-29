@@ -5,6 +5,7 @@ from mytemplate import write_template
 from myuser import *
 from question import *
 from chapter_module import get_chapter_by_encoded_key
+from student_results import save_result
 
 ###########################################################################
 #     Questions helper functions
@@ -126,6 +127,7 @@ class Answer(webapp2.RequestHandler):
     """Implements REST service for receiving answers"""
     def put(self,Id):
         question = Question.get(db.Key(encoded = Id))
+        student = get_current_student()
 
         if question:
             jsn = json.decoder.JSONDecoder()
@@ -134,7 +136,9 @@ class Answer(webapp2.RequestHandler):
                 raise Exception('Chacking answer failed')
             
             answer = model['answer']
-            if question.check_answer(answer):
+            result = question.check_answer(answer)
+            save_result(student, question, result) 
+            if result:
                 self.response.out.write('{"res":"success"}')
             else:
                 self.response.out.write('{"res":"failed"}')
