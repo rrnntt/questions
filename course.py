@@ -45,7 +45,9 @@ class Course(db.Model):
         self.num_questions = n
         
     def get_progress(self,student):
-        n = StudentResult.all().filter('student =',student).filter('result =',True)
+        n = StudentResult.all().filter('student =',student).filter('result =',True).count()
+        if self.num_questions == None:
+            self.count_questions()
         return float(n) / self.num_questions
 
 def get_edit_course():

@@ -26,12 +26,21 @@ class ClassPage(webapp2.RequestHandler):
         class_key = db.Key(encoded=self.request.get('class'))
         clss = Class.get(class_key)
         students = get_class_students(clss)
+        courses = get_courses(clss)
+        
+        # add course progress to each student
+        for stu in students:
+            prog = []
+            for c in courses:
+                s = '{:.2%}'.format(c.get_progress(stu))
+                prog.append( s )
+            stu.progress = prog 
         
         #raise Exception('stu:'+str(len(clss)))
         template_values = {'students': students,
                            'clss': clss,
                            'qlists': get_question_list(clss),
-                           'courses': get_courses(clss)
+                           'courses': courses
                            }
         write_template(self, teacher, 'teacher_class.html', template_values)
                 

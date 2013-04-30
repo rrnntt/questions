@@ -49,20 +49,20 @@ class ChapterPage(webapp2.RequestHandler):
         
         write_template(self, user, 'chapter.html',template_values)
         
-class AddChapterPage(webapp2.RequestHandler):
-    def get(self):
-
-        user = get_current_user()
-        if not user:
-            self.redirect('/')
-            return
-        
-        encoded_chapter_key = self.request.get('chapter')
-        chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
-        template_values = {}
-        add_chapter_values(template_values, chapter)
-        
-        write_template(self, user, 'add_chapter.html',template_values)
+#class AddChapterPage(webapp2.RequestHandler):
+#    def get(self):
+#
+#        user = get_current_user()
+#        if not user:
+#            self.redirect('/')
+#            return
+#        
+#        encoded_chapter_key = self.request.get('chapter')
+#        chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
+#        template_values = {}
+#        add_chapter_values(template_values, chapter)
+#        
+#        write_template(self, user, 'add_chapter.html',template_values)
         
 class EditChapterPage(webapp2.RequestHandler):
     def get(self):

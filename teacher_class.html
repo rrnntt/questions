@@ -94,6 +94,9 @@ function student_checked(box)
     		<td > <input type="checkbox" value="{{student.key()}}" class="check_student" onchange="student_checked(this)"/> </td>
     		<td > {{ student.nickname() }} </td>
     		<td > {{ student._passwd }} </td>
+    		{% for p in student.progress %}
+	    		<td > {{ p }} </td>
+    		{% endfor %}
 		</tr>
 	{% endfor %}
 </table>
