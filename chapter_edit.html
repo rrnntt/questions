@@ -47,11 +47,11 @@
 	</tr>
 </table>
 
-<textarea id="chapter-text" rows="25" cols="80">
 {% if chapter.text != None%}
-{{chapter.text}}
+<textarea id="chapter-text" rows="25" cols="80">{{chapter.text}}</textarea>
+{% else %}
+<textarea id="chapter-text" rows="25" cols="80"></textarea>
 {% endif %}
-</textarea>
 
 {% if has_questions %}
 <h2>Questions</h2>

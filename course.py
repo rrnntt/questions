@@ -48,6 +48,8 @@ class Course(db.Model):
         n = StudentResult.all().filter('student =',student).filter('result =',True).count()
         if self.num_questions == None:
             self.count_questions()
+        if self.num_questions == 0:
+            return 0
         return float(n) / self.num_questions
 
 def get_edit_course():

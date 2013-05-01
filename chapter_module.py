@@ -1,4 +1,7 @@
 import json
+from markdown import markdown
+
+from markdown_postprocess import postprocess
 from chapter import *
 from myuser import *
 from mytemplate import write_template
@@ -29,7 +32,8 @@ class ChapterPage(webapp2.RequestHandler):
         parents.reverse()
         
         if chapter.text != None:
-            chapter_formatted_text = chapter.text
+            chapter_formatted_text = markdown(chapter.text,safe_mode='escape')
+            chapter_formatted_text = postprocess(chapter_formatted_text)
         else:
             chapter_formatted_text = ''
             
