@@ -3,6 +3,7 @@ from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import memcache
 import re
+import random
 
 class MyUser(db.Model):
     """User of the system"""
@@ -78,7 +79,12 @@ class MyUser(db.Model):
         return self._last_name
      
     def full_name(self):
-        return self._first_name + ' '  + self._last_name
+        fname = ''
+        if self._first_name:
+            fname += self._first_name
+        if self._last_name:
+            fname += ' ' + self._last_name
+        return fname
     
     def set_class(self, clss):
         self._clss = clss.key()
@@ -128,6 +134,9 @@ def get_unique_nickname():
                     return new_name
             i = n
     return 's' + str(i + 1)
+
+def get_random_password():
+    return '{:04}'.format( random.randint(101,9999) ) 
     
 def get_user(name):
     """Get user from datastore by nickname"""

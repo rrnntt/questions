@@ -11,6 +11,7 @@ import question_handlers
 import question_list_handlers
 import course_handlers
 import student_handlers
+import json
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -65,7 +66,10 @@ class StartPage(webapp2.RequestHandler):
         
 class GetUniqueName(webapp2.RequestHandler):
     def get(self):
-        self.response.out.write(myuser.get_unique_nickname())
+        res = {}
+        res['nickname'] = myuser.get_unique_nickname()
+        res['password'] = myuser.get_random_password()
+        self.response.out.write(json.dumps(res))
 
 app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/studentlogin', StudentLogin),

@@ -8,6 +8,8 @@ $(function(){
             {
              nickname: $("#nickname").val(),
              password: $("#password").val(),
+             first_name: $("#first_name").val(),
+             last_name:  $("#last_name").val(),
              email: '',
              roles: 'student',
              clss: '{{clss.key()}}',
@@ -36,7 +38,11 @@ $(function(){
     });
     $("#get_unique_name").button().click(function(event){
     	$.ajax('/getuniquename',{
-    		success: function(data,status,jqxhr){$("#nickname").val(data);}
+    		success: function(resp,status,jqxhr){
+    			    data = JSON.parse(resp);
+    			    $("#nickname").val(data['nickname']);
+    			    $("#password").val(data['password']);
+    			}
     	})
     });
     $("#delete_students").button().click(function(event){
@@ -94,6 +100,7 @@ function student_checked(box)
     		<td > <input type="checkbox" value="{{student.key()}}" class="check_student" onchange="student_checked(this)"/> </td>
     		<td > {{ student.nickname() }} </td>
     		<td > {{ student._passwd }} </td>
+    		<td > {{ student.full_name() }} </td>
     		{% for p in student.progress %}
 	    		<td > {{ p }} </td>
     		{% endfor %}
@@ -103,8 +110,10 @@ function student_checked(box)
 <button id="delete_students">Delete students</button>
 <hr />
 <table>
-	<tr> <td> Nickname: </td> <td> <input type="text" name="nickname" id="nickname" /> </td></tr>
-	<tr> <td> Password: </td> <td> <input type="text" name="password" id="password" /> </td></tr>
+	<tr> <td> Nickname: </td> <td> <input type="text" id="nickname" /> </td></tr>
+	<tr> <td> Password: </td> <td> <input type="text" id="password" /> </td></tr>
+	<tr> <td> First name: </td> <td> <input type="text" id="first_name" /> </td></tr>
+	<tr> <td> Last name: </td> <td> <input type="text" id="last_name" /> </td></tr>
 </table>
 <div>
 	<button id="addbutton">Add</button>

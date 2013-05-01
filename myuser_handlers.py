@@ -50,7 +50,7 @@ class MyUsers(webapp2.RequestHandler):
         
         nickname = model['nickname']
         password = model['password']
-        email = model['email']
+#        email = model['email']
         roles = model['roles']
         
         if roles == 'student' and not 'clss' in model: 
