@@ -1,4 +1,6 @@
 import webapp2
+import json
+
 import myuser
 from mytemplate import write_template
 #from chapter_module import list_visible_chapters
@@ -11,7 +13,7 @@ import question_handlers
 import question_list_handlers
 import course_handlers
 import student_handlers
-import json
+import image_handlers
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -77,6 +79,11 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/logout', Logout),
                                (r'/test', TestPage),
                                (r'/getuniquename', GetUniqueName),
+                               
+                               (r'/img', image_handlers.ServeImage),
+                               (r'/myimages', image_handlers.ImageListPage),
+                               (r'/uploadimage', image_handlers.UploadImage),
+                               (r'/uploadimagepage', image_handlers.UploadImagePage),
                                
                                (r'/adminstart', admin_handlers.AdminStartPage),
                                

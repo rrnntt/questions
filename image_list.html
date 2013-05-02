@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block head_script%}
+$(function(){
+	$("#prev_button").button().click(function(){
+		var index = {{index}} - 1;
+		window.location.replace('/myimages?page='+index);
+	});
+	$("#next_button").button().click(function(){
+		var index = {{index}} + 1;
+		window.location.replace('/myimages?page='+index);
+	});
+});
+{% endblock %}
+
+{% block main%}
+{% if not_empty %}
+{% for image in images %}
+	<div>{{image.name}}</div>
+	<div><img src="/img?key={{image.key()}}" width="64" height="64" /></div>
+{% endfor %}
+{% endif %}
+
+<hr />
+<!--
+<div>
+	<button id="prev_button">Previous</button>
+	<button id="next_button">Next</button>
+</div>
+-->
+{% endblock %}

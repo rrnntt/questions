@@ -17,7 +17,7 @@ class RESTHandlerClass(webapp2.RequestHandler):
         
     def convert(self,field,value):
         """
-        Convert value for a model fieeld from str to actual type.
+        Convert value for a model field from str to actual type.
         Method must be overriden if there are non-string fields.
         
         By default returns input value without convertion

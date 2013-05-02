@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block head_script%}
+$(function(){
+	$("#upload_button").button();
+});
+{% endblock %}
+
+{% block main %}
+{% if error %}
+<div class="error_string">{{error}}</div>
+{% endif %}
+<form action="/uploadimage" enctype="multipart/form-data" method="post">
+	<div>Name:</div>
+	{% if image %}
+    	<div><input type="text" name="name" id="name"  style="width: 500px" value="{{image.name}}"/></div>
+    {% else %}
+	    <div><input type="text" name="name" id="name"  style="width: 500px"/></div>
+	{% endif %}
+    <div><label>Image:</label></div>
+    <div><input type="file" id="file" name="img" style="width: 500px"/></div>
+    <div><input type="submit" id="upload_button" value="Upload"></div>
+</form>
+{% if image %}
+<div><input type="text" id="key"  style="width: 500px" value="{{image.key()}}"></div>
+<div><img src="/img?key={{image.key()}}" width="64" height="64" /></div>
+{% endif %}
+{% endblock %}

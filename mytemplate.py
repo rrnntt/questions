@@ -23,7 +23,6 @@ def write_template(handler, user, file_name, template_values = {}):
         user_name = ''
         
     # default template values for base.html
-    template_values['test'] = str(d)
     template_values['user'] = user
     template_values['user_name'] = user_name
     template_values['login_url'] = url

@@ -172,6 +172,8 @@
 				  {% endif %}
 				  {% if user.isTeacher() %}
 				  | <a href="/chapterpage?chapter=root">My chapters</a>
+				  | <a href="/myimages">My images</a>
+				  | <a href="/uploadimagepage">Upload image</a>
      			  <span id="edit_course"></span>
      			  <span id="edit_question_list"></span>
 				  {% endif %}
@@ -198,8 +200,6 @@
 	  </div>
 	{% endif %}
 	
-	test = {{test}}
-    
   	{% block main %}
   	{% endblock %}
   	
