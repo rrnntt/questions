@@ -1,3 +1,4 @@
+import logging
 import webapp2
 import urllib
 from google.appengine.ext import db
@@ -14,15 +15,19 @@ class ServeImage(webapp2.RequestHandler):
             return
         key = self.request.get('key')
         if key:
-            image = db.get( key )
-        else:
-            name = self.request.get('name')
             try:
-                chapter = db.get( self.request.get('chapter') )
+                image = db.get( key )
             except:
                 self.error(404)
                 return
+        else:
+            name = self.request.get('name')
             if not name:
+                self.error(404)
+                return
+            try:
+                chapter = db.get( self.request.get('chapter') )
+            except:
                 self.error(404)
                 return
             image = Image.get_image_by_name(chapter, name)
@@ -50,6 +55,8 @@ class UploadImage(webapp2.RequestHandler):
             if overwrite.lower() == 'true':
                 if old_image:
                     old_image.delete()
+                    chapter.refresh = True
+                    chapter.put()
                 old_image = None
             if old_image:
                 args['image'] = old_image.key()

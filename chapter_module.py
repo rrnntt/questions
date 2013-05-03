@@ -1,3 +1,4 @@
+import logging
 import json
 from markdown import markdown
 
@@ -13,7 +14,7 @@ Chapters are a way of organising questions. A chapter may either include other
 chapters or questions.
 """
 
-def set_chapter_text(chapter, text):
+def set_chapter_text(chapter, text, save=False):
     """Parse the new text and correct if needed.
     
     Consider input text to have Markdown format.
@@ -23,24 +24,26 @@ def set_chapter_text(chapter, text):
     # and interpret image_name as markdown reference id
     # so text must contain line [image_name]: /proper_image_url
     image_link_pattern = re.compile('!\[.*?\]\[(.+?)\]')
-    id_pattern_template = '\[%s\]:.+?'
+    id_pattern_template = '\n\[%s\]:.+'
     match_list = re.findall(image_link_pattern, text)
     refresh = chapter.refresh
     for id in match_list:
         pattern = id_pattern_template % id
-        if not re.search(pattern,text):
-            image = Image.get_image_by_name(chapter, id)
+        image = Image.get_image_by_name(chapter, id)
+        if not re.search(pattern,text):  # there is no [id]: /url string
             if image:
                 text += '\n['+id+']: '+'/img?key='+str(image.key())
-        elif refresh:
-            image = Image.get_image_by_name(chapter, id)
+        elif refresh: # refresh anyway
             if image:
-                text = re.sub(pattern,'['+id+']: '+'/img?key='+str(image.key()),text)
+                text = re.sub(pattern,'\n['+id+']: '+'/img?key='+str(image.key()),text)
             else:
                 text = re.sub(pattern,'',text)
             
+            
     chapter.text = text
     chapter.refresh = False
+    if save:
+        chapter.put()
 
 
 ###########################################################################
@@ -65,8 +68,7 @@ class ChapterPage(webapp2.RequestHandler):
         if chapter.text != None:
             if chapter.refresh:
                 text = chapter.text
-                set_chapter_text(chapter, text)
-                chapter.refresh = False
+                set_chapter_text(chapter, text, True)
             chapter_formatted_text = markdown(chapter.text,safe_mode='escape')
             chapter_formatted_text = postprocess(chapter_formatted_text)
         else:

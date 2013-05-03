@@ -1,5 +1,6 @@
 from markdown import markdown
 from markdown_postprocess import postprocess
+import re
 
 html = markdown("""
 Hello!
@@ -17,3 +18,21 @@ $$E=mc^2>0$$
 """,safe_mode='escape')
 
 print postprocess(html)
+
+text = """
+Image ![iii][im1]
+[im1]: /img?key=ahFkZXZ-aGVsbG9wZGZ3b3JsZHILCxIFSW1hZ2UYLgw
+aaa
+"""
+
+image_link_pattern = re.compile('!\[.*?\]\[(.+?)\]')
+id_pattern_template = '\n\[%s\]:.+'
+pattern = id_pattern_template % 'im1'
+
+print pattern
+
+mo = re.search(pattern,text)
+print mo.groups()
+out = re.sub(pattern,'\n+++', text)
+print text
+print out
