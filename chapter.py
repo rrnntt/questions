@@ -2,6 +2,7 @@ import webapp2
 from google.appengine.ext import db
 from question import Question
 from myuser import MyUser
+import re
 
 
 ###########################################################################
@@ -13,6 +14,7 @@ class Chapter(db.Model):
     title = db.StringProperty()
     authors = db.ListProperty(db.Key)
     text = db.TextProperty()
+    refresh = db.BooleanProperty()
     
     def canEdit(self,user):
         """Check if a user can edit this chapter"""
@@ -70,7 +72,6 @@ class Chapter(db.Model):
         query = Question.all().ancestor(self.key())
         return query.count()
     
-        
 def create_chapter(parent_chapter, author, title):
     parent_key = parent_chapter
     if not isinstance( parent_key, db.Key ):
@@ -78,6 +79,7 @@ def create_chapter(parent_chapter, author, title):
     chapter = Chapter(parent=parent_key)
     chapter.authors.append(author.key())
     chapter.title = title
+    chapter.refresh = True
     chapter.put()
     return chapter
     

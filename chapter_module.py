@@ -6,11 +6,42 @@ from chapter import *
 from myuser import *
 from mytemplate import write_template
 from question import Question
+from image import Image
 
 """
 Chapters are a way of organising questions. A chapter may either include other
 chapters or questions.
 """
+
+def set_chapter_text(chapter, text):
+    """Parse the new text and correct if needed.
+    
+    Consider input text to have Markdown format.
+    - Image names in reference links need to have urls.
+    """
+    # find all image tags in form ![Alt text][image_name]
+    # and interpret image_name as markdown reference id
+    # so text must contain line [image_name]: /proper_image_url
+    image_link_pattern = re.compile('!\[.*?\]\[(.+?)\]')
+    id_pattern_template = '\[%s\]:.+?'
+    match_list = re.findall(image_link_pattern, text)
+    refresh = chapter.refresh
+    for id in match_list:
+        pattern = id_pattern_template % id
+        if not re.search(pattern,text):
+            image = Image.get_image_by_name(chapter, id)
+            if image:
+                text += '\n['+id+']: '+'/img?key='+str(image.key())
+        elif refresh:
+            image = Image.get_image_by_name(chapter, id)
+            if image:
+                text = re.sub(pattern,'['+id+']: '+'/img?key='+str(image.key()),text)
+            else:
+                text = re.sub(pattern,'',text)
+            
+    chapter.text = text
+    chapter.refresh = False
+
 
 ###########################################################################
 #     Request handlers
@@ -32,6 +63,10 @@ class ChapterPage(webapp2.RequestHandler):
         parents.reverse()
         
         if chapter.text != None:
+            if chapter.refresh:
+                text = chapter.text
+                set_chapter_text(chapter, text)
+                chapter.refresh = False
             chapter_formatted_text = markdown(chapter.text,safe_mode='escape')
             chapter_formatted_text = postprocess(chapter_formatted_text)
         else:
@@ -52,21 +87,6 @@ class ChapterPage(webapp2.RequestHandler):
         add_chapter_values(template_values, chapter)
         
         write_template(self, user, 'chapter.html',template_values)
-        
-#class AddChapterPage(webapp2.RequestHandler):
-#    def get(self):
-#
-#        user = get_current_user()
-#        if not user:
-#            self.redirect('/')
-#            return
-#        
-#        encoded_chapter_key = self.request.get('chapter')
-#        chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
-#        template_values = {}
-#        add_chapter_values(template_values, chapter)
-#        
-#        write_template(self, user, 'add_chapter.html',template_values)
         
 class EditChapterPage(webapp2.RequestHandler):
     def get(self):
@@ -108,7 +128,7 @@ class Chapters(webapp2.RequestHandler):
                 return
             chapter.title = model['title']
             if 'text' in model:
-                chapter.text = model['text']
+                set_chapter_text(chapter, model['text'])
             chapter.put()
         else:
             raise Exception('Saving of chapter failed')

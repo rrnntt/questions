@@ -19,7 +19,11 @@ $(function(){
 
 {% if not_empty %}
 {% for image in images %}
-	<div>{{image.name}}</div>
+	<div>
+		<a href="/imagepage?chapter={{chapter.key()}}&image={{image.key()}}">
+		{{image.name}}
+		</a>
+	</div>
 	<div><img src="/img?key={{image.key()}}" width="64" height="64" /></div>
 {% endfor %}
 {% endif %}

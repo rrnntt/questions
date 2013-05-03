@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block head_script%}
+$(function(){
+	$("#update").button().click(function(){
+		window.location.replace('/uploadimagepage?chapter={{chapter.key()}}&image={{image.key()}}');
+	});
+	$("#back").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+		window.location.replace("/chaptereditpage?chapter={{chapter.key()}}");
+	});
+});
+{% endblock %}
+
+{% block main%}
+<div>
+<span id="back">Back</span>
+<h2>{{image.name}}</h2>
+</div>
+<div>
+<button id="update">Update</button>
+</div>
+<hr />
+<div><img src="/img?key={{image.key()}}" /></div>
+
+{% endblock %}
