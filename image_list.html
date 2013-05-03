@@ -2,18 +2,21 @@
 
 {% block head_script%}
 $(function(){
-	$("#prev_button").button().click(function(){
-		var index = {{index}} - 1;
-		window.location.replace('/myimages?page='+index);
+	$("#add_image").button().click(function(){
+		window.location.replace('/uploadimagepage?chapter={{chapter.key()}}');
 	});
-	$("#next_button").button().click(function(){
-		var index = {{index}} + 1;
-		window.location.replace('/myimages?page='+index);
+	$("#back").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+		window.location.replace("/chaptereditpage?chapter={{chapter.key()}}");
 	});
 });
 {% endblock %}
 
 {% block main%}
+<div>
+<span id="back">Back</span>
+<button id="add_image">Add image</button>
+</div>
+
 {% if not_empty %}
 {% for image in images %}
 	<div>{{image.name}}</div>
@@ -22,10 +25,4 @@ $(function(){
 {% endif %}
 
 <hr />
-<!--
-<div>
-	<button id="prev_button">Previous</button>
-	<button id="next_button">Next</button>
-</div>
--->
 {% endblock %}

@@ -36,6 +36,11 @@
 
 {% endblock %}
 
+{% block menu %}
+| <a href="/imagelistpage?chapter={{chapter.key()}}">Images</a>
+{% endblock %}
+
+
 {% block main %}
 
 <div id="chapter_title">Edit chapter "{{chapter.title}}"</div> 

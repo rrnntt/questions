@@ -6,10 +6,6 @@ from image import Image
 from myuser import get_current_user
 from mytemplate import write_template
 
-def start_pagination():
-    memcache.delete('imagelistpage')
-    memcache.delete('imagelistpage_npages')
-
 class ServeImage(webapp2.RequestHandler):
     def get(self):
         key = self.request.get('key')
@@ -36,27 +32,23 @@ class UploadImage(webapp2.RequestHandler):
             self.redirect('/')
             return
         name = self.request.get('name')
+        chapter = db.get( self.request.get('chapter') )
+        args = { 'chapter': chapter.key() }
         if len(name) == 0:
-            args = { 'error': 'Image must have a name.' }
+            args['error'] = 'Image must have a name.'
         else:
-            old_image = Image.get_my_image_by_name(user, name)
+            old_image = Image.get_image_by_name(user, name)
             if old_image:
-                args = { 'key': old_image.key(), 'error': 'Image with this name already exists.' }
+                args['key'] = old_image.key()
+                args['error'] = 'Image with this name already exists.'
             else:
                 data = self.request.get('img')
                 if len(data) == 0:
-                    args = { 'error': 'No data received.' }
+                    args['error'] = 'No data received.' 
                 else:
-                    image = Image(parent=user)
-                    image.name = name
-                    image.data = db.Blob(data)
-                    image.type = 'png'
-                    image.put()
-                    start_pagination()
-                    args = { 'key': image.key() }
+                    image = Image.create(chapter, name, data)
+                    args['key'] = image.key()
         self.redirect('/uploadimagepage?%s' % urllib.urlencode(args))
-#        self.redirect('/?' + urllib.urlencode(
-#            {'guestbook_name': guestbook_name}))
         
 class UploadImagePage(webapp2.RequestHandler):
     def get(self):
@@ -64,6 +56,8 @@ class UploadImagePage(webapp2.RequestHandler):
         if not user:
             self.redirect('/')
             return
+        #raise Exception('chapter '+self.request.get('chapter'))
+        chapter = db.get( self.request.get('chapter') )
         key = self.request.get('key')
         if key:
             image = db.get( key )
@@ -72,7 +66,12 @@ class UploadImagePage(webapp2.RequestHandler):
         error = self.request.get('error')
         if error == '':
             error = None
-        write_template(self, user, 'image_upload.html', {'image':image, 'error': error})
+        
+        template_values = {'image':image, 
+                           'error': error,
+                           'chapter': chapter,
+                           }
+        write_template(self, user, 'image_upload.html', template_values)
         
 class ImageListPage(webapp2.RequestHandler):
     def get(self):
@@ -81,66 +80,14 @@ class ImageListPage(webapp2.RequestHandler):
             self.redirect('/')
             return
         
-#        start_pagination()
-        # number of images per page
-        npp = 1000
-#        n_pages = memcache.get('imagelistpage_npages')
-#        if n_pages == None:
-#            n = db.Query(Image).ancestor(user).count()
-#            n_pages = n // npp
-#            if n_pages * npp != n:
-#                n_pages += 1
-#            memcache.add('imagelistpage_npages', n_pages)
-#        
-#        index = self.request.get('page')
-#        if not index:
-#            index = 0
-#        else:
-#            index = int(index)
-#            
-#        if index < 0:
-#            index = 0
-#            
-#        if index >= n_pages:
-#            index = n_pages - 1
-#            
-#        cursor_list = memcache.get('imagelistpage')
-#            
-#        if not cursor_list:
-#            cursor_list = [None]
-#            memcache.add('imagelistpage',cursor_list)
-#            
-#        n_past_pages = len(cursor_list)
-#        if index < n_past_pages:
-#            page = cursor_list[index]
-#        elif index == 0:
-#            page = None
-#        else:
-#            i = n_past_pages
-#            page = cursor_list[-1]
-#            while i < index:
-#                query = db.Query(Image, cursor=page, keys_only=True).ancestor(user)
-#                keys = query.fetch(npp)
-#                page = query.cursor()
-#                cursor_list.append(page)
-#                i += 1
-#            memcache.set('imagelistpage', cursor_list)
-#            n_past_pages = len(cursor_list)  
+        chapter = db.get( self.request.get('chapter') )
             
-        query = db.Query(Image).ancestor(user)
-        images = query.fetch(npp)
-#        next_page = query.cursor()
-#        
-#        if index == n_past_pages - 1:
-#            cursor_list.append(next_page)
-#        memcache.set('imagelistpage',cursor_list)
-        
+        query = db.Query(Image).filter('chapter =',chapter)
+        images = query.fetch(1000)
         not_empty = len(images) > 0
 
         template_values = {'images': images,
                            'not_empty': not_empty,
-#                           'index': index,
-#                           'npages': n_pages,
-#                           'cl': cursor_list,
+                           'chapter': chapter,
                            }
         write_template(self, user, 'image_list.html', template_values)

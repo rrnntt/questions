@@ -10,7 +10,7 @@ $(function(){
 {% if error %}
 <div class="error_string">{{error}}</div>
 {% endif %}
-<form action="/uploadimage" enctype="multipart/form-data" method="post">
+<form action="/uploadimage?chapter={{chapter.key()}}" enctype="multipart/form-data" method="post">
 	<div>Name:</div>
 	{% if image %}
     	<div><input type="text" name="name" id="name"  style="width: 500px" value="{{image.name}}"/></div>

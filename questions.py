@@ -81,7 +81,7 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/getuniquename', GetUniqueName),
                                
                                (r'/img', image_handlers.ServeImage),
-                               (r'/myimages', image_handlers.ImageListPage),
+                               (r'/imagelistpage', image_handlers.ImageListPage),
                                (r'/uploadimage', image_handlers.UploadImage),
                                (r'/uploadimagepage', image_handlers.UploadImagePage),
                                

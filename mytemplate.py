@@ -43,7 +43,13 @@ def write_template(handler, user, file_name, template_values = {}):
             chapter = Chapter.get(q)
             if chapter:
                 chapter_keys.append(str(chapter.key()))
-    template_values['edit_course_chapter_keys'] = chapter_keys 
+    template_values['edit_course_chapter_keys'] = chapter_keys
+    if 'goto' in template_values:
+        goto = template_values['goto']
+        if goto == None or goto == '':
+            template_values['goto'] = '/'
+    
+    # write out the template 
     template = jinja_environment.get_template(file_name)
     handler.response.out.write(template.render(template_values))
 
