@@ -15,7 +15,7 @@ class QuestionList(db.Model):
 
     @classmethod
     def create(cls, clss, name = 'new'):
-        qlist = QuestionList()
+        qlist = QuestionList(parent=clss)
         qlist.clss = clss
         qlist.name = name
         qlist.put()

@@ -2,6 +2,8 @@ import jinja2
 import os
 
 from google.appengine.api import users
+from google.appengine.ext import db
+
 from course import get_edit_course
 from chapter import Chapter
 
@@ -35,7 +37,7 @@ def write_template(handler, user, file_name, template_values = {}):
         template_values['title'] = 'Questions'
     session = handler.session
     if 'question_list' in session:
-        template_values['edit_question_list'] = session['question_list']  
+        template_values['edit_question_list'] = db.get( session['question_list'] )  
     course = get_edit_course()
     template_values['edit_course'] = course 
     chapter_keys = []

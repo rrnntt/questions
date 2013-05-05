@@ -1,3 +1,4 @@
+import logging 
 import webapp2
 from base_handler import BaseHandler
 from rest import RESTHandlerClass
@@ -30,7 +31,8 @@ class QuestionListHandler(BaseHandler):
         Get the cached QuestionList which is being edited (in "shopping basket")
         """
         if 'question_list' in self.session:
-            return self.session['question_list']
+            key = self.session['question_list']
+            return db.get( key )
         return None
     
     def stop_edit_question_list(self):
@@ -38,11 +40,11 @@ class QuestionListHandler(BaseHandler):
             del self.session['question_list']
     
     def start_edit_question_list(self, qlist):
-        if 'question_list' in self.session:
-            self.session['question_list'] = qlist
+        logging.info('started question list editing')
+        self.session['question_list'] = str(qlist.key())
     
         
-class QuestionListPage(BaseHandler):
+class QuestionListPage(QuestionListHandler):
     """
     Open page showing single question list.
     URL: /questionlistpage?key=<question_list_key>&edit=<true|false>
@@ -85,7 +87,7 @@ class QuestionListPage(BaseHandler):
                            }
         write_template(self, user, 'question_list.html', template_values)
                 
-class SaveQuestionList(BaseHandler):
+class SaveQuestionList(QuestionListHandler):
     """
     Open page showing single question list.
     URL: /savequestionlist?key=<question_list_key>&class=<aclass_key>
@@ -112,7 +114,7 @@ class SaveQuestionList(BaseHandler):
         
         self.redirect('/')
 
-class CancelEditQuestionList(BaseHandler):
+class CancelEditQuestionList(QuestionListHandler):
     """
     Cancel list editing and remove it from shopping list.
     URL: /cancelquestionlist?goto=<url>
@@ -131,7 +133,7 @@ class CancelEditQuestionList(BaseHandler):
         
         self.redirect(goto)
 
-class DeleteEditQuestionList(BaseHandler):
+class DeleteEditQuestionList(QuestionListHandler):
     """
     Delete list editing and remove it from shopping list.
     URL: /deletequestionlist?goto=<url>
@@ -154,7 +156,7 @@ class DeleteEditQuestionList(BaseHandler):
         
         self.redirect(goto)
 
-class CreateQuestionList(BaseHandler):
+class CreateQuestionList(QuestionListHandler):
     """
     Open page showing single question list.
     URL: /savequestionlist?key=<question_list_key>&class=<aclass_key>
@@ -166,7 +168,7 @@ class CreateQuestionList(BaseHandler):
             return
             
         parent_key = db.Key(encoded=self.request.get('parent'))
-        qlist = create_question_list(parent_key)
+        qlist = QuestionList.create(parent_key)
         self.start_edit_question_list(qlist)
         
         goto = self.request.get('goto')
