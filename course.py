@@ -1,5 +1,4 @@
 from google.appengine.ext import db
-from google.appengine.api import memcache
 from chapter import Chapter, root_key
 from student_results import StudentResult
 from question import count_questions
@@ -52,18 +51,6 @@ class Course(db.Model):
         if self.num_questions == 0:
             return 0
         return float(n) / self.num_questions
-
-def get_edit_course():
-    """
-    Get the cached course which is being edited (in "shopping basket")
-    """
-    return memcache.get('course')
-
-def stop_edit_course():
-    memcache.delete('course')
-
-def start_edit_course(course):
-    memcache.add('course',course)
 
 def create_course(clss, name = 'new'):
     course = Course(parent=clss)

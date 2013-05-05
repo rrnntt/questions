@@ -1,7 +1,9 @@
 import webapp2
+from google.appengine.ext import db
+
 from rest import RESTHandlerClass
 from base_handler import BaseHandler
-from course import *
+from course import Course, create_course
 from mytemplate import write_template
 from chapter_module import Chapter
 from aclass import get_teacher_classes, Class
@@ -24,7 +26,24 @@ class CourseRESTHandler(RESTHandlerClass):
         
         return RESTHandlerClass.convert(self, field, value)
         
-class CoursePage(BaseHandler):
+class CourseHandler(BaseHandler):
+    def get_edit_course(self):
+        """
+        Get the cached Course which is being edited (in "shopping basket")
+        """
+        if 'course' in self.session:
+            key = self.session['course']
+            return db.get( key )
+        return None
+    
+    def stop_edit_course(self):
+        if 'course' in self.session:
+            del self.session['course']
+    
+    def start_edit_course(self, course):
+        self.session['course'] = str(course.key())
+    
+class CoursePage(CourseHandler):
     """
     Open page showing single course.
     URL: /coursepage?key=<course_key>&edit=<true|false>
@@ -49,7 +68,7 @@ class CoursePage(BaseHandler):
         if edit == 'true' and user.isTeacher():
             edit = True
             class_list = get_teacher_classes(user)
-            start_edit_course(course)
+            self.start_edit_course(course)
         else:
             edit = False
             class_list = []
@@ -67,7 +86,7 @@ class CoursePage(BaseHandler):
                            }
         write_template(self, user, 'course.html', template_values)
                 
-class SaveCourse(BaseHandler):
+class SaveCourse(CourseHandler):
     """
     Save course and remove it from shopping list.
     URL: /savecourse?key=<course_key>&class=<aclass_key>
@@ -95,11 +114,11 @@ class SaveCourse(BaseHandler):
             newCourse.count_questions()
             newCourse.put()
             
-        stop_edit_course()
+        self.stop_edit_course()
         
         self.redirect(goto)
 
-class CancelEditCourse(BaseHandler):
+class CancelEditCourse(CourseHandler):
     """
     Cancel course editing and remove it from shopping list.
     URL: /cancelcourse?goto=<url>
@@ -114,11 +133,11 @@ class CancelEditCourse(BaseHandler):
         if goto == None or goto == '':
             goto = '/'
         
-        stop_edit_course()
+        self.stop_edit_course()
         
         self.redirect(goto)
 
-class DeleteEditCourse(BaseHandler):
+class DeleteEditCourse(CourseHandler):
     """
     Delete course editing and remove it from shopping list.
     URL: /deletecourse?goto=<url>
@@ -129,7 +148,7 @@ class DeleteEditCourse(BaseHandler):
             self.redirect('/')
             return
             
-        course = get_edit_course()
+        course = self.get_edit_course()
         if course != None:
             course.delete()
             
@@ -137,11 +156,11 @@ class DeleteEditCourse(BaseHandler):
         if goto == None or goto == '':
             goto = '/'
         
-        stop_edit_course()
+        self.stop_edit_course()
         
         self.redirect(goto)
 
-class CreateCourse(BaseHandler):
+class CreateCourse(CourseHandler):
     """
     Create new course.
     URL: /createcourse?parent=<parent_key>&goto=<url>
@@ -152,9 +171,9 @@ class CreateCourse(BaseHandler):
             self.redirect('/')
             return
             
-        parent_key = db.Key(encoded=self.request.get('parent'))
-        qlist = create_course(parent_key)
-        start_edit_course(qlist)
+        parent_key = db.Key( encoded=self.request.get('parent') )
+        course = create_course(parent_key)
+        self.start_edit_course(course)
         
         goto = self.request.get('goto')
         if goto == None and goto == '':
