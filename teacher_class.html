@@ -121,18 +121,24 @@ function student_checked(box)
 </div>
 
 <h3>Courses</h3>
+<ul>
 {% for course in courses %}
+<li>
 <a href="/coursepage?key={{course.key()}}&edit=true&goto=/teacherclass?class={{clss.key()}}">{{course.name}}</a>
-<br />
+</li>
 {% endfor %}
+</ul>
 
 <button id="add_course">Add course</button>
 
 <h3>Question lists</h3>
+<ul>
 {% for qlist in qlists %}
+<li>
 <a href="/questionlistpage?key={{qlist.key()}}&edit=true&goto=/teacherclass?class={{clss.key()}}">{{qlist.name}}</a>
-<br />
+</li>
 {% endfor %}
+</ul>
 
 <button id="add_question_list">Add question list</button>
 
