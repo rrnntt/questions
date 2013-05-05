@@ -2,16 +2,16 @@ import webapp2
 from google.appengine.ext import db
 import json
 from google.appengine.api import memcache
-from myuser import get_current_user
+from base_handler import BaseHandler
 
-class RESTHandlerClass(webapp2.RequestHandler):
+class RESTHandlerClass(BaseHandler):
     """REST service template class for managing a model.
     
     self.ModelClass = 
     
     """
     def __init__(self, request=None, response=None):
-        webapp2.RequestHandler.__init__(self, request, response)
+        BaseHandler.__init__(self, request, response)
         self.obj = None
         self.parent_required = False
         
@@ -82,7 +82,7 @@ class RESTHandlerClass(webapp2.RequestHandler):
 
     def post(self,Id=None):
         """Create new chapter instance and retirn its id which is its key"""
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -156,30 +156,30 @@ class MemcachedRESTHandler(RESTHandlerClass):
         out = RESTHandlerClass.post(self, Id)
         
         if Id == None:
-            qlist = memcache.get(self.cache_key)
+            qlist = self.session[self.cache_key]
             if qlist != None:
                 qlist.delete()
-            memcache.delete(self.cache_key)
+            del self.session[self.cache_key]
             if self.obj != None:
-                memcache.add(self.cache_key,self.obj)
+                self.session[self.cache_key] = self.obj
             
         return out            
 
     def put(self,Id):
         RESTHandlerClass.put(self, Id)
         #raise Exception('put '+Id +'\n'+self.to_str('questions'))
-        qlist = memcache.get(self.cache_key)
+        qlist = self.session[self.cache_key]
         if qlist.key() == self.obj.key():
             #qlist = self.obj
-            memcache.set(self.cache_key, self.obj)
+            self.session[self.cache_key] = self.obj
         else:
             raise Exception('Object is not in memcache')
 
     def delete(self,Id):
-        qlist = memcache.get(self.cache_key)
+        qlist = self.session[self.cache_key]
         if qlist != None:
             key = db.Key(encoded = Id)
             if key == qlist.key():
-                memcache.delete(self.cache_key)
+                del self.session[self.cache_key]
         RESTHandlerClass.put(self, Id)
         

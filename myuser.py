@@ -138,9 +138,9 @@ def get_unique_nickname():
 def get_random_password():
     return '{:04}'.format( random.randint(101,9999) ) 
     
-def get_user(name):
+def get_user(nickname):
     """Get user from datastore by nickname"""
-    user = MyUser.get_by_key_name(name.lower())
+    user = MyUser.get_by_key_name(nickname.lower())
     return user
 
 def create_user(name,roles = None, passwd = None):
@@ -178,81 +178,6 @@ def create_user(name,roles = None, passwd = None):
 
     return user
 
-def local_login(nickname,password):
-    """Log in user without google account.
-    
-    Args:
-        nickname (str): Nickname to login with
-        passwd (str): User local password
-    
-    Return (MyUser):
-        Logged in user or None if failed.
-    """
-    user = get_user(nickname.lower())
-    if not user or user.password() != password:
-        return None
-    memcache.add('local_user',user.key())
-    return user
-    
-def local_logout():
-    """Log out user without google account."""
-    memcache.delete('local_user')
-    
-def get_current_user():
-    """Return the current user if someone logged in or None otherwise"""
-    default_user = 'roman.tolchenov'
-    gUser = users.get_current_user()
-    if not gUser:
-        #return MyUser(key_name=default_user)
-        user_key = memcache.get('local_user')
-        if not user_key:
-            return None
-        user = MyUser.get(user_key)
-    else:
-        user = get_user(gUser.nickname().lower())
-    if user and not user.user:
-        user.user = gUser 
-    # if default user logged in but not registered - register him (me)
-    if not user and gUser.nickname().lower() == default_user:
-        user = MyUser(key_name=default_user)
-        user.user = gUser
-        user.roles = ['admin','teacher']
-        user.put()
-    # temporary:
-#    if gUser and gUser.nickname() == default_user:
-#        user.roles = ['admin','teacher']
-    return user
-
-def check_loggedin(func):
-    """Decorator for requests handlers wich must check that a user has logged in"""
-    def check_loggedin_wrapper(self):
-        user = get_current_user()
-        if not user:
-            self.redirect('/')
-            return
-        func(self)
-    return check_loggedin_wrapper
-
-def get_current_admin():
-    """Return the current user if someone logged in and is an admin or None otherwise"""
-    user = get_current_user()
-    if not user or not user.isAdmin():
-        return None
-    return user
-
-def get_current_teacher():
-    """Return the current user if someone logged in and is a teacher or None otherwise"""
-    user = get_current_user()
-    if not user or not user.isTeacher():
-        return None
-    return user
-
-def get_current_student():
-    """Return the current user if someone logged in and is a student or None otherwise"""
-    user = get_current_user()
-    if not user or not user.isStudent():
-        return None
-    return user
 
 def google_login(email,user_id):
     """Emulate google login for testing"""

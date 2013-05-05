@@ -15,7 +15,7 @@ table {
 
 
 #container {
-  width: 800px;
+  /*width: 800px;*/
   box-shadow: 0 0 30px #ccc;
   margin-left: auto;
   margin-right: auto;

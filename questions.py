@@ -14,10 +14,11 @@ import question_list_handlers
 import course_handlers
 import student_handlers
 import image_handlers
+from base_handler import BaseHandler
 
-class MainPage(webapp2.RequestHandler):
+class MainPage(BaseHandler):
     def get(self):
-        user = myuser.get_current_user()
+        user = self.get_current_user()
         template_values = {}
         if user:
             if user.isAdmin():
@@ -34,44 +35,50 @@ class MainPage(webapp2.RequestHandler):
         else:
             write_template(self, user, 'index.html', template_values)
         
-class StudentLogin(webapp2.RequestHandler):
+class StudentLogin(BaseHandler):
     def get(self):
         values = {'in_local_login': True,'page': self.request.get('page')}
         write_template(self, None, 'student_login.html', values)
 
-class Login(webapp2.RequestHandler):
+class Login(BaseHandler):
     def post(self):
         nickname = self.request.get('nickname')
         password = self.request.get('password')
         page = str(self.request.get('page'))
-        user = myuser.local_login(nickname, password)
+        user = self.local_login(nickname, password)
         if not isinstance(page, str):
             raise Exception('not str!')
         self.redirect(page)
 
-class Logout(webapp2.RequestHandler):
+class Logout(BaseHandler):
     def get(self):
-        myuser.local_logout()
+        self.local_logout()
         self.redirect('/')
 
-class TestPage(webapp2.RequestHandler):
+class TestPage(BaseHandler):
     def get(self):
-        user = myuser.get_current_user()
+        user = self.get_current_user()
         values = {'page': self.request.get('page')}
         write_template(self, user, 'test.html', values)
 
-class StartPage(webapp2.RequestHandler):
+class StartPage(BaseHandler):
     def get(self):
-        user = myuser.get_current_user()
+        user = self.get_current_user()
         values = {'page': self.request.get('page')}
         write_template(self, user, 'test.html', values)
         
-class GetUniqueName(webapp2.RequestHandler):
+class GetUniqueName(BaseHandler):
     def get(self):
         res = {}
         res['nickname'] = myuser.get_unique_nickname()
         res['password'] = myuser.get_random_password()
         self.response.out.write(json.dumps(res))
+        
+        
+config = {}
+config['webapp2_extras.sessions'] = {
+    'secret_key': 'my-super-secret-key',
+}
 
 app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/studentlogin', StudentLogin),
@@ -134,4 +141,4 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/studentcoursespage', student_handlers.CoursesPage),
                                (r'/studentcoursepage', student_handlers.CoursePage),
                                ],
-                              debug=True)
+                              debug=True, config=config)

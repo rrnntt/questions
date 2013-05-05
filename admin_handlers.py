@@ -1,11 +1,12 @@
 import webapp2
 from google.appengine.ext import db
-from myuser import MyUser,create_user,get_current_admin
+from base_handler import BaseHandler
+from myuser import MyUser
 from mytemplate import write_template
 
-class AdminStartPage(webapp2.RequestHandler):
+class AdminStartPage(BaseHandler):
     def get(self):
-        admin = get_current_admin()
+        admin = self.get_current_admin()
         if not admin:
             self.redirect('/')
             return

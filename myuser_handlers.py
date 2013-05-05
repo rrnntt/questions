@@ -1,14 +1,17 @@
 import webapp2
 import json
 from google.appengine.ext import db
-from myuser import MyUser,create_user,get_current_admin
+from google.appengine.api import users
+
+from base_handler import BaseHandler
+from myuser import MyUser, create_user
 from aclass import Class
 from mytemplate import write_template
 
 ####################################################################
 #   MyUser REST service
 ####################################################################
-class MyUsers(webapp2.RequestHandler):
+class MyUsers(BaseHandler):
     """Implements REST service for managing users"""
     def put(self,Id):
         """Save a user with key == Id"""
@@ -25,7 +28,7 @@ class MyUsers(webapp2.RequestHandler):
 
     def post(self,Id=None):
         """Create new user instance and retirn its id which is its key"""
-        admin = get_current_admin()
+        admin = self.get_current_admin()
         if not admin:
             self.redirect('/')
             return
@@ -80,10 +83,10 @@ class MyUsers(webapp2.RequestHandler):
 #    Request handlers
 #########################################################################
 
-class UserList(webapp2.RequestHandler):
+class UserList(BaseHandler):
     def get(self):
 
-        user = get_current_admin()
+        user = self.get_current_admin()
         if not user:
             self.redirect('/')
             return
@@ -95,7 +98,7 @@ class UserList(webapp2.RequestHandler):
         }
         write_template(self, user, 'user_list.html',template_values)
         
-class DeleteUser(webapp2.RequestHandler):
+class DeleteUser(BaseHandler):
     def post(self):
         encoded_key = self.request.get('key')
         key = db.Key(encoded=encoded_key)
@@ -104,7 +107,7 @@ class DeleteUser(webapp2.RequestHandler):
             user.delete()
         self.redirect('/userlist')
         
-class AddUser(webapp2.RequestHandler):
+class AddUser(BaseHandler):
     def post(self):
         name = self.request.get('new-name')
         if len(name) > 0:

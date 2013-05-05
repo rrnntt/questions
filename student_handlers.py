@@ -1,3 +1,4 @@
+from base_handler import BaseHandler
 from google.appengine.api import memcache
 from markdown import markdown
 from markdown_postprocess import postprocess
@@ -10,9 +11,9 @@ from aclass import get_student_classes
 from course import Course, get_courses
 from student_results import passed
 
-class StartPage(webapp2.RequestHandler):
+class StartPage(BaseHandler):
     def get(self):
-        student = get_current_student()
+        student = self.get_current_student()
         if not student:
             self.redirect('/')
             return
@@ -27,9 +28,9 @@ class StartPage(webapp2.RequestHandler):
                            }
         write_template(self, student, 'student_start.html',template_values)
 
-class SelectClass(webapp2.RequestHandler):
+class SelectClass(BaseHandler):
     def get(self):
-        student = get_current_student()
+        student = self.get_current_student()
         if not student:
             self.redirect('/')
             return
@@ -40,9 +41,9 @@ class SelectClass(webapp2.RequestHandler):
         
         self.redirect('/studentcoursespage')
 
-class CoursesPage(webapp2.RequestHandler):
+class CoursesPage(BaseHandler):
     def get(self):
-        student = get_current_student()
+        student = self.get_current_student()
         if not student:
             self.redirect('/')
             return
@@ -61,13 +62,13 @@ class CoursesPage(webapp2.RequestHandler):
                            }
         write_template(self, student, 'student_courses.html',template_values)
 
-class CoursePage(webapp2.RequestHandler):
+class CoursePage(BaseHandler):
     """
     Open page showing single course.
     URL: /studentcoursepage?key=<course_key>
     """
     def get(self):
-        user = get_current_student()
+        user = self.get_current_student()
         if not user:
             self.redirect('/')
             return
@@ -93,9 +94,9 @@ class CoursePage(webapp2.RequestHandler):
                            }
         write_template(self, user, 'student_course.html', template_values)
 
-class ChapterPage(webapp2.RequestHandler):
+class ChapterPage(BaseHandler):
     def get(self):
-        user = get_current_student()
+        user = self.get_current_student()
         if not user:
             self.redirect('/')
             return

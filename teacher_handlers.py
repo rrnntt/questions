@@ -1,14 +1,15 @@
 import webapp2
 from google.appengine.ext import db
-from myuser import MyUser,create_user,get_current_teacher
+from base_handler import BaseHandler
+from myuser import MyUser,create_user
 from mytemplate import write_template
 from aclass import *
 from question_list import QuestionList, get_question_list
 from course import Course, get_courses
 
-class StartPage(webapp2.RequestHandler):
+class StartPage(BaseHandler):
     def get(self):
-        teacher = get_current_teacher()
+        teacher = self.get_current_teacher()
         if not teacher:
             self.redirect('/')
             return
@@ -16,9 +17,9 @@ class StartPage(webapp2.RequestHandler):
         template_values = {'classes': get_teacher_classes(teacher)}
         write_template(self, teacher, 'teacher_start.html', template_values)
         
-class ClassPage(webapp2.RequestHandler):
+class ClassPage(BaseHandler):
     def get(self):
-        teacher = get_current_teacher()
+        teacher = self.get_current_teacher()
         if not teacher:
             self.redirect('/')
             return

@@ -1,13 +1,14 @@
 import webapp2
 import json
 from google.appengine.ext import db
+from base_handler import BaseHandler
 from aclass import Class, create_class, get_student_classes
-from myuser import get_current_teacher,get_current_student,MyUser,create_user
+from myuser import MyUser,create_user
 
 ####################################################################
 #   Class REST service
 ####################################################################
-class Classes(webapp2.RequestHandler):
+class Classes(BaseHandler):
     """Implements REST service for managing classes"""
     def put(self,Id):
         """Save a class with key == Id"""
@@ -22,7 +23,7 @@ class Classes(webapp2.RequestHandler):
 
     def post(self,Id=None):
         """Create new class instance and retirn its id which is its key"""
-        teacher = get_current_teacher()
+        teacher = self.get_current_teacher()
         if not teacher:
             self.redirect('/')
             return
@@ -66,7 +67,7 @@ class Classes(webapp2.RequestHandler):
 ####################################################################
 #   Student REST service
 ####################################################################
-class Students(webapp2.RequestHandler):
+class Students(BaseHandler):
     """Implements REST service for managing students"""
     def put(self,Id):
         """Save a student with key == Id"""
@@ -81,7 +82,7 @@ class Students(webapp2.RequestHandler):
 
     def post(self,Id=None):
         """Create new class instance and retirn its id which is its key"""
-        teacher = get_current_teacher()
+        teacher = self.get_current_teacher()
         if not teacher:
             self.redirect('/')
             return

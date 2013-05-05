@@ -2,6 +2,7 @@ import logging
 import json
 from markdown import markdown
 
+from base_handler import BaseHandler
 from markdown_postprocess import postprocess
 from chapter import *
 from myuser import *
@@ -50,9 +51,9 @@ def set_chapter_text(chapter, text, save=False):
 #     Request handlers
 ###########################################################################
             
-class ChapterPage(webapp2.RequestHandler):
+class ChapterPage(BaseHandler):
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -90,10 +91,10 @@ class ChapterPage(webapp2.RequestHandler):
         
         write_template(self, user, 'chapter.html',template_values)
         
-class EditChapterPage(webapp2.RequestHandler):
+class EditChapterPage(BaseHandler):
     def get(self):
 
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -115,7 +116,7 @@ class EditChapterPage(webapp2.RequestHandler):
 ###########################################################################
 #     Chapters
 ###########################################################################
-class Chapters(webapp2.RequestHandler):
+class Chapters(BaseHandler):
     """Implements REST service for managing chapters"""
     def put(self,Id):
         """Save a chapter with key == Id"""
@@ -137,7 +138,7 @@ class Chapters(webapp2.RequestHandler):
 
     def post(self,Id=None):
         """Create new chapter instance and retirn its id which is its key"""
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return

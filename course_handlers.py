@@ -1,8 +1,8 @@
 import webapp2
 from rest import RESTHandlerClass
+from base_handler import BaseHandler
 from course import *
 from mytemplate import write_template
-from myuser import get_current_teacher, get_current_user
 from chapter_module import Chapter
 from aclass import get_teacher_classes, Class
 
@@ -24,13 +24,13 @@ class CourseRESTHandler(RESTHandlerClass):
         
         return RESTHandlerClass.convert(self, field, value)
         
-class CoursePage(webapp2.RequestHandler):
+class CoursePage(BaseHandler):
     """
     Open page showing single course.
     URL: /coursepage?key=<course_key>&edit=<true|false>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -67,13 +67,13 @@ class CoursePage(webapp2.RequestHandler):
                            }
         write_template(self, user, 'course.html', template_values)
                 
-class SaveCourse(webapp2.RequestHandler):
+class SaveCourse(BaseHandler):
     """
     Save course and remove it from shopping list.
     URL: /savecourse?key=<course_key>&class=<aclass_key>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -99,13 +99,13 @@ class SaveCourse(webapp2.RequestHandler):
         
         self.redirect(goto)
 
-class CancelEditCourse(webapp2.RequestHandler):
+class CancelEditCourse(BaseHandler):
     """
     Cancel course editing and remove it from shopping list.
     URL: /cancelcourse?goto=<url>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -118,13 +118,13 @@ class CancelEditCourse(webapp2.RequestHandler):
         
         self.redirect(goto)
 
-class DeleteEditCourse(webapp2.RequestHandler):
+class DeleteEditCourse(BaseHandler):
     """
     Delete course editing and remove it from shopping list.
     URL: /deletecourse?goto=<url>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -141,13 +141,13 @@ class DeleteEditCourse(webapp2.RequestHandler):
         
         self.redirect(goto)
 
-class CreateCourse(webapp2.RequestHandler):
+class CreateCourse(BaseHandler):
     """
     Create new course.
     URL: /createcourse?parent=<parent_key>&goto=<url>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return

@@ -1,8 +1,8 @@
 import webapp2
+from base_handler import BaseHandler
 from rest import RESTHandlerClass
 from question_list import *
 from mytemplate import write_template
-from myuser import get_current_teacher, get_current_user
 from question import Question
 from aclass import get_teacher_classes, Class
 
@@ -24,13 +24,13 @@ class QuestionListRESTHandler(RESTHandlerClass):
         
         return RESTHandlerClass.convert(self, field, value)
         
-class QuestionListPage(webapp2.RequestHandler):
+class QuestionListPage(BaseHandler):
     """
     Open page showing single question list.
     URL: /questionlistpage?key=<question_list_key>&edit=<true|false>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -67,13 +67,13 @@ class QuestionListPage(webapp2.RequestHandler):
                            }
         write_template(self, user, 'question_list.html', template_values)
                 
-class SaveQuestionList(webapp2.RequestHandler):
+class SaveQuestionList(BaseHandler):
     """
     Open page showing single question list.
     URL: /savequestionlist?key=<question_list_key>&class=<aclass_key>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -94,13 +94,13 @@ class SaveQuestionList(webapp2.RequestHandler):
         
         self.redirect('/')
 
-class CancelEditQuestionList(webapp2.RequestHandler):
+class CancelEditQuestionList(BaseHandler):
     """
     Cancel list editing and remove it from shopping list.
     URL: /cancelquestionlist?goto=<url>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -113,13 +113,13 @@ class CancelEditQuestionList(webapp2.RequestHandler):
         
         self.redirect(goto)
 
-class DeleteEditQuestionList(webapp2.RequestHandler):
+class DeleteEditQuestionList(BaseHandler):
     """
     Delete list editing and remove it from shopping list.
     URL: /deletequestionlist?goto=<url>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -136,13 +136,13 @@ class DeleteEditQuestionList(webapp2.RequestHandler):
         
         self.redirect(goto)
 
-class CreateQuestionList(webapp2.RequestHandler):
+class CreateQuestionList(BaseHandler):
     """
     Open page showing single question list.
     URL: /savequestionlist?key=<question_list_key>&class=<aclass_key>
     """
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return

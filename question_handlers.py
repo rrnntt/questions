@@ -1,6 +1,8 @@
 import webapp2
 from google.appengine.ext import db
 import json
+
+from base_handler import BaseHandler
 from mytemplate import write_template
 from myuser import *
 from question import *
@@ -24,10 +26,10 @@ def create_question(chapter, typ = 'numeric'):
 #     Questions pages
 ###########################################################################
 
-class EditQuestionPage(webapp2.RequestHandler):
+class EditQuestionPage(BaseHandler):
     def get(self):
 
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -54,7 +56,7 @@ class EditQuestionPage(webapp2.RequestHandler):
 ###########################################################################
 #     Questions REST interface
 ###########################################################################
-class Questions(webapp2.RequestHandler):
+class Questions(BaseHandler):
     """Implements REST service for managing questions"""
     def put(self,Id):
         """Save a question with key == Id"""
@@ -77,7 +79,7 @@ class Questions(webapp2.RequestHandler):
 
     def post(self,Id=None):
         """Create new chapter instance and retirn its id which is its key"""
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -123,11 +125,11 @@ class Questions(webapp2.RequestHandler):
         else:
             raise Exception('Deleting of question failed')
 
-class Answer(webapp2.RequestHandler):
+class Answer(BaseHandler):
     """Implements REST service for receiving answers"""
     def put(self,Id):
         question = Question.get(db.Key(encoded = Id))
-        student = get_current_student()
+        student = self.get_current_student()
 
         if question:
             jsn = json.decoder.JSONDecoder()
@@ -145,7 +147,7 @@ class Answer(webapp2.RequestHandler):
 
     def post(self,Id=None):
 
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return

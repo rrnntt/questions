@@ -4,12 +4,12 @@ import urllib
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from image import Image
-from myuser import get_current_user
+from base_handler import BaseHandler
 from mytemplate import write_template
 
-class ServeImage(webapp2.RequestHandler):
+class ServeImage(BaseHandler):
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.error(404)
             return
@@ -38,9 +38,9 @@ class ServeImage(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = str('image/'+image.type)
         self.response.out.write(image.data)
 
-class UploadImage(webapp2.RequestHandler):
+class UploadImage(BaseHandler):
     def post(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -71,9 +71,9 @@ class UploadImage(webapp2.RequestHandler):
                     chapter.refresh = True
         self.redirect('/uploadimagepage?%s' % urllib.urlencode(args))
         
-class UploadImagePage(webapp2.RequestHandler):
+class UploadImagePage(BaseHandler):
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -94,9 +94,9 @@ class UploadImagePage(webapp2.RequestHandler):
                            }
         write_template(self, user, 'image_upload.html', template_values)
         
-class ImageListPage(webapp2.RequestHandler):
+class ImageListPage(BaseHandler):
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
@@ -113,9 +113,9 @@ class ImageListPage(webapp2.RequestHandler):
                            }
         write_template(self, user, 'image_list.html', template_values)
         
-class ImagePage(webapp2.RequestHandler):
+class ImagePage(BaseHandler):
     def get(self):
-        user = get_current_user()
+        user = self.get_current_user()
         if not user:
             self.redirect('/')
             return
