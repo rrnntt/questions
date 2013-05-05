@@ -1,6 +1,9 @@
 body {
   font-family: Verdana, Helvetica, sans-serif;
   font-size: 80%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 a:link {text-decoration:none;}
@@ -10,7 +13,18 @@ table {
   font-size: 100%;
 }
 
-#main-menu {
+
+#container {
+  width: 800px;
+  box-shadow: 0 0 30px #ccc;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px 5px 5px 5px;
+  min-height:100%;
+  position:relative;
+}
+
+#header {
 	background: url("/images/main-menu-bg.png");
 	height: 25px;
 	overflow-y: hidden;
@@ -18,18 +32,23 @@ table {
 	border-radius: 6px;
 	padding-top: 5px;
 	padding-left: 10px;
+	/*padding: 10px;*/
 }
-#main-menu a {
+
+#header a {
   text-decoration: none;
 }
 
-#main-body {
-  width: 800px;
-  box-shadow: 0 0 30px #ccc;
-  margin-left: auto;
-  margin-right: auto;
-  height: inherit;
-  padding: 5px 5px 5px 5px;
+#body {
+   padding:10px;
+   padding-bottom:60px;   /* Height of the footer */
+}
+
+#footer {
+   position:absolute;
+   bottom:0;
+   width:99%;
+   height:60px;   /* Height of the footer */
 }
 
 #chapter_title {

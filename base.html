@@ -157,30 +157,38 @@
   
   <body>
   	
-  	<div id="main-body">
+  	<div id="container">
   	
+  	<div id="header">
   	<table width="100%">
   		<tr> 
-		<td style="text-align: right">   
-		  	<nav id="main-menu">
+  		<td>
+		  	<nav class="main-menu">
 		  	  <a href="/">Home</a>
-
 			  {%if user %}
 				  {% if user.isAdmin() %}
 				  | <a href="/userlist">Manage users</a>
 				  | <a href="/_ah/admin">Admin</a>
 				  {% endif %}
 				  {% if user.isTeacher() %}
+				  | <a href="/teacherstart">My classes</a>
 				  | <a href="/chapterpage?chapter=root">My chapters</a>
-     			  <span id="edit_course"></span>
-     			  <span id="edit_question_list"></span>
      			  {% block menu %}
      			  {% endblock %}
 				  {% endif %}
 			  {% endif %}
+		  	</nav>
+  		</td>
+		<td style="text-align: right">   
+		  	<nav class="main-menu">
+			  {%if user %}
+				  {% if user.isTeacher() %}
+     			  <span id="edit_course"></span>
+     			  <span id="edit_question_list"></span>
+				  {% endif %}
+			  {% endif %}
 
 		  	  {%if in_local_login != True %} 
-			  	  |
 			  	  <a href="{{ login_url }}">{{ login_url_text }}</a>
 			  	  {%if login_url_text != 'Logout' %}
 				  	  | <a href="{{ local_login_url }}"> Student </a>
@@ -191,6 +199,9 @@
 		</td> 
   		</tr>
   	</table>
+  	</div>
+  	
+  	<div id="body">
 	{% if user %}
 	  <div style="margin-bottom: 10px">
 	  	User: {{ user_name }}
@@ -202,8 +213,14 @@
 	
   	{% block main %}
   	{% endblock %}
+  	</div>
   	
   	<div id="debug"></div>
+  	
+  	<div id="footer">
+  		<hr />
+  		This is footer
+  	</div>
   	
   	</div>
   </body>
