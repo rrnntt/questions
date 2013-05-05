@@ -24,3 +24,13 @@ indexes:
   properties:
   - name: roles=
   - name: _nickname
+
+- kind: Question
+  properties:
+  - name: chapter
+  - name: id
+
+- kind: Question
+  properties:
+  - name: chapter
+  - name: title

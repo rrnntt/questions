@@ -7,7 +7,7 @@ from markdown_postprocess import postprocess
 from chapter import *
 from myuser import *
 from mytemplate import write_template
-from question import Question
+from question import Question, list_questions
 from image import Image
 
 """

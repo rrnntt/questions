@@ -1,3 +1,4 @@
+import logging
 import webapp2
 from google.appengine.ext import db
 import json
@@ -8,19 +9,6 @@ from myuser import *
 from question import *
 from chapter_module import get_chapter_by_encoded_key
 from student_results import save_result
-
-###########################################################################
-#     Questions helper functions
-###########################################################################
-
-def create_question(chapter, typ = 'numeric'):
-    question = Question(parent=chapter.key())
-    question.title = 'new'
-    question.text = ''
-    question.answer = ''
-    question.type = typ
-    question.put()
-    return question
 
 ###########################################################################
 #     Questions pages
@@ -39,7 +27,7 @@ class EditQuestionPage(BaseHandler):
         
         question_key = self.request.get('question')
         if question_key == 'new':
-            question = create_question(chapter)
+            question = Question.create(chapter)
         else:
             question = Question.get(db.Key(encoded=question_key))
         question_key = question.key()
@@ -66,7 +54,6 @@ class Questions(BaseHandler):
         if question:
             jsn = json.decoder.JSONDecoder()
             model = jsn.decode( self.request.get('model'))
-            #raise Exception(model[0])
             if 'text' in model:
                 question.text = model['text']
             if 'answer' in model:
@@ -74,6 +61,8 @@ class Questions(BaseHandler):
             if 'type' in model:
                 question.type = model['type']
             question.put()
+            #question = Question.get(db.Key(encoded = Id))
+            #logging.info('text: '+question.text)
         else:
             raise Exception('Saving of question failed')
 
@@ -84,7 +73,6 @@ class Questions(BaseHandler):
             self.redirect('/')
             return
             
-        #raise Exception(self.request.get('_method'))
         httpMethod = self.request.get('_method')
         if httpMethod == 'PUT':
             self.put(Id)
@@ -107,7 +95,7 @@ class Questions(BaseHandler):
         
         if len(text) > 0:
             chapter_key = db.Key(encoded=model['chapter'])
-            question = Question(parent=chapter_key)
+            question = Question.create(chapter_key)
             question.text = text
             question.answer = model['answer']
             question.put()

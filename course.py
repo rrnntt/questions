@@ -2,6 +2,7 @@ from google.appengine.ext import db
 from google.appengine.api import memcache
 from chapter import Chapter, root_key
 from student_results import StudentResult
+from question import count_questions
 
 class Course(db.Model):
     # Name/Title of the course 
@@ -41,7 +42,7 @@ class Course(db.Model):
         n = 0
         for key in self.chapters:
             chapter = Chapter.get(key)
-            n += chapter.count_questions()
+            n += count_questions(chapter)
         self.num_questions = n
         
     def get_progress(self,student):

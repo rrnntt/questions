@@ -23,6 +23,24 @@ class QuestionListRESTHandler(RESTHandlerClass):
             return qlist
         
         return RESTHandlerClass.convert(self, field, value)
+    
+class QuestionListHandler(BaseHandler):
+    def get_edit_question_list(self):
+        """
+        Get the cached QuestionList which is being edited (in "shopping basket")
+        """
+        if 'question_list' in self.session:
+            return self.session['question_list']
+        return None
+    
+    def stop_edit_question_list(self):
+        if 'question_list' in self.session:
+            del self.session['question_list']
+    
+    def start_edit_question_list(self, qlist):
+        if 'question_list' in self.session:
+            self.session['question_list'] = qlist
+    
         
 class QuestionListPage(BaseHandler):
     """
@@ -49,7 +67,7 @@ class QuestionListPage(BaseHandler):
         if edit == 'true' and user.isTeacher():
             edit = True
             class_list = get_teacher_classes(user)
-            start_edit_question_list(qlist)
+            self.start_edit_question_list(qlist)
         else:
             edit = False
             class_list = []
@@ -90,7 +108,7 @@ class SaveQuestionList(BaseHandler):
             newList.questions = qlist.questions
             newList.put()
             
-        stop_edit_question_list()
+        self.stop_edit_question_list()
         
         self.redirect('/')
 
@@ -109,7 +127,7 @@ class CancelEditQuestionList(BaseHandler):
         if goto == None or goto == '':
             goto = '/'
         
-        stop_edit_question_list()
+        self.stop_edit_question_list()
         
         self.redirect(goto)
 
@@ -124,7 +142,7 @@ class DeleteEditQuestionList(BaseHandler):
             self.redirect('/')
             return
             
-        qlist = get_edit_question_list()
+        qlist = self.get_edit_question_list()
         if qlist != None:
             qlist.delete()
         
@@ -132,7 +150,7 @@ class DeleteEditQuestionList(BaseHandler):
         if goto == None or goto == '':
             goto = '/'
         
-        stop_edit_question_list()
+        self.stop_edit_question_list()
         
         self.redirect(goto)
 
@@ -149,7 +167,7 @@ class CreateQuestionList(BaseHandler):
             
         parent_key = db.Key(encoded=self.request.get('parent'))
         qlist = create_question_list(parent_key)
-        start_edit_question_list(qlist)
+        self.start_edit_question_list(qlist)
         
         goto = self.request.get('goto')
         if goto == None and goto == '':

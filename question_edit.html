@@ -25,7 +25,11 @@
         });
         
 		$("#cancel_button").button().click(function(event){
-			window.location.replace("/chapterpage?chapter={{chapter.key()}}");
+			window.location.replace("/chaptereditpage?chapter={{chapter.key()}}");
+		});
+		$("#delete_button").button().click(function(event){
+			question.destroy({success: function(){location.replace("/chaptereditpage?chapter={{chapter.key()}}"); }  });
+			
 		});
 		
 		$( "#radio" ).buttonset();
@@ -76,6 +80,7 @@ Answer:<br />
 <div style="margin-top: 20px">
 	<button id="save_button">Save</button>
 	<button id="cancel_button">Cancel</button>
+	<button id="delete_button">Delete</button>
 </div>
 
 {% endblock %}

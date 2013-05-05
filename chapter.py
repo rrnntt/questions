@@ -1,8 +1,8 @@
-import webapp2
+#import webapp2
 from google.appengine.ext import db
-from question import Question
+#from question import Question
 from myuser import MyUser
-import re
+#import re
 
 
 ###########################################################################
@@ -68,10 +68,6 @@ class Chapter(db.Model):
         # return the result
         return chapters
 
-    def count_questions(self):
-        query = Question.all().ancestor(self.key())
-        return query.count()
-    
 def create_chapter(parent_chapter, author, title):
     parent_key = parent_chapter
     if not isinstance( parent_key, db.Key ):
@@ -200,18 +196,3 @@ def list_parents(chapter):
         p = p.parent()
     return parents
     
-def list_questions(chapter):
-    parent_key = chapter.key()
-    query = Question.all().ancestor(parent_key)
-    qs = []
-    i = 1
-    for q in query.run():
-        if q.parent_key() == parent_key:
-            qs.append(q)
-            stri = str(i)
-            i += 1
-            if q.title != stri:
-                q.title = stri
-                q.put()
-    return qs
-

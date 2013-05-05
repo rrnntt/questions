@@ -89,7 +89,7 @@
 	var editQuestionList = createQuestionList();
 	function enableQList()
 	{
-		$("#edit_question_list").html("|	 <a href=\"/questionlistpage?key="+editQuestionList.id+"&edit=true\">Q List</a>");
+		$("#edit_question_list").html("<a href=\"/questionlistpage?key="+editQuestionList.id+"&edit=true\">Q List</a> |");
 		$("#edit_question_list").show();
 	}
 	function disableQList()
@@ -120,7 +120,7 @@
 	var editCourse = createCourse();
 	function enableCourse()
 	{
-		$("#edit_course").html("|	 <a href=\"/coursepage?key="+editCourse.id+"&edit=true\">Course</a>");
+		$("#edit_course").html("<a href=\"/coursepage?key="+editCourse.id+"&edit=true\">Course</a> |");
 		$("#edit_course").show();
 	}
 	function disableCourse()
