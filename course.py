@@ -45,7 +45,7 @@ class Course(db.Model):
         self.num_questions = n
         
     def get_progress(self,student):
-        n = StudentResult.all().filter('student =',student).filter('result =',True).count()
+        n = StudentResult.all().filter('student =',student).filter('result =','correct').count()
         if self.num_questions == None:
             self.count_questions()
         if self.num_questions == 0:
