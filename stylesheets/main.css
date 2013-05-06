@@ -32,7 +32,7 @@ table {
 	border-radius: 6px;
 	padding-top: 5px;
 	padding-left: 10px;
-	/*padding: 10px;*/
+	font-size: 120%;
 }
 
 #header a {

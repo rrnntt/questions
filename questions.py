@@ -55,12 +55,6 @@ class Logout(BaseHandler):
         self.local_logout()
         self.redirect('/')
 
-class TestPage(BaseHandler):
-    def get(self):
-        user = self.get_current_user()
-        values = {'page': self.request.get('page')}
-        write_template(self, user, 'test.html', values)
-
 class StartPage(BaseHandler):
     def get(self):
         user = self.get_current_user()
@@ -84,7 +78,6 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/studentlogin', StudentLogin),
                                (r'/login', Login),
                                (r'/logout', Logout),
-                               (r'/test', TestPage),
                                (r'/getuniquename', GetUniqueName),
                                
                                (r'/img', image_handlers.ServeImage),
