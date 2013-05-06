@@ -9,7 +9,7 @@ from mytemplate import write_template
 from question import Question,list_questions
 from aclass import get_student_classes
 from course import Course, get_courses
-from student_results import passed
+from student_results import get_result
 
 class StartPage(BaseHandler):
     def get(self):
@@ -123,7 +123,7 @@ class ChapterPage(BaseHandler):
             
         questions = list_questions(chapter)
         for q in questions:
-            q.done = passed(user,q)
+            q.result = get_result(user,q)
         has_questions = len(questions) > 0
         
         template_values = {

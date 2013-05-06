@@ -22,12 +22,6 @@
 		});
 		$("#show_edit_form_button").button().click(function(event){
 			window.location.replace("/chaptereditpage?chapter={{chapter.key()}}");
-			//$("#edit_chapter_page").show();
-			//$("#add_chapter_page").hide();
-			//$("#show_edit_form_button").hide();
-			//$("#show_add_form_button").show();
-			//$("#savebutton_title_text").val("{{chapter.title}}");
-			//$("#savebutton_title_text").focus();
 		});
 		$("#delete_button").button().click(function(event){
             $("#dialog-confirm").dialog('open');
@@ -91,7 +85,6 @@
 				  	{
 				  		model.id = resp.id;
 				  	}
-				  	//location.reload();
 				  	},
 				  error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
 				  wait: true
@@ -116,7 +109,6 @@
 				  	{
 				  		model.id = resp.id;
 				  	}
-				  	//location.reload();
 				  	},
 				  error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
 				  wait: true

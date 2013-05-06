@@ -9,14 +9,24 @@ class Question(polymodel.PolyModel):
     text = db.TextProperty()
     id = db.IntegerProperty()
     answer = db.TextProperty()
-    type = db.StringProperty() # numeric, formula, text
+    type = db.StringProperty()   # numeric, formula, text
     solution = db.TextProperty() # ? should it be a model itself ?
     
     def get_answer(self):
         return self.answer
     
     def check_answer(self, answer):
-        return self.get_answer() == answer
+        """ Automatic answer check. For open-ended questions return 'unmarked'.
+        Return a value of StudentResult.result propery: 'correct', 'wrong', or 'unmarked' """
+        if self.is_open_ended():
+            return 'unmarked'
+        res = self.get_answer() == answer
+        if res:
+            return 'correct'
+        return 'wrong'
+    
+    def is_open_ended(self):
+        return self.answer == None or len(self.answer) == 0
     
     @classmethod
     def create(cls, chapter, typ = 'numeric'):
@@ -24,7 +34,8 @@ class Question(polymodel.PolyModel):
         question.chapter = chapter
         question.title = 'new'
         question.text = ''
-        question.answer = ''
+        # if answer isn't set then it's an open-ended question
+        question.answer = None 
         question.type = typ
         question.id = 1000000
         question.put()

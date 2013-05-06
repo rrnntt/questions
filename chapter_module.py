@@ -104,9 +104,11 @@ class EditChapterPage(BaseHandler):
 
         questions = list_questions(chapter)
         has_questions = len(questions) > 0
+        has_text = chapter.text and len(chapter.text) > 0
         template_values = {
                            'questions' : questions,
                            'has_questions' : has_questions,
+                           'has_text': has_text,
                            }
         add_chapter_values(template_values, chapter)
         template_values['title'] = 'Edit chapter ' + chapter.title

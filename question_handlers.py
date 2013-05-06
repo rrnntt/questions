@@ -127,11 +127,8 @@ class Answer(BaseHandler):
             
             answer = model['answer']
             result = question.check_answer(answer)
-            save_result(student, question, result) 
-            if result:
-                self.response.out.write('{"res":"success"}')
-            else:
-                self.response.out.write('{"res":"failed"}')
+            save_result(student, question, answer, result) 
+            self.response.out.write('{"res":"' + result + '"}')
 
     def post(self,Id=None):
 

@@ -16,7 +16,7 @@
 				answer.save({},{
 					success: function(model, resp, opt){
 						//alert('OK: '+JSON.stringify(resp));
-						if ( resp.res == 'success')
+						if ( resp.res == 'correct')
 						{
 							$("#done_{{q.key()}}").show();
 							$("#check_{{q.key()}}").show();
@@ -37,8 +37,22 @@
 		{% endfor %}
 		{% endif %}
 		{% for q in questions %}
-			{% if not q.done %}
-				$("#done_{{q.key()}}").hide();
+			{% if q.result == 'correct' %}
+				//$("#correct_{{q.key()}}").hide();
+				$("#wrong_{{q.key()}}").hide();
+				$("#unmarked_{{q.key()}}").hide();
+			{% elif q.result == 'wrong' %}
+				$("#correct_{{q.key()}}").hide();
+				//$("#wrong_{{q.key()}}").hide();
+				$("#unmarked_{{q.key()}}").hide();
+			{% elif q.result == 'unmarked' %}
+				$("#correct_{{q.key()}}").hide();
+				$("#wrong_{{q.key()}}").hide();
+				//$("#unmarked_{{q.key()}}").hide();
+			{% else %}
+				$("#correct_{{q.key()}}").hide();
+				$("#wrong_{{q.key()}}").hide();
+				$("#unmarked_{{q.key()}}").hide();
 			{% endif %}
 			$("#check_{{q.key()}}").hide();
 			$("#cross_{{q.key()}}").hide();
@@ -68,7 +82,9 @@
 {% for q in questions %}
 <h3> 
 	Question {{q.title}}
-	<img src="/images/check.png" id="done_{{q.key()}}" width="20" height="20"/>
+	<img src="/images/check.png" id="correct_{{q.key()}}" width="20" height="20"/>
+	<img src="/images/cross.png" id="wrong_{{q.key()}}" width="20" height="20"/>
+	<img src="/images/question-mark.png" id="unmarked_{{q.key()}}" width="20" height="20"/>
 </h3>
 {{q.text}}
 <br />
@@ -79,7 +95,11 @@
 		<img src="/images/check.png" id="check_{{q.key()}}" width="10" height="10"/> 
 		<img src="/images/cross.png" id="cross_{{q.key()}}" width="10" height="10" /> 
 	</td> 
-	<td><textarea id="answer-text_{{q.key()}}" rows="1" cols="80"></textarea> </td>
+	{% if q.is_open_ended() %}
+		<td><textarea id="answer-text_{{q.key()}}" rows="5" cols="80"></textarea> </td>
+	{% else %}
+		<td><textarea id="answer-text_{{q.key()}}" rows="1" cols="80"></textarea> </td>
+	{% endif %}
 	</tr>
 </table>
 <button id="submit_answer_{{q.key()}}">Submit</button>

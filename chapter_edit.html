@@ -16,7 +16,6 @@
 			chapter.save({title: $("#title").val(), text:$("#chapter-text").val()},
 			   {
 				success: function(model,resp,opt){
-					//location.reload();
 					window.location.replace("/chapterpage?chapter={{chapter.key()}}");
 					},
 				error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
@@ -32,7 +31,16 @@
 			window.location.replace("/questioneditpage?chapter={{chapter.key()}}&question=new");
 		});
 		
+		{% if has_text %}
+		$("#text_checkbox").attr("checked",true);
+		{% else %}
+		$("#text_checkbox").attr("checked",false);
+		{% endif %}
 	});
+	
+	function toggle_text(box){
+		alert(box.checked);
+	};
 
 {% endblock %}
 
@@ -52,7 +60,9 @@
 	</tr>
 </table>
 
-{% if chapter.text != None%}
+<input type="checkbox" id="text_checkbox" onchange="toggle_text(this)"/><br />
+
+{% if has_text %}
 <textarea id="chapter-text" rows="25" cols="80">{{chapter.text}}</textarea>
 {% else %}
 <textarea id="chapter-text" rows="25" cols="80"></textarea>
