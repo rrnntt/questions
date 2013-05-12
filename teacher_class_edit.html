@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block head_script %}
+$(function(){
+	$("#back_button").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+		window.location.replace("/teacherclass?class={{clss.key()}}");
+	});
+	$("#addbutton").button().click(function(event){
+      var student = new Student();
+	  student.save(
+            {
+             nickname: $("#nickname").val(),
+             password: $("#password").val(),
+             first_name: $("#first_name").val(),
+             last_name:  $("#last_name").val(),
+             email: '',
+             roles: 'student',
+             clss: '{{clss.key()}}',
+            },
+	       {
+    		success: function(model,resp,opt){
+    			model.id = resp.id;
+    			location.reload();
+    			},
+    		error: function(model,resp){ alert('ERROR'+JSON.stringify(resp)); },
+    		wait: true
+    	   });
+    });
+    {% for student in students %}
+      $("#{{student.key()}}_delete").button().click(function(event){
+      	var stu = new Student();
+      	stu.id = '{{student.key()}}';
+      	stu.destroy({success: function(){location.reload();}});
+      });
+    {% endfor %}
+    $("#get_unique_name").button().click(function(event){
+    	$.ajax('/getuniquename',{
+    		success: function(resp,status,jqxhr){
+    			    data = JSON.parse(resp);
+    			    $("#nickname").val(data['nickname']);
+    			    $("#password").val(data['password']);
+    			}
+    	})
+    });
+    $("#delete_students").button().click(function(event){
+    	var n = selected_students.length; 
+    	if (n == 0) return;
+    	for (s in selected_students)
+    	{
+	      	var stu = new Student();
+	      	stu.id = selected_students[s];
+	      	if (s < n - 1)  	{
+	      	   stu.destroy();
+	      	}
+	      	else
+	      	{
+	      	   stu.destroy({success: function(){ location.reload();}  });
+	      	}
+        }
+      });
+    $("#delete_students").hide();
+});
+var selected_students = [];
+function student_checked(box)
+{
+	if (box.checked)
+	{
+		selected_students.push(box.value);
+	}
+	else
+	{
+		var i = selected_students.indexOf(box.value);
+		selected_students.splice(i,1);
+	}
+	if (selected_students.length > 0)
+	{
+		$("#delete_students").show();
+	}
+	else
+	{
+		$("#delete_students").hide();
+	}
+}
+{% endblock %}
+
+{%block main%}
+<span id="back_button">Back</span><h3> Class {{ clss.name }}</h3>
+<hr />
+<table>
+    <tr>
+    	<th></th>
+    	<th>Nickname</th>
+    	<th>Password</th>
+    </tr>
+	{% for student in students %}
+		<tr>
+    		<td > <input type="checkbox" value="{{student.key()}}" class="check_student" onchange="student_checked(this)"/> </td>
+    		<td > {{ student.nickname() }} </td>
+    		<td > {{ student._passwd }} </td>
+    		<td > {{ student.full_name() }} </td>
+		</tr>
+	{% endfor %}
+</table>
+<button id="delete_students">Delete students</button>
+<hr />
+<table>
+	<tr> <td> Nickname: </td> <td> <input type="text" id="nickname" /> </td></tr>
+	<tr> <td> Password: </td> <td> <input type="text" id="password" /> </td></tr>
+	<tr> <td> First name: </td> <td> <input type="text" id="first_name" /> </td></tr>
+	<tr> <td> Last name: </td> <td> <input type="text" id="last_name" /> </td></tr>
+</table>
+<div>
+	<button id="addbutton">Add</button>
+	<button id="get_unique_name">Unique</button>
+</div>
+
+
+{%endblock%}

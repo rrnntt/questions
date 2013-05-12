@@ -67,9 +67,12 @@ table {
 	margin-top: 20px;
 }
 
-/*.underlined {
-	display: block;
-    border-bottom: 1px solid #000;
-    width: 100%;
-}*/
+.login-link {
+	border: 1px solid #CCCCCC;
+	border-radius: 6px;
+	padding: 10px;
+}
 
+.login-link-container {
+	margin-bottom: 40px;
+}

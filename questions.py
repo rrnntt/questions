@@ -90,6 +90,7 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                
                                (r'/teacherstart', teacher_handlers.StartPage),
                                (r'/teacherclass', teacher_handlers.ClassPage),
+                               (r'/teacherclassedit', teacher_handlers.EditClassPage),
                                
                                (r'/classes', aclass_handlers.Classes),
                                (r'/classes/(.+)', aclass_handlers.Classes),

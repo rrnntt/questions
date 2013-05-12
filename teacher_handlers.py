@@ -44,4 +44,20 @@ class ClassPage(BaseHandler):
                            'courses': courses
                            }
         write_template(self, teacher, 'teacher_class.html', template_values)
+
+class EditClassPage(BaseHandler):
+    def get(self):
+        teacher = self.get_current_teacher()
+        if not teacher:
+            self.redirect('/')
+            return
+            
+        class_key = db.Key(encoded=self.request.get('class'))
+        clss = Class.get(class_key)
+        students = get_class_students(clss)
+        
+        template_values = {'students': students,
+                           'clss': clss,
+                           }
+        write_template(self, teacher, 'teacher_class_edit.html', template_values)
                 
