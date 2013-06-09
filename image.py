@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+from google.appengine.api import images
 from chapter import Chapter
 
 class Image(db.Model):
@@ -11,7 +12,7 @@ class Image(db.Model):
     # binary image data
     data = db.BlobProperty()
     # thumbnail view of the image
-    #icon = db.BlobProperty()
+    icon = db.BlobProperty()
     
     @classmethod
     def create(cls, chapter, name, data):
@@ -20,6 +21,9 @@ class Image(db.Model):
         image.chapter = chapter
         image.name = name
         image.data = db.Blob(data)
+        img = images.Image(image.data)
+        img.resize(64, 64)
+        image.icon = img.execute_transforms()
         image.type = 'png'
         image.put()
         return image
@@ -30,6 +34,11 @@ class Image(db.Model):
         query = Image.all().filter('chapter =',chapter).filter('name =', name)
         images = query.fetch(10) # there must be at most 1 image but just in case...
         if len(images) == 0:
+            # try parents
+            parent = chapter.parent()
+            if parent:
+                img = cls.get_image_by_name(parent,name)
+                return img
             return None
         return images[0]
     

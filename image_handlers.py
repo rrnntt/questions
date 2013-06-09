@@ -34,9 +34,15 @@ class ServeImage(BaseHandler):
         if not image:
             self.error(404)
             return
+        
+        thumbnail = self.request.get('thumbnail')
+        serveThumbnail = thumbnail and thumbnail == 'true'
             
         self.response.headers['Content-Type'] = str('image/'+image.type)
-        self.response.out.write(image.data)
+        if serveThumbnail:
+            self.response.out.write(image.icon)
+        else:
+            self.response.out.write(image.data)
 
 class UploadImage(BaseHandler):
     def post(self):
