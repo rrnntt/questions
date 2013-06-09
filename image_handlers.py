@@ -1,8 +1,8 @@
-import logging
-import webapp2
+#import logging
+#import webapp2
 import urllib
 from google.appengine.ext import db
-from google.appengine.api import memcache
+#from google.appengine.api import memcache
 from image import Image
 from base_handler import BaseHandler
 from mytemplate import write_template

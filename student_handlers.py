@@ -1,15 +1,14 @@
 from base_handler import BaseHandler
-from google.appengine.api import memcache
-from markdown import markdown
-from markdown_postprocess import postprocess
+from mymarkdown import mymarkdown
 
 from chapter import *
 from myuser import *
 from mytemplate import write_template
-from question import Question,list_questions
+from question import list_questions
 from aclass import get_student_classes
 from course import Course, get_courses
 from student_results import get_result
+from mymarkdown import mymarkdown
 
 class StartPage(BaseHandler):
     def get(self):
@@ -116,14 +115,15 @@ class ChapterPage(BaseHandler):
         parents.reverse()
         
         if chapter.text != None:
-            chapter_formatted_text = markdown(chapter.text,safe_mode='escape')
-            chapter_formatted_text = postprocess(chapter_formatted_text)
+            chapter_formatted_text = mymarkdown(chapter.text)
         else:
             chapter_formatted_text = ''
             
         questions = list_questions(chapter)
         for q in questions:
             q.result = get_result(user,q)
+            q.formatted_text = mymarkdown(q.text)
+            
         has_questions = len(questions) > 0
         
         template_values = {

@@ -1,4 +1,4 @@
-import logging
+#import logging
 from google.appengine.ext import db
 from google.appengine.ext.db import polymodel
 from chapter import Chapter

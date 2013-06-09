@@ -1,11 +1,12 @@
 import logging 
-import webapp2
+#import webapp2
 from base_handler import BaseHandler
 from rest import RESTHandlerClass
 from question_list import *
 from mytemplate import write_template
 from question import Question
-from aclass import get_teacher_classes, Class
+from aclass import get_teacher_classes
+from mymarkdown import mymarkdown
 
 class QuestionListRESTHandler(RESTHandlerClass):
     def __init__(self, request=None, response=None):
@@ -62,6 +63,7 @@ class QuestionListPage(QuestionListHandler):
         for q in qlist.questions:
             question = Question.get(q)
             if question:
+                question.formatted_text = mymarkdown(question.text)
                 questions.append(question)
                 question_keys.append(str(question.key()))
         

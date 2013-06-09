@@ -1,14 +1,13 @@
-import logging
+#import logging
 import json
-from markdown import markdown
 
 from base_handler import BaseHandler
-from markdown_postprocess import postprocess
 from chapter import *
 from myuser import *
 from mytemplate import write_template
-from question import Question, list_questions
+from question import list_questions, Question
 from image import Image
+from mymarkdown import mymarkdown
 
 """
 Chapters are a way of organising questions. A chapter may either include other
@@ -70,12 +69,14 @@ class ChapterPage(BaseHandler):
             if chapter.refresh:
                 text = chapter.text
                 set_chapter_text(chapter, text, True)
-            chapter_formatted_text = markdown(chapter.text,safe_mode='escape')
-            chapter_formatted_text = postprocess(chapter_formatted_text)
+            chapter_formatted_text = mymarkdown(chapter.text)
         else:
             chapter_formatted_text = ''
             
         questions = list_questions(chapter)
+        for q in questions:
+            q.formatted_text = mymarkdown(q.text)
+        
         has_questions = len(questions) > 0
         
         template_values = {
@@ -103,6 +104,9 @@ class EditChapterPage(BaseHandler):
         chapter, encoded_chapter_key = get_chapter_by_encoded_key(encoded_chapter_key)
 
         questions = list_questions(chapter)
+        for q in questions:
+            q.formatted_text = mymarkdown(q.text)
+        
         has_questions = len(questions) > 0
         has_text = chapter.text and len(chapter.text) > 0
         template_values = {

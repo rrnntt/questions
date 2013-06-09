@@ -1,11 +1,11 @@
-import webapp2
-from google.appengine.ext import db
+#import webapp2
+#from google.appengine.ext import db
 from base_handler import BaseHandler
-from myuser import MyUser,create_user
+#from myuser import MyUser,create_user
 from mytemplate import write_template
 from aclass import *
-from question_list import QuestionList, get_question_list
-from course import Course, get_courses
+from question_list import get_question_list
+from course import get_courses
 
 class StartPage(BaseHandler):
     def get(self):

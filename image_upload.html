@@ -12,11 +12,12 @@ $(function(){
 <div class="error_string">{{error}}</div>
 {% endif %}
 
+<p>Supprorted image formats: PNG</p>
 {% if image %}
 <form action="/uploadimage?chapter={{chapter.key()}}&overwrite=true" enctype="multipart/form-data" method="post">
-	<div>Name:</div>
+	<div>Image name:</div>
    	<div><input type="text" name="name" id="name"  style="width: 500px" value="{{image.name}}"/></div>
-    <div><label>Image:</label></div>
+    <div><label>Image file:</label></div>
     <div><input type="file" id="file" name="img" style="width: 500px"/></div>
     <div><input type="submit" id="upload_button" value="Upload"></div>
 </form>
@@ -24,9 +25,9 @@ $(function(){
 <div><img src="/img?key={{image.key()}}" width="64" height="64" /></div>
 {% else %}
 <form action="/uploadimage?chapter={{chapter.key()}}" enctype="multipart/form-data" method="post">
-	<div>Name:</div>
+	<div>Image name:</div>
     <div><input type="text" name="name" id="name"  style="width: 500px"/></div>
-    <div><label>Image:</label></div>
+    <div><label>Image file:</label></div>
     <div><input type="file" id="file" name="img" style="width: 500px"/></div>
     <div><input type="submit" id="upload_button" value="Upload"></div>
 </form>

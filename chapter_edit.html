@@ -72,7 +72,7 @@
 <h2>Questions</h2>
 {% for q in questions %}
 <h3>Question {{q.title}} </h3>
-{{q.text}}<br />
+{{q.formatted_text}}<br />
 <a href="/questioneditpage?chapter={{chapter.key()}}&question={{q.key()}}">Edit...</a>
 {% endfor %}
 {% endif %}
