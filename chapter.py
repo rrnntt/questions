@@ -67,7 +67,7 @@ class Chapter(db.Model):
                 chapters.append(chapter)
         # return the result
         return chapters
-
+    
 def create_chapter(parent_chapter, author, title):
     parent_key = parent_chapter
     if not isinstance( parent_key, db.Key ):

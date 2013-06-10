@@ -6,6 +6,7 @@ from google.appengine.ext import db
 from image import Image
 from base_handler import BaseHandler
 from mytemplate import write_template
+from chapter_module import refresh_chapter
 
 class ServeImage(BaseHandler):
     def get(self):
@@ -61,8 +62,8 @@ class UploadImage(BaseHandler):
             if overwrite.lower() == 'true':
                 if old_image:
                     old_image.delete()
-                    chapter.refresh = True
-                    chapter.put()
+                    refresh_chapter(chapter)
+                    #chapter.put()
                 old_image = None
             if old_image:
                 args['image'] = old_image.key()
@@ -74,7 +75,7 @@ class UploadImage(BaseHandler):
                 else:
                     image = Image.create(chapter, name, data)
                     args['image'] = image.key()
-                    chapter.refresh = True
+                    refresh_chapter(chapter)
         self.redirect('/uploadimagepage?%s' % urllib.urlencode(args))
         
 class UploadImagePage(BaseHandler):

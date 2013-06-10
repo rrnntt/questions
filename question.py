@@ -7,6 +7,7 @@ class Question(polymodel.PolyModel):
     chapter = db.ReferenceProperty(Chapter)
     title = db.StringProperty()
     text = db.TextProperty()
+    refresh = db.BooleanProperty()
     id = db.IntegerProperty()
     answer = db.TextProperty()
     type = db.StringProperty()   # numeric, formula, text
@@ -38,6 +39,7 @@ class Question(polymodel.PolyModel):
         question.answer = None 
         question.type = typ
         question.id = 1000000
+        question.refresh = True
         question.put()
         return question    
 

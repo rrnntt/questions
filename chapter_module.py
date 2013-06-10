@@ -6,8 +6,7 @@ from chapter import *
 from myuser import *
 from mytemplate import write_template
 from question import list_questions, Question
-from image import Image
-from mymarkdown import mymarkdown
+from mymarkdown import mymarkdown,update_links
 
 """
 Chapters are a way of organising questions. A chapter may either include other
@@ -20,30 +19,34 @@ def set_chapter_text(chapter, text, save=False):
     Consider input text to have Markdown format.
     - Image names in reference links need to have urls.
     """
-    # find all image tags in form ![Alt text][image_name]
-    # and interpret image_name as markdown reference id
-    # so text must contain line [image_name]: /proper_image_url
-    image_link_pattern = re.compile('!\[.*?\]\[(.+?)\]')
-    id_pattern_template = '\n\[%s\]:.+'
-    match_list = re.findall(image_link_pattern, text)
-    refresh = chapter.refresh
-    for id in match_list:
-        pattern = id_pattern_template % id
-        image = Image.get_image_by_name(chapter, id)
-        if not re.search(pattern,text):  # there is no [id]: /url string
-            if image:
-                text += '\n['+id+']: '+'/img?key='+str(image.key())
-        elif refresh: # refresh anyway
-            if image:
-                text = re.sub(pattern,'\n['+id+']: '+'/img?key='+str(image.key()),text)
-            else:
-                text = re.sub(pattern,'',text)
-            
-            
-    chapter.text = text
+    chapter.text = update_links(chapter, text)
     chapter.refresh = False
     if save:
         chapter.put()
+
+
+def set_question_text(chapter, question, text, save=False):
+    """Parse the new text and correct if needed.
+    
+    Consider input text to have Markdown format.
+    - Image names in reference links need to have urls.
+    """
+    question.text = update_links(chapter, text)
+    question.refresh = False
+    if save:
+        question.put()
+        
+def refresh_chapter(chapter):
+    chapter.refresh = True
+    chapter.put()
+    query = Question.all().filter('chapter =', chapter)
+    for q in query.run():
+        q.refresh = True
+        q.put
+    query = Chapter.all().ancestor(chapter.key())
+    for c in query.run():
+        if c  != chapter:
+            refresh_chapter(c)
 
 
 ###########################################################################
@@ -75,6 +78,9 @@ class ChapterPage(BaseHandler):
             
         questions = list_questions(chapter)
         for q in questions:
+            if q.refresh:
+                text = q.text
+                set_question_text(chapter, q, text, True)
             q.formatted_text = mymarkdown(q.text)
         
         has_questions = len(questions) > 0
@@ -105,6 +111,9 @@ class EditChapterPage(BaseHandler):
 
         questions = list_questions(chapter)
         for q in questions:
+            if q.refresh:
+                text = q.text
+                set_question_text(chapter, q, text, True)
             q.formatted_text = mymarkdown(q.text)
         
         has_questions = len(questions) > 0

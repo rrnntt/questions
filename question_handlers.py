@@ -9,6 +9,7 @@ from myuser import *
 from question import *
 from chapter_module import get_chapter_by_encoded_key
 from student_results import save_result
+from mymarkdown import update_links
 
 ###########################################################################
 #     Questions pages
@@ -56,6 +57,7 @@ class Questions(BaseHandler):
             model = jsn.decode( self.request.get('model'))
             if 'text' in model:
                 question.text = model['text']
+                question.refresh = True
             if 'answer' in model:
                 question.answer = model['answer']
             if 'type' in model:
