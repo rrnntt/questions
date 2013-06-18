@@ -24,16 +24,17 @@ $(function(){
     			model.id = resp.id;
     			location.reload();
     			},
-    		error: function(model,resp){ alert('error'+JSON.stringify(resp)); },
+    		error: function(model,resp){ 
+    			//alert('error'+JSON.stringify(resp));
+    			$("#error").html(resp.responseText); 
+    			},
     		wait: true
     	   });
     });
     {% for u in user_list %}
-      {% if u.isTeacher() %}
           var user = new User({'nickname':'{{u.nickname()}}'});
 	      user.id = '{{u.key()}}';
 	      Users.add(user);
-      {% endif %}
     {% endfor %}
 	$("#deletebutton").button().click(function(event){
 		while( Selection.length > 0 )
@@ -76,10 +77,11 @@ function user_checked(box)
 	</table>
 
 	<hr />
+	<p> Nickname is the account name if email is ...@gmail.com of full email otherwise.</p> 
 	<table>
 		<tr> <td> Nickname: </td> <td> <input type="text" name="nickname" id="nickname_text" /> </td></tr>
 		<!--<tr> <td> Password: </td> <td> <input type="text" name="password" id="password_text" /> </td></tr>-->
-		<tr> <td> EMail:    </td> <td> <input type="text" name="email" id="email_text" />       </td></tr>
+		<!--<tr> <td> EMail:    </td> <td> <input type="text" name="email" id="email_text" />       </td></tr>-->
 		<tr>
 			<td> <label>Role: </label> </td>
 			<td><select id="roles">
@@ -94,5 +96,6 @@ function user_checked(box)
 		<button id="addbutton">Add</button>
 		<button id="deletebutton">Delete selected</button>
 	</div>
+	<div id="error" class="error_string"></div>
 
 {% endblock %}

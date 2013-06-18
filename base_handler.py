@@ -58,6 +58,7 @@ class BaseHandler(webapp2.RequestHandler):
             user = get_user(gUser.nickname().lower())
         if user and not user.user:
             user.user = gUser 
+            user.put()
         # if default user logged in but not registered - register him (me)
         if not user and gUser.nickname().lower() == default_user:
             user = MyUser(key_name=default_user)

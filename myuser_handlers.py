@@ -63,7 +63,11 @@ class MyUsers(BaseHandler):
             return
             
         if len(nickname) > 0:
-            new_user = create_user(nickname, roles, password)
+            try:
+                new_user = create_user(nickname, roles, password)
+            except:
+                self.response.out.write('User cannot be created (exists already?)')
+                return
             if not new_user:
                 self.response.out.write('error')
                 return
@@ -93,7 +97,11 @@ class UserList(BaseHandler):
             self.redirect('/')
             return
         
-        user_list = MyUser.all().fetch(1000)
+        query = MyUser.all()
+        user_list = []
+        for u in query.run():
+            if len(u.roles) > 1 or 'student' not in u.roles:
+                user_list.append(u)        
             
         template_values = {
             'user_list': user_list,
