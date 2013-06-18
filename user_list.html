@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block head_script %}
+
+var UserCollection = Backbone.Collection.extend({
+  model: User
+});
+var Users = new UserCollection(); 
+var Selection = new UserCollection();
+
 $(function(){
 	//$("#roles").combobox();
 	$("#addbutton").button().click(function(event){
@@ -22,23 +29,48 @@ $(function(){
     	   });
     });
     {% for u in user_list %}
-      $("#{{u.key()}}_delete").button().click(function(event){
-      	var duser = new User();
-      	duser.id = '{{u.key()}}';
-      	duser.destroy({success: function(){location.reload();}});
-      });
+      {% if u.isTeacher() %}
+          var user = new User({'nickname':'{{u.nickname()}}'});
+	      user.id = '{{u.key()}}';
+	      Users.add(user);
+      {% endif %}
     {% endfor %}
+	$("#deletebutton").button().click(function(event){
+		while( Selection.length > 0 )
+		{
+		  	var duser = Selection.pop();
+		 	duser.destroy({success: function(){ if (Selection.length == 0){ location.reload();} }});
+		 	//duser.destroy();
+	    }
+	});
 });
+
+function user_checked(box)
+{
+	var user = Users.get(box.value);
+	if (box.checked)
+	{
+		//alert(user.get('nickname'));
+		Selection.add(user);
+	}
+	else
+	{
+		Selection.remove(user);
+	}
+}
+
 {% endblock %}
 
 {% block main%}
 
     Users:<br/>
-	<table width="100%">
+	<table>
     {% for u in user_list %}
 		<tr>
+			<td> <input type="checkbox" value="{{u.key()}}" class="user" onchange="user_checked(this)"/> </td>
     		<td> {{ u.nickname() }} </td>
-    		<td style="text-align: right"> <button id="{{u.key()}}_delete">Delete</button> </td>
+    		<td> {{ u.roles }} </td>
+    		<td> {{ u.email() }} </td>
 		</tr>
     {% endfor %}
 	</table>
@@ -46,12 +78,12 @@ $(function(){
 	<hr />
 	<table>
 		<tr> <td> Nickname: </td> <td> <input type="text" name="nickname" id="nickname_text" /> </td></tr>
-		<tr> <td> Password: </td> <td> <input type="text" name="password" id="password_text" /> </td></tr>
+		<!--<tr> <td> Password: </td> <td> <input type="text" name="password" id="password_text" /> </td></tr>-->
 		<tr> <td> EMail:    </td> <td> <input type="text" name="email" id="email_text" />       </td></tr>
 		<tr>
 			<td> <label>Role: </label> </td>
 			<td><select id="roles">
-				<option value="student">Student</option>
+				<!--<option value="student">Student</option>-->
 				<option value="teacher">Teacher</option>
 				<option value="admin">Admin</option>
 			</select></td>
@@ -60,6 +92,7 @@ $(function(){
 	</table>
 	<div>
 		<button id="addbutton">Add</button>
+		<button id="deletebutton">Delete selected</button>
 	</div>
 
 {% endblock %}

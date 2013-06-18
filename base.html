@@ -34,9 +34,9 @@
 		});
 	var User = Backbone.Model.extend({
 		urlRoot : '/users', 
-		nickname: '', 
-		email: '',
-		roles: '',
+		//nickname: '', 
+		//email: '',
+		//roles: '',
 		});
 	var Class = Backbone.Model.extend({
 		urlRoot : '/classes', 
@@ -160,9 +160,9 @@
   	<div id="container">
   	
   	<div id="header">
-  	<table width="100%">
+  	<table width="100%" id="main-menu">
   		<tr> 
-  		<td>
+  		<td class="main-menu">
 		  	<nav class="main-menu">
 		  	  <a href="/">Home</a>
 			  {%if user %}
@@ -178,7 +178,7 @@
 			  {% endif %}
 		  	</nav>
   		</td>
-		<td style="text-align: right">   
+		<td style="text-align: right" class="main-menu">   
 		  	<nav class="main-menu">
 			  {%if user %}
 				  {% if user.isTeacher() %}

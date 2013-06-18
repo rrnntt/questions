@@ -5,7 +5,7 @@ from google.appengine.api import users
 
 from base_handler import BaseHandler
 from myuser import MyUser, create_user
-from aclass import Class
+#from aclass import Class
 from mytemplate import write_template
 
 ####################################################################
@@ -27,7 +27,7 @@ class MyUsers(BaseHandler):
             raise Exception('Saving of user failed')
 
     def post(self,Id=None):
-        """Create new user instance and retirn its id which is its key"""
+        """Create new user instance and return its id which is its key"""
         admin = self.get_current_admin()
         if not admin:
             self.redirect('/')
@@ -52,8 +52,10 @@ class MyUsers(BaseHandler):
             self.response.out.write('error')
         
         nickname = model['nickname']
-        password = model['password']
-#        email = model['email']
+        if 'password' in model:
+            password = model['password']
+        else:
+            password = None
         roles = model['roles']
         
         if roles == 'student' and not 'clss' in model: 

@@ -1,5 +1,6 @@
 import webapp2
 import json
+from google.appengine.api import users
 
 import myuser
 from mytemplate import write_template
@@ -52,7 +53,14 @@ class Login(BaseHandler):
 
 class Logout(BaseHandler):
     def get(self):
-        self.local_logout()
+        user = self.get_current_user()
+        if user:
+            if user.isLocal():
+                self.local_logout()
+            else:
+                url = users.create_logout_url(self.request.uri)
+                self.redirect(url)
+                return
         self.redirect('/')
 
 class StartPage(BaseHandler):

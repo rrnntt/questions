@@ -13,6 +13,13 @@ table {
   font-size: 100%;
 }
 
+td.main-menu {
+	padding-right:0px;
+}
+
+td {
+	padding-right: 25px;
+}
 
 #container {
   /*width: 800px;*/
