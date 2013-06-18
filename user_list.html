@@ -15,8 +15,7 @@ $(function(){
 	  new_user.save(
             {
              nickname: $("#nickname_text").val(),
-             password: $("#password_text").val(),
-             email: $("#email_text").val(),
+             alias: $("#alias_text").val(),
              roles: $("#roles").val(),
             },
 	       {
@@ -64,12 +63,14 @@ function user_checked(box)
 
 {% block main%}
 
-    Users:<br/>
+    <h3>Users:</h3>
+    <hr />
 	<table>
     {% for u in user_list %}
 		<tr>
 			<td> <input type="checkbox" value="{{u.key()}}" class="user" onchange="user_checked(this)"/> </td>
-    		<td> {{ u.nickname() }} </td>
+    		<td> <a href="useredit?user={{u.key()}}"> {{ u.nickname() }} </a> </td>
+    		<td> {{ u.alias }} </td>
     		<td> {{ u.roles }} </td>
     		<td> {{ u.email() }} </td>
 		</tr>
@@ -80,7 +81,7 @@ function user_checked(box)
 	<p> Nickname is the account name if email is ...@gmail.com of full email otherwise.</p> 
 	<table>
 		<tr> <td> Nickname: </td> <td> <input type="text" name="nickname" id="nickname_text" /> </td></tr>
-		<!--<tr> <td> Password: </td> <td> <input type="text" name="password" id="password_text" /> </td></tr>-->
+		<tr> <td> Alias: </td> <td> <input type="text" name="alias" id="alias_text" /> </td></tr>
 		<!--<tr> <td> EMail:    </td> <td> <input type="text" name="email" id="email_text" />       </td></tr>-->
 		<tr>
 			<td> <label>Role: </label> </td>

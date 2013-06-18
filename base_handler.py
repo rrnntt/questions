@@ -64,6 +64,7 @@ class BaseHandler(webapp2.RequestHandler):
             user = MyUser(key_name=default_user)
             user.user = gUser
             user.roles = ['admin','teacher']
+            user.alias = 'admin'
             user.put()
         # temporary:
     #    if gUser and gUser.nickname() == default_user:

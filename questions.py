@@ -106,6 +106,7 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/students/(.+)', aclass_handlers.Students),
                                
                                (r'/userlist', myuser_handlers.UserList),
+                               (r'/useredit', myuser_handlers.EditUserPage),
                                (r'/users', myuser_handlers.MyUsers),
                                (r'/users/(.+)', myuser_handlers.MyUsers),
                                (r'/deleteuser', myuser_handlers.DeleteUser),

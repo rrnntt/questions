@@ -20,8 +20,7 @@ class MyUsers(BaseHandler):
         if user:
             jsn = json.decoder.JSONDecoder()
             model = jsn.decode( self.request.get('model'))
-            user._first_name = model['first_name']
-            user._last_name = model['last_name']
+            user.from_json(model)
             user.put()
         else:
             raise Exception('Saving of user failed')
@@ -72,6 +71,7 @@ class MyUsers(BaseHandler):
                 self.response.out.write('error')
                 return
             new_user.from_json(model)
+            new_user.put()
 
         else:
             self.response.out.write('error')
@@ -107,6 +107,28 @@ class UserList(BaseHandler):
             'user_list': user_list,
         }
         write_template(self, user, 'user_list.html',template_values)
+        
+class EditUserPage(BaseHandler):
+    def get(self):
+
+        user = self.get_current_admin()
+        if not user:
+            self.redirect('/')
+            return
+        
+        key = self.request.get('user')
+        euser = db.get(key)
+        roles = []
+        for role in euser.roles:
+            roles.append(str(role))
+        
+        template_values = {
+            'euser': euser,
+            'euser_roles': roles,
+        }
+        write_template(self, user, 'user_edit.html',template_values)
+        
+##################################################################################
         
 class DeleteUser(BaseHandler):
     def post(self):

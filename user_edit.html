@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block head_script %}
+var euser = new User({'roles':{{euser_roles}},'alias':'{{euser.alias}}'});
+euser.id = '{{euser.key()}}';
+
+$(function(){
+	$("#alias_text").val('{{euser.alias}}');
+	
+	{% if 'teacher' in euser.roles %}
+		$("#teacher").attr('checked',true);
+	{% else %}
+		$("#teacher").attr('checked',false);
+	{% endif %}
+	
+	{% if 'admin' in euser.roles %}
+		$("#admin").attr('checked',true);
+	{% else %}
+		$("#admin").attr('checked',false);
+	{% endif %}
+	
+	$("#savebutton").button().click(function(event){
+	  alias = $('#alias_text').val();
+	  if (alias.length == 0)
+	  {
+	  	alias = euser.get('alias');
+	  }
+	  euser.set('alias',alias);
+	  euser.save({},
+	       {
+    		success: function(model,resp,opt){
+    			location.replace('/userlist');
+    			},
+    		error: function(model,resp){ 
+    			$("#error").html(resp.responseText); 
+    			},
+    		wait: true
+    	   });
+    });
+	$("#cancelbutton").button().click(function(event){
+		location.replace('/userlist');
+    });
+});
+
+function role_checked(box,role_name)
+{
+	var roles = euser.get('roles');
+	if (box.checked)
+	{
+		if ( roles.indexOf(role_name) < 0 )
+		{
+			roles.push(role_name);
+			euser.set('roles',roles);
+		}
+	}
+	else
+	{
+		var i = roles.indexOf(role_name); 
+		if ( i > 0 )
+		{
+			roles.splice(i,1);
+			euser.set('roles',roles);
+		}
+	}
+}
+
+function teacher_checked(box)
+{
+	role_checked(box,'teacher');
+}
+
+function admin_checked(box)
+{
+	role_checked(box,'admin');
+}
+
+{% endblock %}
+
+{% block main %}
+<h2>Profile of {{euser.nickname()}}</h2>
+
+<hr />
+<table>
+	<tr>
+		<td>Email</td>
+		<td> {{ euser.email() }} </td>
+	</tr>
+	<tr>
+		<td>Alias</td>
+		<td> <input type="text" name="alias" id="alias_text" /> </td>
+	</tr>
+	<tr>
+		<td>Teacher</td>
+		<td><input type="checkbox" id="teacher" onchange="teacher_checked(this)"/></td>
+	</tr>
+	<tr>
+		<td>Admin</td>
+		<td><input type="checkbox" id="admin" onchange="admin_checked(this)"/></td>
+	</tr>
+	
+</table>
+
+<hr />
+<div>
+	<button id="savebutton">Save</button>
+	<button id="cancelbutton">Cancel</button>
+</div>
+<div id="error" class="error_string"></div>
+
+{% endblock %}

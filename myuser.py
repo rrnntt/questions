@@ -4,6 +4,9 @@ from google.appengine.api import users
 from google.appengine.api import memcache
 import re
 import random
+import logging
+
+logger = logging.getLogger('MyUser')
 
 class MyUser(db.Model):
     """User of the system"""
@@ -18,6 +21,7 @@ class MyUser(db.Model):
     _last_name = db.StringProperty()
     _email = db.StringProperty()
     _clss = db.ReferenceProperty()
+    alias = db.StringProperty()
     
     def nickname(self):
         """Return user nickname"""
@@ -91,15 +95,17 @@ class MyUser(db.Model):
         self.put()
         
     def from_json(self, model):
+        logger.info(str(model))
+        
         if 'nickname' in model:
             self._nickname = model['nickname'].lower()
-        else:
-            raise Exception('Model doesn\'t have nickname.')
         if 'roles' in model:
-            roles = model['roles'].split(',')
-            self.roles = roles
-        else:
-            raise Exception('Roles is missing form model.')
+            roles = model['roles']
+            if isinstance(roles,str) or isinstance(roles,unicode):
+                roles = roles.split(',')
+            else: 
+                self.roles = roles
+        
         if 'password' in model:
             self._passwd = model['password']
         if 'first_name' in model:
@@ -108,6 +114,8 @@ class MyUser(db.Model):
             self._last_name = model['last_name']
         if 'email' in model:
             self._email = model['email']
+        if 'alias' in model:
+            self.alias = model['alias']
         #if 'clss' in model:
         #    self._clss = db.Key(encoded=model['clss'])
         
@@ -172,6 +180,9 @@ def create_user(name,roles = None, passwd = None):
                     user.roles.append(roles)
             if passwd:
                 user._passwd = passwd
+        if user.alias == None or len(user.alias) == 0:
+            user.alias = user.nickname() 
+        logger.info('alias='+str(user.alias))
         user.put()
     else:
         raise Exception('User '+nickname+' exists')
