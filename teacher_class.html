@@ -22,7 +22,7 @@ $(function(){
     </tr>
 	{% for student in students %}
 		<tr>
-    		<td > {{ student.full_name() }} </td>
+    		<td > <a href="/teacherstudent?class={{clss.key()}}&student={{student.key()}}"> {{ student.full_name() }} </a> </td>
     		{% for p in student.progress %}
 	    		<td > {{ p }} </td>
     		{% endfor %}

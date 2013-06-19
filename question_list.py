@@ -20,6 +20,9 @@ class QuestionList(db.Model):
         qlist.name = name
         qlist.put()
         return qlist
+    
+    def __getitem__(self,i):
+        return db.get( self.questions[i] )
 
 def get_question_list(parent):
     """

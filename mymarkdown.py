@@ -1,6 +1,7 @@
 import re
 from markdown import markdown
 from image import Image
+from question import Question
 
 youtube_pattern = re.compile('&lt;iframe(.*?)src="http://www\.youtube\.com/embed/(.*?)&gt;&lt;/iframe&gt;')
 inline_math_pattern = re.compile('\$(.*?)\$')
@@ -45,4 +46,17 @@ def update_links(chapter, text):
                 
     return text
             
-            
+def markdown_questionlist(qlist):
+    qlist.formatted_questions = []
+    for q in qlist.questions:
+        if isinstance(q,Question):
+            question = q
+        else:
+            question = Question.get(q)
+        if question:
+            question.formatted_text = mymarkdown(question.text)
+            qlist.formatted_questions.append(question)
+    
+def markdown_questionlists(qlists):
+    for qlist in qlists:
+        markdown_questionlist(qlist)

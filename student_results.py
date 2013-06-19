@@ -8,11 +8,12 @@ class StudentResult(db.Model):
     student = db.ReferenceProperty(MyUser)
     question = db.ReferenceProperty(Question)
     answer = db.TextProperty()
+    solution = db.TextProperty()
     # values: correct, wrong, unmarked
     result = db.StringProperty()
 
 
-def save_result(student,question,answer,status):
+def save_result(student,question,answer,status,solution = None):
     # find and delete any previous results of same student and same question
     # TODO: maybe I'll keep all results for statistics
     query = StudentResult.all().filter('student =', student).filter('question =', question)
@@ -24,7 +25,27 @@ def save_result(student,question,answer,status):
     result.question = question
     result.answer = answer
     result.result = status
+    if solution:
+        result.solution = solution
     result.put()
+
+def get_student_result(student,question):
+    """Get result of student answering a question."""
+    query = StudentResult.all().filter('student =', student.key()).filter('question =', question)
+    if query.count() == 0:
+        return None
+    # return the best result
+    res = None
+    for r in query.run():
+        if res == None:
+            res = r
+        rr = r.result
+        if rr == 'correct':
+            res = r
+            break
+        elif rr == 'wrong' and res.result != 'correct':
+            res = r
+    return res
 
 def get_result(student,question):
     """Get result of student answering a question.
@@ -46,6 +67,6 @@ def get_result(student,question):
         if rr == 'correct':
             res = rr
             break
-        elif res == 'wrong' and res != 'correct':
+        elif rr == 'wrong' and res != 'correct':
             res = 'wrong'
     return res

@@ -36,6 +36,9 @@ class Class(db.Model):
     def get_student(self,i):
         k = self.students[i]
         return MyUser.get(k)
+    
+    def has_student(self,student):
+        return student.key() in self.students
 
     def __getitem__(self, i):
         return self.get_student(i)

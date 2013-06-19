@@ -1,7 +1,7 @@
 from google.appengine.ext import db
 from chapter import Chapter, root_key
 from student_results import StudentResult
-from question import count_questions
+from question import count_questions,list_questions
 
 class Course(db.Model):
     # Name/Title of the course 
@@ -43,6 +43,14 @@ class Course(db.Model):
             chapter = Chapter.get(key)
             n += count_questions(chapter)
         self.num_questions = n
+        
+    def get_chapters(self):
+        chapters = []
+        for key in self.chapters:
+            chapter = Chapter.get(key)
+            chapter.questions = list_questions(chapter)
+            chapters.append(chapter)
+        return chapters
         
     def get_progress(self,student):
         n = StudentResult.all().filter('student =',student).filter('result =','correct').count()

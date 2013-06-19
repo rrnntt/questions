@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block head_script %}
+	$(function(){
+		$("#up_button").button({text:false, icons: {primary: "ui-icon-arrowreturnthick-1-n"}}).click(function(){
+			location.replace("/teacherclass?class={{clss.key()}}");
+		});
+	});
+{% endblock %}
+
+{% block main %}
+
+<span id="up_button"><a href="/teacherclass?class={{clss.key()}}">Up</a></span>
+<h1>Student {{student.full_name()}}</h1>
+
+<h2>Courses</h2>
+{% for course in courses %}
+	<h3>{{course.name}}</h3>
+	{% for qlist in course.qlists %}
+		<hr />
+		{% for q in qlist.questions %}
+		<h4>Question {{q.title}}</h4>
+		<div>{{q.formatted_text}}</div>
+		{% if q.result %}
+		<div style="position: relative; left: 20px;">
+			<div style="color: red">{{q.result.result}}</div>
+			<div>{{q.result.answer}}</div>
+			{% if q.is_open_ended() %}
+			<div>
+				<button id="mark-correct-{{q.result.key()}}">Correct</button>
+				<button id="mark-wrong-{{q.result.key()}}">Wrong</button>
+				<script>
+					$('#mark-correct-{{q.result.key()}}').button().click(function(){
+						$.ajax('/teachermark?result={{q.result.key()}}&mark=correct');
+						setTimeout(function(){location.reload()},100);
+					});
+					$('#mark-wrong-{{q.result.key()}}').button().click(function(){
+						$.ajax('/teachermark?result={{q.result.key()}}&mark=wrong');
+						setTimeout(function(){location.reload()},100);
+					});
+				</script>
+			</div>
+			{% elif q.result.result != 'correct' %}
+			Correct answer:
+			<div>{{q.answer}}</div>
+			{% endif %}
+		</div>
+		{% endif %}
+		{% endfor %}
+	{% endfor %}
+{% endfor %}
+
+<hr />
+
+{% for qlist in qlists %}
+<h3>{{qlist.name}}</h3>
+	{% for q in qlist.formatted_questions %}
+		<h4>Question {{q.title}}</h4>
+		<p>{{q.formatted_text}}</p>
+	{% endfor %}
+{% endfor %}
+
+{% endblock %}
