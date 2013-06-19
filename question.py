@@ -30,7 +30,7 @@ class Question(polymodel.PolyModel):
         return self.answer == None or len(self.answer) == 0
     
     @classmethod
-    def create(cls, chapter, typ = 'numeric'):
+    def create(cls, chapter, typ = 'text'):
         question = Question(parent=chapter)
         question.chapter = chapter
         question.title = 'new'

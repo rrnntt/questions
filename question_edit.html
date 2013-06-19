@@ -68,12 +68,18 @@ Question:<br />
 <br />
 
 Answer:<br />
+{% if question.answer == None %}
+<textarea id="question-answer" rows="10" cols="80"></textarea>
+{% else %}
 <textarea id="question-answer" rows="10" cols="80">{{question.answer}}</textarea>
+{% endif %}
 <br />
 
 <div id="radio">
+	<!-- not implemented yet
 	<input type="radio" id="type-numeric" name="radio" checked="checked" /><label for="type-numeric">Numeric</label>
 	<input type="radio" id="type-formula" name="radio" /><label for="type-formula">Formula</label>
+	-->
 	<input type="radio" id="type-text" name="radio" /><label for="type-text">Text</label>
 </div>
 

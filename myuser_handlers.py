@@ -2,11 +2,14 @@ import webapp2
 import json
 from google.appengine.ext import db
 from google.appengine.api import users
+import logging
 
 from base_handler import BaseHandler
 from myuser import MyUser, create_user
 #from aclass import Class
 from mytemplate import write_template
+
+logger = logging.getLogger("myuser_handlers")
 
 ####################################################################
 #   MyUser REST service

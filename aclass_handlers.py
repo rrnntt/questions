@@ -1,9 +1,12 @@
 import webapp2
 import json
+import logging
 from google.appengine.ext import db
 from base_handler import BaseHandler
 from aclass import Class, create_class, get_student_classes
 from myuser import MyUser,create_user
+
+logger = logging.getLogger("aclass_handlers")
 
 ####################################################################
 #   Class REST service
@@ -108,6 +111,7 @@ class Students(BaseHandler):
         if not 'clss' in model:
             raise Exception('Class is missing from model.')
             
+        logger.info('Create student '+str(model))
         try:
             student = create_user(model)
         except:

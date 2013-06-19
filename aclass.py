@@ -3,6 +3,9 @@ from google.appengine.ext import db
 #from google.appengine.api import memcache
 import myuser
 from myuser import *
+import logging
+
+logger = logging.getLogger("Class")
 
 class Class(db.Model):
     name = db.StringProperty()
@@ -70,12 +73,15 @@ def get_class_students(aclass):
     """
     Get a list of all students in a class.
     """
+    logger.info("Get students in class "+aclass.name)
     stu_list = []
     if aclass == None:
         return stu_list
     for key in aclass.students:
         stu = MyUser.get(key)
+        logger.info(stu.roles)
         if stu and stu.isStudent():
             stu_list.append( stu )
+    logger.info(str(stu_list))
     return stu_list 
     

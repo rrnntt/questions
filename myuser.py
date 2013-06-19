@@ -102,7 +102,7 @@ class MyUser(db.Model):
         if 'roles' in model:
             roles = model['roles']
             if isinstance(roles,str) or isinstance(roles,unicode):
-                roles = roles.split(',')
+                self.roles = roles.split(',')
             else: 
                 self.roles = roles
         
