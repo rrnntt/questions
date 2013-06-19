@@ -3,7 +3,7 @@ import json
 
 from base_handler import BaseHandler
 from chapter import *
-from myuser import *
+from myuser import get_user
 from mytemplate import write_template
 from question import list_questions, Question
 from mymarkdown import mymarkdown,update_links
@@ -188,10 +188,11 @@ class Chapters(BaseHandler):
         title = model['title']
             
         if len(title) > 0:
-            chapter = Chapter(parent=parent_key)
-            chapter.authors.append(user.key())
-            chapter.title = title
-            chapter.put()
+#            chapter = Chapter(parent=parent_key)
+#            chapter.authors.append(user.key())
+#            chapter.title = title
+#            chapter.put()
+            chapter = create_chapter(parent_key, user, title)
         else:
             self.response.out.write('error')
             return
@@ -206,3 +207,62 @@ class Chapters(BaseHandler):
         else:
             raise Exception('Deleting of chapter failed')
 
+class AddAuthor(BaseHandler):
+    def get(self):
+        user = self.get_current_user()
+        if not user:
+            self.redirect('/')
+            return
+        
+        try:
+            chapter = db.get( self.request.get('chapter') )
+        except:
+            self.redirect('/')
+            return
+            
+        if not chapter or not chapter.canEdit(user):
+            self.redirect('/')
+            return
+        
+        nickname = self.request.get('author')
+        user1 = get_user(nickname)
+        
+        res = {}
+
+        if user1:
+            res['status'] = 'OK'
+            chapter.add_author(user1)
+            chapter.put()
+        else:
+            res['status'] = "User '" +nickname+ "' isn't registered."
+        
+        self.response.out.write(json.dumps(res))
+
+class RemoveAuthor(BaseHandler):
+    def get(self):
+        user = self.get_current_user()
+        if not user:
+            self.redirect('/')
+            return
+        
+        try:
+            chapter = db.get( self.request.get('chapter') )
+        except:
+            self.redirect('/')
+            return
+            
+        if not chapter or not chapter.isOwner(user):
+            self.redirect('/')
+            return
+        
+        nickname = self.request.get('author')
+        user1 = get_user(nickname)
+        
+        res = {}
+        res['status'] = 'OK'
+
+        if user1:
+            chapter.remove_author(user1)
+            chapter.put()
+        
+        self.response.out.write(json.dumps(res))

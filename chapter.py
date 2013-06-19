@@ -12,6 +12,7 @@ from myuser import MyUser
 class Chapter(db.Model):
     """A chapter"""
     title = db.StringProperty()
+    owner = db.ReferenceProperty(MyUser)
     authors = db.ListProperty(db.Key)
     text = db.TextProperty()
     refresh = db.BooleanProperty()
@@ -19,6 +20,10 @@ class Chapter(db.Model):
     def canEdit(self,user):
         """Check if a user can edit this chapter"""
         return self.key() == root_key() or user.key() in self.authors
+    
+    def isOwner(self,user):
+        """Check if a user owns this chapter"""
+        return user.key() == self.owner.key()
     
     def deleteAll(self):
         """Delete this chater and all child chapters recursively"""
@@ -44,13 +49,21 @@ class Chapter(db.Model):
         self.authors.append( k )
         
     def remove_author(self, author):
-        if len(self.authors) == 1:
-            return
+        if len(self.authors) == 1 or self.isOwner(author):
+            return False
         k = author.key()
         if not k in self.authors:
-            return
+            return False
         i = self.authors.index(k)
         del self.authors[i:i+1]
+        return True
+        
+    def get_author_nicknames(self):
+        names = []
+        for a in self.authors:
+            author = db.get(a)
+            names.append(author.nickname())
+        return names
         
     def list_all_subchapters(self):
         query = Chapter.all().ancestor(self.key())
@@ -73,6 +86,7 @@ def create_chapter(parent_chapter, author, title):
     if not isinstance( parent_key, db.Key ):
         parent_key = parent_key.key()
     chapter = Chapter(parent=parent_key)
+    chapter.owner = author
     chapter.authors.append(author.key())
     chapter.title = title
     chapter.refresh = True

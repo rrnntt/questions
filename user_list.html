@@ -39,9 +39,9 @@ $(function(){
 		while( Selection.length > 0 )
 		{
 		  	var duser = Selection.pop();
-		 	duser.destroy({success: function(){ if (Selection.length == 0){ location.reload();} }});
-		 	//duser.destroy();
+		 	duser.destroy();
 	    }
+	    setTimeout(function(){location.reload()},100)
 	});
 });
 

@@ -116,6 +116,8 @@ app = webapp2.WSGIApplication([(r'/', MainPage),
                                (r'/chaptereditpage', chapter_module.EditChapterPage),
                                (r'/chapters', chapter_module.Chapters),
                                (r'/chapters/(.+)', chapter_module.Chapters),
+                               (r'/chapteraddauthor', chapter_module.AddAuthor),
+                               (r'/chapterremoveauthor', chapter_module.RemoveAuthor),
                                
                                (r'/questions', question_handlers.Questions),
                                (r'/questions/(.+)', question_handlers.Questions),

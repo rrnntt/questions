@@ -35,12 +35,81 @@
 		$("#text_checkbox").attr("checked",true);
 		{% else %}
 		$("#text_checkbox").attr("checked",false);
+		$('#chapter-text').hide();
 		{% endif %}
+
+        $( "#dialog-add-author" ).dialog({
+			modal: true,
+			autoOpen: false,
+			buttons: {
+				"Add": function() {
+					$.ajax('/chapteraddauthor?chapter={{chapter.key()}}&author='+$("#add-author-nickname").val(),{
+						success: function(resp,status,jqxhr){
+							data = JSON.parse(resp);
+							if (data.status == 'OK')
+							{
+								location.reload();
+							}
+							else
+							{
+								alert(data.status);
+							}
+					    },
+					    error: function(jqxhr,status,errorThrown){
+					    	alert(errorThrown);
+					    }
+					})
+					$( this ).dialog( "close" );
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		{% if chapter.isOwner(user)%}
+		$("#add-author-button").button().click(function(event){
+			$("#dialog-add-author").dialog('open');
+		});
+		$("#remove-author-button").button().click(function(event){
+			while(selected_authors.length > 0)
+			{
+				var name = selected_authors.shift(); 
+				$.ajax('/chapterremoveauthor?chapter={{chapter.key()}}&author='+name);
+			}
+			setTimeout(function(){location.reload()},100)
+		});
+		{% endif %}
+		
 	});
 	
 	function toggle_text(box){
-		alert(box.checked);
+		if (box.checked)
+		{
+			$('#chapter-text').show();
+		}
+		else
+		{
+			$('#chapter-text').hide();
+		}
 	};
+
+	{% if chapter.isOwner(user)%}
+	var selected_authors = new Array();
+	function author_selected(box){
+		if (box.checked)
+		{
+			selected_authors.push( box.value );
+		}
+		else
+		{
+			var i = selected_authors.indexOf( box.value );
+			if ( i >= 0 )
+			{
+				selected_authors.splice(i,1);
+			}
+		}
+	};
+	{% endif %}
 
 {% endblock %}
 
@@ -53,14 +122,50 @@
 
 <div id="chapter_title">Edit chapter "{{chapter.title}}"</div> 
 
+<div id="error" class="error_string">{{error}}</div>
+
 <table >
 	<tr>
 	<td>Title:</td> 
 	<td><input type="text" name="title" id="title"  style="width: 500px"/> </td>
 	</tr>
+	<tr>
+		<td>Owner</td>
+		<td>{{chapter.owner}}</td>
+	</tr>
 </table>
 
-<input type="checkbox" id="text_checkbox" onchange="toggle_text(this)"/><br />
+<!-- ********************************************************************************************* -->
+<h2>Authors</h2>
+{% for a in chapter.get_author_nicknames() %}
+<table>
+	<tr>
+		{% if chapter.isOwner(user)%}
+		<td><input type="checkbox" value="{{a}}" onchange="author_selected(this)"/></td>
+		{% endif %}
+		<td>{{a}}</td>
+	</tr>
+</table>
+{% endfor %}
+
+{% if chapter.isOwner(user)%}
+<button id="add-author-button" style="margin-top: 20px">Add author</button>
+<button id="remove-author-button" style="margin-top: 20px">Remove selected authors</button>
+<div id="dialog-add-author" title="Add author">
+	<p>
+		<input type="text" id="add-author-nickname"  style="width: 250px"/>
+	</p>
+</div>
+{% endif %}
+
+<!-- ********************************************************************************************* -->
+<h2>Text</h2>
+<table>
+	<tr>
+		<td><input type="checkbox" id="text_checkbox" onchange="toggle_text(this)"/></td>
+		<td> Show/hide text editor. </td>
+	</tr>
+</table>
 
 {% if has_text %}
 <textarea id="chapter-text" rows="25" cols="80">{{chapter.text}}</textarea>

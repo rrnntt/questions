@@ -125,7 +125,7 @@ class MyUser(db.Model):
         email = self.email()
         if not email:
             email = ''
-        return '{'+self.nickname()+', '+email+'}'
+        return self.nickname()
     
 def get_unique_nickname():
     """Create unique student nickname of the form s1234"""
